@@ -285,7 +285,7 @@
             <h2>Welcome Back!</h2>
             <p>පද්ධතියේ ඇති ඔබගේ මෙම අංකය භාවිතා කරනවාද? <br><b id="savedNum" style="color:var(--primary)"></b></p>
             <button class="modal-btn" onclick="useOldNum()">ඔව්, එයට එවන්න</button>
-            <button style="background:transparent; color:#777; border:none; margin-top:15px; cursor:pointer" onclick="closeM('historyModal')">වෙනත් අංකයක්</button>
+            <button style="background:transparent; color:#777; border:none; margin-top:15px; cursor:pointer" onclick="closeHistoryModal()">වෙනත් අංකයක්</button>
         </div>
     </div>
 
@@ -320,12 +320,14 @@
     <script>
         document.addEventListener('contextmenu', event => event.preventDefault());
 
-        // මෙතන තමයි වෙනස් කළේ ( /send-movie කෑල්ල අයින් කළා )
         const BOT_URL = "https://kaveesha2005-my-bots.hf.space";
         
         const MOVIE_NAME = "Sonic_2020";
         const MOVIE_LINK = "https://dl.springsfern.in/dl/AAAAAdURLsdGScB1AAAGvQ/kFpKysNIbfZld2Yln69VbYykF09qmn5knq53MKmA3-w";
         const COOLDOWN_TIME = 2 * 60 * 60 * 1000;
+
+        let controller = null; // To handle aborting fetch
+        let showHistoryPopup = true; // Control history popup visibility
 
         window.onload = function() {
             const savedState = localStorage.getItem('sendingState_' + MOVIE_NAME);
@@ -339,19 +341,30 @@
 
         function checkHistory() {
             const last = localStorage.getItem('last_num');
-            if (last && document.getElementById('waNumber').value === "") {
+            if (last && document.getElementById('waNumber').value === "" && showHistoryPopup) {
                 document.getElementById('savedNum').innerText = last;
                 document.getElementById('historyModal').style.display = 'flex';
             }
         }
-        function useOldNum() { document.getElementById('waNumber').value = localStorage.getItem('last_num'); closeM('historyModal'); }
+        
+        function useOldNum() { 
+            document.getElementById('waNumber').value = localStorage.getItem('last_num'); 
+            closeM('historyModal'); 
+        }
+
+        // Added this new function to handle closing history modal properly
+        function closeHistoryModal() {
+            showHistoryPopup = false;
+            closeM('historyModal');
+            document.getElementById('waNumber').focus();
+        }
+
         function closeM(id) { document.getElementById(id).style.display = 'none'; }
         
         function triggerPreModal() {
             const num = document.getElementById('waNumber').value.replace(/[^0-9]/g, '');
             if (num.length < 10) { alert("🚨 කරුණාකර නිවැරදි අංකයක් ලබාදෙන්න!"); return; }
 
-            // මෙතනින් තමයි ඔයාගේ අංකය (94710388481) Limit එකෙන් අයින් කරලා තියෙන්නේ. අනිත් අයට Limit එක වැඩ කරනවා.
             if (num === "94710388481") {
                 document.getElementById('instructionModal').style.display = 'flex';
                 return;
@@ -376,6 +389,10 @@
 
             const cancelBtn = document.getElementById('cancelBtn');
             cancelBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> CANCELLING...';
+
+            if (controller) {
+                controller.abort(); // Cancel the fetch request
+            }
 
             try {
                 const response = await fetch(`${BOT_URL}/cancel?number=${number}`, { method: 'GET', keepalive: true });
@@ -407,8 +424,11 @@
 
         async function checkBotTask(number) {
             const status = document.getElementById('status');
+            controller = new AbortController();
+            const signal = controller.signal;
+
             try {
-                const response = await fetch(`${BOT_URL}/send-movie?number=${number}&movieUrl=${encodeURIComponent(MOVIE_LINK)}&movieName=${encodeURIComponent(MOVIE_NAME)}`, { method: 'GET', keepalive: true });
+                const response = await fetch(`${BOT_URL}/send-movie?number=${number}&movieUrl=${encodeURIComponent(MOVIE_LINK)}&movieName=${encodeURIComponent(MOVIE_NAME)}`, { method: 'GET', keepalive: true, signal: signal });
                 const data = await response.json();
                 
                 if (response.ok && data.status === "Success") {
@@ -428,6 +448,12 @@
                     alert("දෝෂයක් මතු විය: " + (data.error || "Unknown Error"));
                 }
             } catch (err) { 
+                if (err.name === 'AbortError') {
+                    // Fetch was aborted, don't show the red error box
+                    return; 
+                }
+                
+                // Show standard error if not an abort
                 clearSendingUI();
                 const btn = document.getElementById('sendBtn');
                 btn.innerHTML = '<i class="fas fa-exclamation-triangle"></i> SERVER OFFLINE';
