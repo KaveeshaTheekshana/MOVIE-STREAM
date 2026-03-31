@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sonic the Hedgehog (2020) | KAVI CINEMA</title>
+    <title>Sonic the Hedgehog (2020) | Movie Stream </title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&family=Poppins:wght@400;700&display=swap" rel="stylesheet">
     <style>
@@ -66,7 +66,7 @@
 
     <div class="hero-bg"></div>
     <header>
-        <a href="films.html" class="logo">KAVI<span>CINEMA</span></a>
+        <a href="films.html" class="logo">Movie<span>Stream</span></a>
         <div class="meta-item"><i class="fa-solid fa-signal"></i> Online</div>
     </header>
 
@@ -318,7 +318,7 @@
             setUI(false); 
             document.getElementById('resultIcon').innerHTML = '<i class="fa-solid fa-circle-xmark" style="color:#ff4d4d"></i>';
             document.getElementById('resultTitle').innerText = "දෝෂයකි!";
-            document.getElementById('resultMessage').innerText = "සර්වර් එක සමඟ සම්බන්ධ වීමේ දෝෂයකි. බොට් offline වීමට හෝ ලින්ක් එකේ ගැටළුවක් විය හැක. කරුණාකර පසුව උත්සාහ කරන්න.";
+            document.getElementById('resultMessage').innerText = "සර්වර් එක සමඟ සම්බන්ධ වීමේ දෝෂයකි.කරුණාකර පසුව උත්සාහ කරන්න.";
             document.getElementById('resultModal').style.display = 'flex';
         }
 
@@ -348,7 +348,7 @@
             if (controller) controller.abort();
             clearDownloadState();
             
-            document.getElementById('status').innerHTML = "අවලංගු කරමින් පවතී...";
+            document.getElementById('status').innerHTML = "❌ අවලංගු කරමින් පවතී...";
             
             try {
                 await fetch(`${BOT_URL}/cancel?number=${number}`);
