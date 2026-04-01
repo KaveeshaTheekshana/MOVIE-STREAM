@@ -57,13 +57,13 @@
         </a>
     </header>
 
-    <img src="https://wallpapercave.com/wp/wp5301898.jpg" alt="Sonic Background" class="hero-bg">
+    <img src="https://wallpapercave.com/wp/wp5301898.jpg" class="hero-bg">
 
     <main class="container mx-auto px-4 pt-24 md:pt-32 pb-20 max-w-5xl">
         
         <div class="flex flex-col md:flex-row gap-6 md:gap-8 items-center md:items-start" data-aos="fade-up">
             <div class="w-[60%] max-w-[220px] md:w-1/3 md:max-w-none shrink-0 rounded-2xl overflow-hidden shadow-2xl shadow-primary/20 border border-white/10 float-anim">
-                <img src="https://cinesubz.net/wp-content/uploads/2021/11/aQvJ5WPzZgYVDrxLX4R6cLJCEaQ.jpg" alt="Sonic Poster" class="w-full h-auto object-cover">
+                <img src="https://cinesubz.net/wp-content/uploads/2021/11/aQvJ5WPzZgYVDrxLX4R6cLJCEaQ.jpg" class="w-full h-auto object-cover">
             </div>
             
             <div class="w-full md:w-2/3 text-center md:text-left space-y-3 md:space-y-4 mt-2 md:mt-0">
@@ -133,7 +133,7 @@
                 </div>
 
                 <div id="section_process" class="ui-section">
-                    <div id="vip_banner" class="mb-5 md:mb-6 bg-gradient-to-r from-yellow-500/10 via-yellow-500/20 to-yellow-500/10 border border-yellow-500/30 p-3 md:p-4 rounded-xl">
+                    <div id="vip_banner" class="hidden mb-5 md:mb-6 bg-gradient-to-r from-yellow-500/10 via-yellow-500/20 to-yellow-500/10 border border-yellow-500/30 p-3 md:p-4 rounded-xl">
                         <i class="fa-solid fa-crown text-2xl md:text-3xl text-gold mb-1 md:mb-2 drop-shadow-[0_0_10px_rgba(255,215,0,0.8)]"></i>
                         <h3 class="font-bold text-gold text-base md:text-lg">VIP අවසරය ලබාදෙන ලදි!</h3>
                     </div>
@@ -211,6 +211,7 @@
         const BOT_URL = "https://api.moviestream.lat"; 
         const MOVIE_NAME = "Sonic the Hedgehog (2020)"; 
         const MOVIE_LINK = "https://dl.springsfern.in/dl/AAAAAdURLsdGScB1AAAGvQ/kFpKysNIbfZld2Yln69VbYykF09qmn5knq53MKmA3-w";
+        const VIP_NUMBERS = ["94710388481", "94702409932"];
 
         let currentUser = "";
         let currentNumber = "";
@@ -225,7 +226,6 @@
         });
 
         socket.on('disconnect', () => {
-            console.warn("⚠️ Bot Live Connection Lost!");
             const dlState = localStorage.getItem('dl_state_' + MOVIE_NAME);
             if (dlState === 'processing') {
                 const s = document.getElementById('status_text');
@@ -253,6 +253,16 @@
             }
         }
 
+        // Logic to show or hide VIP banner
+        function checkVIPUI(number) {
+            const banner = document.getElementById('vip_banner');
+            if (VIP_NUMBERS.includes(number)) {
+                banner.classList.remove('hidden');
+            } else {
+                banner.classList.add('hidden');
+            }
+        }
+
         window.onload = () => {
             const savedName = localStorage.getItem('kavi_user_name');
             const savedNum = localStorage.getItem('kavi_user_num');
@@ -265,6 +275,7 @@
                 document.getElementById('display_phone').innerText = "+" + savedNum;
                 
                 if (dlState === 'processing') {
+                    checkVIPUI(currentNumber);
                     switchState('section_process', true);
                     
                     fetch(`${BOT_URL}/check-status?number=${currentNumber}&movieName=${encodeURIComponent(MOVIE_NAME)}`)
@@ -275,7 +286,6 @@
                                 showSuccessPersistent();
                             } else if (data.status === "Error") {
                                 localStorage.removeItem('dl_state_' + MOVIE_NAME);
-                                // මෙතැනදී Cancel පණිවිඩය පෙන්වයි
                                 document.getElementById('status_text').innerHTML = "<i class='fa-solid fa-circle-xmark text-2xl md:text-3xl text-red-500 mb-2 md:mb-3 block'></i><span class='text-red-400'>ඔබ විසින් සාර්ථකව අවලංගු කරන ලදි.</span>";
                                 document.getElementById('btn_cancel_main').style.display = 'none';
                             } else {
@@ -336,6 +346,7 @@
         }
 
         function showVIPStatus() {
+            checkVIPUI(currentNumber);
             switchState('section_process');
             startDownload();
         }
@@ -377,7 +388,6 @@
                     showSuccessPersistent(); 
                 } else if (data.status === "Error") {
                     localStorage.removeItem('dl_state_' + MOVIE_NAME);
-                    // මෙතැනදීත් Cancel පණිවිඩය පෙන්වයි
                     document.getElementById('status_text').innerHTML = "<i class='fa-solid fa-circle-xmark text-2xl md:text-3xl text-red-500 mb-2 md:mb-3 block'></i><span class='text-red-400'>ඔබ විසින් සාර්ථකව අවලංගු කරන ලදි.</span>";
                     document.getElementById('btn_cancel_main').style.display = 'none';
                 } else {
@@ -397,7 +407,7 @@
         }
 
         function showSuccessPersistent() {
-            document.getElementById('vip_banner').style.display = 'none';
+            checkVIPUI(currentNumber);
             const s = document.getElementById('status_text');
             if(s) {
                 s.innerHTML = `
@@ -450,7 +460,6 @@
                     await fetch(`${BOT_URL}/cancel?number=${currentNumber}&movieName=${encodeURIComponent(MOVIE_NAME)}`); 
                 }
             } catch(e) {}
-            // පණිවිඩය බලාගැනීමට තත්පර 3ක් ඉඩ දී Reload කරයි
             setTimeout(() => location.reload(), 3000);
         }
 
