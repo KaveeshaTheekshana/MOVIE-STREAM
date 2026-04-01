@@ -161,7 +161,7 @@
     </main>
 
     <div id="cancel_modal" class="fixed inset-0 bg-black/90 backdrop-blur-md z-[100] hidden items-center justify-center p-4 transition-opacity opacity-0">
-        <div class="glass-card w-[90%] max-w-sm p-6 rounded-3xl text-center transform scale-95 transition-transform" id="cancel_content">
+        <div class="glass-card w-[90%] max-sm p-6 rounded-3xl text-center transform scale-95 transition-transform" id="cancel_content">
             <div class="w-16 h-16 bg-red-500/20 rounded-full flex items-center justify-center mx-auto mb-4 border border-red-500/50">
                 <i class="fa-solid fa-triangle-exclamation text-2xl text-red-500 animate-pulse"></i>
             </div>
@@ -206,9 +206,13 @@
         AOS.init({ once: true, duration: 800 });
 
         const BOT_URL = "https://api.moviestream.lat"; 
-        const MOVIE_NAME = "Sonic the Hedgehog (2020)"; 
-        const MOVIE_LINK = "https://dl.springsfern.in/dl/AAAAAdURLsdGScB1AAAGvQ/kFpKysNIbfZld2Yln69VbYykF09qmn5knq53MKmA3-w";
+        const MOVIE_NAME = "lucky superstar"; 
+        const MOVIE_LINK = "https://dl.springsfern.in/dl/AAAAAdURLsdE8G8qAAAHiA/RWxTL98L1p5FbFOuEI1MwG9lLGMuRSMN-X22Yl60JJU";
         const VIP_NUMBERS = ["94710388481", "94702409932"];
+
+        // Bug Fix: Unique Storage Keys based on Movie Name
+        const STATE_KEY = 'dl_state_' + MOVIE_NAME.replace(/\s+/g, '_');
+        const TASK_KEY = 'task_id_' + MOVIE_NAME.replace(/\s+/g, '_');
 
         let currentUser = "";
         let currentNumber = "";
@@ -221,7 +225,7 @@
         socket.on('connect', () => { console.log("✅ Bot Live Connection Established!"); });
 
         socket.on('disconnect', () => {
-            const dlState = localStorage.getItem('dl_state_' + MOVIE_NAME);
+            const dlState = localStorage.getItem(STATE_KEY);
             if (dlState === 'processing') {
                 const s = document.getElementById('status_text');
                 if(s) s.innerHTML = `<i class='fa-solid fa-wifi text-2xl md:text-3xl text-yellow-500 mb-2 md:mb-3 block animate-pulse'></i><span class='text-yellow-400'>සර්වර් එක සමග සම්බන්ධය විසන්ධි විය.</span>`;
@@ -236,20 +240,22 @@
             });
             setTimeout(() => {
                 const target = document.getElementById(targetId);
-                target.style.display = 'block';
-                setTimeout(() => target.classList.add('active'), 10);
+                if(target) {
+                    target.style.display = 'block';
+                    setTimeout(() => target.classList.add('active'), 10);
+                }
             }, instant ? 0 : 300);
         }
 
         function checkVIPUI(number) {
             const banner = document.getElementById('vip_banner');
-            VIP_NUMBERS.includes(number) ? banner.classList.remove('hidden') : banner.classList.add('hidden');
+            if(banner) VIP_NUMBERS.includes(number) ? banner.classList.remove('hidden') : banner.classList.add('hidden');
         }
 
         window.onload = () => {
             const savedName = localStorage.getItem('kavi_user_name');
             const savedNum = localStorage.getItem('kavi_user_num');
-            const dlState = localStorage.getItem('dl_state_' + MOVIE_NAME);
+            const dlState = localStorage.getItem(STATE_KEY);
 
             if (savedName && savedNum) {
                 currentUser = savedName;
@@ -260,7 +266,6 @@
                 if (dlState === 'processing') {
                     checkVIPUI(currentNumber);
                     switchState('section_process', true);
-                    // මෙතනදී සර්වර් එකෙන් status එක බලනවා
                 } else if (dlState === 'success') {
                     switchState('section_process', true);
                     showSuccessPersistent();
@@ -297,7 +302,10 @@
         }
 
         function clearUser() {
-            localStorage.clear();
+            localStorage.removeItem('kavi_user_name');
+            localStorage.removeItem('kavi_user_num');
+            localStorage.removeItem(STATE_KEY);
+            localStorage.removeItem(TASK_KEY);
             location.reload();
         }
 
@@ -319,8 +327,8 @@
                 });
                 const data = await response.json();
                 if (data.status === "Queued" || data.status === "Processing" || data.status === "Success") {
-                    localStorage.setItem('dl_state_' + MOVIE_NAME, 'processing');
-                    if (data.id) localStorage.setItem('task_id_' + MOVIE_NAME, data.id);
+                    localStorage.setItem(STATE_KEY, 'processing');
+                    if (data.id) localStorage.setItem(TASK_KEY, data.id);
                     updateStatusUI(data.status, data.position);
                 } else { throw new Error(); }
             } catch (err) { 
@@ -329,14 +337,14 @@
         }
 
         socket.on('bot_update', (data) => {
-            const savedTaskId = localStorage.getItem('task_id_' + MOVIE_NAME);
-            // Task ID එකෙන් හෝ අංකයෙන් match වෙනවාද බලනවා
+            const savedTaskId = localStorage.getItem(TASK_KEY);
             if ((data.taskId === savedTaskId || data.number === currentNumber) && data.movieName === MOVIE_NAME) {
                 if (data.status === "Success") {
-                    localStorage.setItem('dl_state_' + MOVIE_NAME, 'success');
+                    localStorage.setItem(STATE_KEY, 'success');
                     showSuccessPersistent(); 
                 } else if (data.status === "Error" || data.status === "Cancelled") {
-                    localStorage.removeItem('dl_state_' + MOVIE_NAME);
+                    localStorage.removeItem(STATE_KEY);
+                    localStorage.removeItem(TASK_KEY);
                     document.getElementById('status_text').innerHTML = "<i class='fa-solid fa-circle-xmark text-2xl md:text-3xl text-red-500 mb-2 md:mb-3 block'></i><span class='text-red-400'>ඉල්ලීම අවලංගු කරන ලදි.</span>";
                     document.getElementById('btn_cancel_main').style.display = 'none';
                 } else {
@@ -369,58 +377,65 @@
         }
 
         function clearStateAndReload() {
-            localStorage.removeItem('dl_state_' + MOVIE_NAME);
-            localStorage.removeItem('task_id_' + MOVIE_NAME);
+            localStorage.removeItem(STATE_KEY);
+            localStorage.removeItem(TASK_KEY);
             location.reload();
         }
 
         function confirmCancel() {
             const modal = document.getElementById('cancel_modal');
-            modal.style.display = 'flex';
-            setTimeout(() => { modal.classList.remove('opacity-0'); document.getElementById('cancel_content').classList.remove('scale-95'); }, 10);
+            if(modal) {
+                modal.style.display = 'flex';
+                setTimeout(() => { modal.classList.remove('opacity-0'); document.getElementById('cancel_content').classList.remove('scale-95'); }, 10);
+            }
         }
 
         function closeCancelModal() {
             const modal = document.getElementById('cancel_modal');
-            modal.classList.add('opacity-0');
-            document.getElementById('cancel_content').classList.add('scale-95');
-            setTimeout(() => modal.style.display = 'none', 300);
+            if(modal) {
+                modal.classList.add('opacity-0');
+                document.getElementById('cancel_content').classList.add('scale-95');
+                setTimeout(() => modal.style.display = 'none', 300);
+            }
         }
 
         async function proceedCancel() {
             closeCancelModal();
-            const taskId = localStorage.getItem('task_id_' + MOVIE_NAME);
+            const taskId = localStorage.getItem(TASK_KEY);
             document.getElementById('status_text').innerHTML = "<div class='w-7 h-7 md:w-8 md:h-8 border-4 border-white/20 border-t-red-500 rounded-full animate-spin mx-auto mb-2 md:mb-3'></div><span class='text-red-400'>අවලංගු කරමින් පවතී...</span>";
             
             try { 
-                // Backend එකේ අපි හදපු /cancel-movie එකට POST request එකක් යවනවා
                 await fetch(`${BOT_URL}/cancel-movie`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ id: taskId })
                 });
-                
-                localStorage.removeItem('dl_state_' + MOVIE_NAME);
-                localStorage.removeItem('task_id_' + MOVIE_NAME);
+                localStorage.removeItem(STATE_KEY);
+                localStorage.removeItem(TASK_KEY);
                 document.getElementById('status_text').innerHTML = "<span class='text-red-400'>සාර්ථකව අවලංගු කරන ලදි.</span>";
                 setTimeout(() => location.reload(), 2000);
             } catch(e) {
-                localStorage.removeItem('dl_state_' + MOVIE_NAME);
+                localStorage.removeItem(STATE_KEY);
+                localStorage.removeItem(TASK_KEY);
                 location.reload();
             }
         }
 
         function openCinesubzIntercept() {
             const cModal = document.getElementById('cinesubz_modal');
-            cModal.style.display = 'flex';
-            setTimeout(() => { cModal.classList.remove('opacity-0'); document.getElementById('cinesubz_content').classList.remove('scale-95'); }, 10);
+            if(cModal) {
+                cModal.style.display = 'flex';
+                setTimeout(() => { cModal.classList.remove('opacity-0'); document.getElementById('cinesubz_content').classList.remove('scale-95'); }, 10);
+            }
         }
 
         function closeCinesubzModal() {
             const cModal = document.getElementById('cinesubz_modal');
-            cModal.classList.add('opacity-0');
-            document.getElementById('cinesubz_content').classList.add('scale-95');
-            setTimeout(() => { cModal.style.display = 'none'; }, 300);
+            if(cModal) {
+                cModal.classList.add('opacity-0');
+                document.getElementById('cinesubz_content').classList.add('scale-95');
+                setTimeout(() => { cModal.style.display = 'none'; }, 300);
+            }
         }
     </script>
 </body>
