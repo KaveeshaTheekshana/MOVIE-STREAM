@@ -183,7 +183,7 @@
         </div>
     </div>
 
-    <div id="success_popup_modal" class="fixed inset-0 bg-black/90 backdrop-blur-md z-[110] items-center justify-center p-4 transition-opacity opacity-0">
+    <div id="success_popup_modal" class="fixed inset-0 bg-black/90 backdrop-blur-md z-[110] items-center justify-center p-4 transition-opacity opacity-0 hidden">
         <div class="glass-card neon-border w-[95%] max-w-sm p-8 rounded-3xl text-center transform scale-95 transition-transform duration-300" id="success_popup_content">
             <div class="w-20 h-20 bg-blue-500/20 rounded-full flex items-center justify-center mx-auto mb-6 border border-blue-500/50 shadow-[0_0_20px_rgba(0,163,255,0.4)]">
                 <i class="fa-solid fa-paper-plane text-3xl text-blue-400 animate-bounce"></i>
@@ -226,7 +226,7 @@
             <div class="flex flex-col-reverse sm:flex-row gap-3">
                 <button onclick="closeCinesubzModal()" class="w-full sm:w-1/2 bg-white/10 hover:bg-white/20 py-3 rounded-xl font-semibold transition text-sm">පසුවට</button>
                 <a href="https://cinesubz.net/" target="_blank" onclick="closeCinesubzModal()" class="w-full sm:w-1/2 bg-blue-600 hover:bg-blue-700 py-3 rounded-xl font-semibold transition shadow-lg shadow-blue-500/30 text-sm flex items-center justify-center gap-2">
-                     එකඟයි <i class="fa-solid fa-check"></i>
+                    එකඟයි <i class="fa-solid fa-check"></i>
                 </a>
             </div>
         </div>
@@ -348,18 +348,23 @@
 
         function showSuccessPopup() {
             const sModal = document.getElementById('success_popup_modal');
-            sModal.style.display = 'flex';
-            setTimeout(() => { 
-                sModal.classList.remove('opacity-0'); 
-                document.getElementById('success_popup_content').classList.remove('scale-95');
-            }, 10);
+            if(sModal) {
+                sModal.classList.remove('hidden');
+                sModal.style.display = 'flex';
+                setTimeout(() => { 
+                    sModal.classList.remove('opacity-0'); 
+                    document.getElementById('success_popup_content').classList.remove('scale-95');
+                }, 10);
+            }
         }
 
         function closeSuccessPopup() {
             const sModal = document.getElementById('success_popup_modal');
-            sModal.classList.add('opacity-0');
-            document.getElementById('success_popup_content').classList.add('scale-95');
-            setTimeout(() => { sModal.style.display = 'none'; }, 300);
+            if(sModal) {
+                sModal.classList.add('opacity-0');
+                document.getElementById('success_popup_content').classList.add('scale-95');
+                setTimeout(() => { sModal.style.display = 'none'; sModal.classList.add('hidden'); }, 300);
+            }
         }
 
         async function startDownload() {
@@ -388,7 +393,7 @@
             if ((data.taskId === savedTaskId || data.number === currentNumber) && data.movieName === MOVIE_NAME) {
                 if (data.status === "Success") {
                     localStorage.setItem(DL_STATE_KEY, 'success');
-                    showSuccessPersistent(); 
+                    setTimeout(() => showSuccessPersistent(), 500); 
                 } else if (data.status === "Error" || data.status === "Cancelled") {
                     localStorage.removeItem(DL_STATE_KEY);
                     localStorage.removeItem(TASK_ID_KEY);
@@ -404,9 +409,9 @@
             const s = document.getElementById('status_text');
             if (!s) return;
             if (status === "Queued") {
-                s.innerHTML = `<div class='w-7 h-7 md:w-8 md:h-8 border-4 border-white/20 border-t-gold rounded-full animate-spin mx-auto mb-2 md:mb-3'></div> ඔබ පෝලිමේ සිටී...<br><span class="text-[11px] md:text-xs text-gray-400 mt-2 block">ස්ථානය: <span class="text-gold font-bold text-base md:text-lg">#${position || 0}</span></span>`;
+                s.innerHTML = `<div class='w-7 h-7 border-4 border-white/20 border-t-gold rounded-full animate-spin mx-auto mb-2'></div> ඔබ පෝලිමේ සිටී...<br><span class="text-[11px] text-gray-400 mt-1 block">ස්ථානය: <span class="text-gold font-bold text-base">#${position || 0}</span></span>`;
             } else if (status === "Processing" || status === "Uploading") {
-                s.innerHTML = `<i class='fa-solid fa-rocket text-2xl md:text-3xl text-accent mb-2 md:mb-3 block animate-bounce'></i> චිත්‍රපටය එවමින් පවතී...`;
+                s.innerHTML = `<i class='fa-solid fa-rocket text-2xl text-accent mb-2 block animate-bounce'></i> <span class="text-accent font-bold">චිත්‍රපටය එවමින් පවතී...</span><br><span class="text-[10px] text-gray-400">කරුණාකර WhatsApp පරීක්ෂා කරන්න.</span>`;
             }
         }
 
@@ -414,10 +419,10 @@
             const s = document.getElementById('status_text');
             if(s) {
                 s.innerHTML = `
-                    <div class="transform scale-125 md:scale-150 mb-4 md:mb-6 mt-2 md:mt-4"><i class="fa-solid fa-circle-check text-accent drop-shadow-[0_0_15px_rgba(37,211,102,0.8)]"></i></div>
-                    <h3 class="text-lg md:text-xl font-bold text-white mb-1 md:mb-2">සාර්ථකයි, ${currentUser}! 🎉</h3>
-                    <p class="text-xs md:text-sm text-gray-400 mb-5">චිත්‍රපටය ඔබගේ WhatsApp ගිණුමට යවා ඇත.</p>
-                    <button onclick="clearStateAndReload()" class="bg-white/10 hover:bg-white/20 text-white px-5 py-2.5 rounded-xl text-xs md:text-sm font-semibold transition border border-white/20">නැවත මුල් පිටුවට</button>
+                    <div class="mb-3 mt-1"><i class="fa-solid fa-circle-check text-4xl text-accent drop-shadow-[0_0_15px_rgba(37,211,102,0.8)]"></i></div>
+                    <h3 class="text-lg font-bold text-white mb-1">සාර්ථකයි! 🎉</h3>
+                    <p class="text-[11px] md:text-sm text-gray-400 mb-4 px-2">චිත්‍රපටය ඔබගේ WhatsApp ගිණුමට සාර්ථකව යවා ඇත.</p>
+                    <button onclick="clearStateAndReload()" class="bg-white/10 hover:bg-white/20 text-white px-6 py-2 rounded-xl text-xs font-semibold transition border border-white/20">නැවත මුල් පිටුවට</button>
                 `;
                 document.getElementById('btn_cancel_main').style.display = 'none';
             }
@@ -431,15 +436,19 @@
 
         function confirmCancel() {
             const modal = document.getElementById('cancel_modal');
-            modal.style.display = 'flex';
-            setTimeout(() => { modal.classList.remove('opacity-0'); document.getElementById('cancel_content').classList.remove('scale-95'); }, 10);
+            if(modal) {
+                modal.style.display = 'flex';
+                setTimeout(() => { modal.classList.remove('opacity-0'); document.getElementById('cancel_content').classList.remove('scale-95'); }, 10);
+            }
         }
 
         function closeCancelModal() {
             const modal = document.getElementById('cancel_modal');
-            modal.classList.add('opacity-0');
-            document.getElementById('cancel_content').classList.add('scale-95');
-            setTimeout(() => modal.style.display = 'none', 300);
+            if(modal) {
+                modal.classList.add('opacity-0');
+                document.getElementById('cancel_content').classList.add('scale-95');
+                setTimeout(() => modal.style.display = 'none', 300);
+            }
         }
 
         async function proceedCancel() {
@@ -466,15 +475,19 @@
 
         function openCinesubzIntercept() {
             const cModal = document.getElementById('cinesubz_modal');
-            cModal.style.display = 'flex';
-            setTimeout(() => { cModal.classList.remove('opacity-0'); document.getElementById('cinesubz_content').classList.remove('scale-95'); }, 10);
+            if(cModal) {
+                cModal.style.display = 'flex';
+                setTimeout(() => { cModal.classList.remove('opacity-0'); document.getElementById('cinesubz_content').classList.remove('scale-95'); }, 10);
+            }
         }
 
         function closeCinesubzModal() {
             const cModal = document.getElementById('cinesubz_modal');
-            cModal.classList.add('opacity-0');
-            document.getElementById('cinesubz_content').classList.add('scale-95');
-            setTimeout(() => { cModal.style.display = 'none'; }, 300);
+            if(cModal) {
+                cModal.classList.add('opacity-0');
+                document.getElementById('cinesubz_content').classList.add('scale-95');
+                setTimeout(() => { cModal.style.display = 'none'; }, 300);
+            }
         }
     </script>
 </body>
