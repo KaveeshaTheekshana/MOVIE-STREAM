@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title id="page_title">MovieStream | Loading...</title>
+    <title id="page_title">MovieStream | AKHANDA</title>
     
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
@@ -14,7 +14,7 @@
     <link href="https://unpkg.com/videojs-netflix-theme@1.0.1/dist/videojs-netflix-theme.css" rel="stylesheet">
 
     <script>
-        // 🛠️ API URL එක මෙහෙම තියෙන්න ඕනේ (අන්තිමට / හෝ * එපා)
+        // 🛠️ පිරිසිදු API URL එක (අන්තිමට කිසිම දෙයක් දාන්න එපා)
         const API_BASE_URL = "https://api.moviestream.lat"; 
         
         const MOVIE_DATA = {
@@ -28,7 +28,7 @@
             language: "Telugu (Sinhala Subtitles)",
             description: "Akhanda කියන්නේ action සහ devotional elements එකට එකතු වූ Telugu චිත්‍රපටයක් වන අතර, හොඳ හා නරක අතර සටනක් වටා කතාව ගොඩනැගෙයි. මේ කතාවේ Akhanda නම් බලවත් චරිතය සමාජයේ අසාධාරණය සහ දූෂණයට විරුද්ධව සටන් කරයි.",
             backdrop: "https://i.pinimg.com/736x/d9/f5/84/d9f584ae1e47ee835a03f266477e4718.jpg", 
-            directLink: "https://t.me/c/3759526849/2",
+            directLink: "https://t.me/c/3759526849/2", // මෙතන 2 තමයි Message ID එක
             screenshots: [
                 "https://i.pinimg.com/1200x/d5/e6/88/d5e68863c7a20102be0a7f989780155b.jpg", 
                 "https://i.pinimg.com/736x/59/35/d8/5935d8e701b7b8873b6a7de2070dc9fa.jpg", 
@@ -46,7 +46,6 @@
         .hero-section { position: relative; width: 100%; min-height: 95dvh; background-size: cover; background-position: center; display: flex; align-items: center; }
         .hero-overlay { background: linear-gradient(to right, #000 15%, rgba(0,0,0,0.3) 60%, transparent 100%), linear-gradient(to top, #000 0%, transparent 40%); position: absolute; inset: 0; }
 
-        /* Video.js Fixes */
         .video-js { width: 100%; max-width: 1000px; aspect-ratio: 16/9; border-radius: 8px; margin: 0 auto; box-shadow: 0 0 50px rgba(229, 9, 20, 0.4); }
         #video_display_area { display: none; padding: 40px 0; background: #000; border-bottom: 1px solid #111; }
 
@@ -58,7 +57,6 @@
 
         .poster-img { width: 220px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.1); box-shadow: 0 30px 60px rgba(0,0,0,0.9); }
         
-        /* 🎬 Advanced Screenshots */
         .ss-card { border-radius: 6px; overflow: hidden; border: 1px solid #222; transition: 0.4s ease; background: #111; cursor: pointer; }
         .ss-card:hover { border-color: var(--netflix-red); transform: scale(1.05); box-shadow: 0 10px 20px rgba(0,0,0,0.5); }
         .ss-card img { width: 100%; aspect-ratio: 16/9; object-fit: cover; opacity: 0.8; transition: 0.4s; }
@@ -108,7 +106,7 @@
                 <h2 class="text-lg font-black uppercase tracking-widest text-red-600"><i class="fa-solid fa-signal animate-pulse mr-2"></i> Streaming Link Active</h2>
                 <button onclick="closeVideo()" class="text-white hover:text-red-600 transition-all"><i class="fa-solid fa-xmark text-4xl"></i></button>
             </div>
-            <video id="vid-player" class="video-js vjs-netflix-theme" controls preload="auto" playsinline></video>
+            <video id="vid-player" class="video-js vjs-netflix-theme" controls preload="auto" playsinline crossorigin="anonymous"></video>
         </div>
     </section>
 
@@ -159,10 +157,9 @@
         <div class="bg-[#0f0f0f] border border-white/10 p-8 rounded-2xl w-full max-w-md">
             <i class="fa-solid fa-circle-exclamation text-yellow-500 text-5xl mb-4"></i>
             <h3 class="text-white font-black text-xl mb-4 uppercase tracking-tighter">Data Warning!</h3>
-            <p class="sh-text text-gray-300 mb-6 text-sm">ඔබ Online නැරඹීමට උත්සාහ කරයි. ඔබ සතුව WhatsApp Package පමනක් තිබේ නම් කරුණාකර WhatsApp හරහා ලබා ගන්න.</p>
+            <p class="sh-text text-gray-300 mb-6 text-sm">ඔබ Online නැරඹීමට උත්සාහ කරයි. මෙහිදී Data වැයවිය හැක.</p>
             <div class="flex flex-col gap-3">
-                <button onclick="playOnlineNow()" class="w-full bg-white text-black py-4 rounded font-black uppercase text-xs">ඔව්, දිගටම යන්න</button>
-                <button onclick="handleWhatsAppClick()" class="w-full btn-whatsapp text-white py-4 rounded font-black uppercase text-xs">WhatsApp එකට ගන්න</button>
+                <button onclick="playOnlineNow()" class="w-full bg-white text-black py-4 rounded font-black uppercase text-xs">දිගටම යන්න</button>
                 <button onclick="closeAllPopups()" class="text-gray-500 text-[10px] font-bold uppercase mt-2">අවලංගු කරන්න</button>
             </div>
         </div>
@@ -171,9 +168,8 @@
     <div id="popup_step1" class="fixed inset-0 z-[9999] hidden custom-popup items-center justify-center p-6">
         <div class="bg-[#0f0f0f] border border-white/10 p-8 rounded-2xl w-full max-w-md animate__animated animate__fadeInUp">
             <h3 class="text-white font-black text-xl mb-6 uppercase tracking-tighter">Step 1: Your Number</h3>
-            <p class="sh-text text-gray-400 mb-4 uppercase font-bold text-[10px]">වට්ස්ඇප් අංකය ඇතුලත් කරන්න (94xxxxxxxxx)</p>
-            <input type="tel" id="user_num" placeholder="947XXXXXXXX" class="w-full bg-black border border-white/10 p-4 rounded text-white text-center text-xl mb-4 outline-none focus:border-red-600 transition-all">
-            <div id="num_error" class="hidden text-red-500 text-[10px] mb-4 font-bold uppercase italic text-center">94 අංකයෙන් ආරම්භ කරන්න.</div>
+            <input type="tel" id="user_num" placeholder="947XXXXXXXX" class="w-full bg-black border border-white/10 p-4 rounded text-white text-center text-xl mb-4 outline-none focus:border-red-600">
+            <div id="num_error" class="hidden text-red-500 text-[10px] mb-4 font-bold uppercase text-center italic">94 අංකයෙන් ආරම්භ කරන්න.</div>
             <div class="flex gap-2">
                 <button onclick="closeAllPopups()" class="w-1/3 bg-gray-800 py-4 rounded font-bold uppercase text-white text-xs">Back</button>
                 <button onclick="validateStep1()" class="w-2/3 btn-whatsapp py-4 rounded font-black uppercase text-white text-xs">Next Step</button>
@@ -184,7 +180,6 @@
     <div id="popup_step2" class="fixed inset-0 z-[9999] hidden custom-popup items-center justify-center p-6">
         <div class="bg-[#0f0f0f] border border-white/10 p-8 rounded-2xl w-full max-w-md animate__animated animate__fadeInRight">
             <h3 class="text-white font-black text-xl mb-6 uppercase tracking-tighter">Step 2: Your Name</h3>
-            <p class="sh-text text-gray-400 mb-4 uppercase font-bold text-[10px]">ඔබේ නම ඇතුලත් කරන්න</p>
             <input type="text" id="user_name" placeholder="Enter Your Name" class="w-full bg-black border border-white/10 p-4 rounded text-white text-center text-xl mb-6 outline-none focus:border-blue-500">
             <div class="flex gap-2">
                 <button onclick="openStep1()" class="w-1/3 bg-gray-800 py-4 rounded font-bold uppercase text-white text-xs">Back</button>
@@ -197,18 +192,15 @@
         <div class="bg-[#0f0f0f] border border-red-600/30 p-8 rounded-2xl w-full max-w-md animate__animated animate__zoomIn">
             <div class="text-red-600 text-5xl mb-4"><i class="fa-solid fa-shield-halved"></i></div>
             <h3 class="text-white font-black text-xl mb-2 uppercase" id="final_greet"></h3>
-            <p class="sh-text text-gray-300 text-xs mb-6">WhatsApp ආරක්ෂිත පියවරක් ලෙස, අපගේ අංකය ඔබගේ දුරකථනයේ <b>Save</b> කර නොමැති නම් චිත්‍රපටය ලැබීම අවහිර කරනු ලැබේ.</p>
-            <div class="flex flex-col gap-2">
-                <button onclick="finalRequest()" class="w-full btn-whatsapp py-4 rounded font-black uppercase text-white shadow-lg">Confirm & Send</button>
-                <button onclick="openStep2()" class="w-full bg-gray-800 py-2 rounded font-bold uppercase text-white text-xs">Change Name</button>
-            </div>
+            <p class="sh-text text-gray-300 text-xs mb-6">WhatsApp ආරක්ෂිත පියවරක් ලෙස අංකය <b>Save</b> කරන්න.</p>
+            <button onclick="finalRequest()" class="w-full btn-whatsapp py-4 rounded font-black uppercase text-white shadow-lg">Confirm & Send</button>
         </div>
     </div>
 
     <div id="popup_congrats" class="fixed inset-0 z-[10000] hidden custom-popup items-center justify-center p-6 text-center">
-        <div class="bg-[#0a0a0a] border border-white/10 p-10 rounded-3xl w-full max-w-md animate__animated animate__bounceIn">
+        <div class="bg-[#0a0a0a] border border-white/10 p-10 rounded-3xl w-full max-w-md">
             <div class="text-6xl mb-4">🎉</div>
-            <h3 class="text-white font-black text-2xl mb-2 uppercase tracking-tighter">Request Success!</h3>
+            <h3 class="text-white font-black text-2xl mb-2 uppercase">Request Success!</h3>
             <p id="congrats_msg" class="sh-text text-gray-300 text-sm mb-6"></p>
             <button onclick="location.reload()" class="w-full bg-white text-black py-4 rounded-xl font-black uppercase text-xs">හරි</button>
         </div>
@@ -233,7 +225,6 @@
                 </div>`;
             });
 
-            // Auto-fill from storage
             const savedNum = localStorage.getItem('ms_user_num');
             const savedName = localStorage.getItem('ms_user_name');
             if(savedNum) document.getElementById('user_num').value = savedNum;
@@ -251,7 +242,10 @@
         function playOnlineNow() {
             closeAllPopups();
             const area = document.getElementById('video_display_area');
-            const msgId = MOVIE_DATA.directLink.split('/').pop();
+            
+            // 🛠️ Message ID එක විතරක් ගමු (අනවශ්‍ය ලකුණු අයින් කරලා)
+            let msgId = MOVIE_DATA.directLink.split('/').pop().replace(/[^0-9]/g, '');
+            
             area.style.display = 'block';
             area.scrollIntoView({ behavior: 'smooth' });
 
@@ -259,12 +253,14 @@
                 vjsPlayer = videojs('vid-player', {
                     fluid: true,
                     playbackRates: [0.5, 1, 1.5, 2],
-                    controlBar: { skipButtons: { forward: 10, backward: 10 } }
                 });
             }
-            // 🛠️ API URL එක නිවැරදිව ලබා දීම (https://api.moviestream.lat/stream/2)
-            vjsPlayer.src({ type: 'video/mp4', src: `${API_BASE_URL}/stream/${msgId}` });
-            vjsPlayer.load();
+
+            // 🚀 ලින්ක් එක හැදෙන විදිහ: https://api.moviestream.lat/stream/2
+            vjsPlayer.src({ 
+                type: 'video/mp4', 
+                src: `${API_BASE_URL}/stream/${msgId}` 
+            });
             vjsPlayer.play();
         }
 
@@ -298,6 +294,7 @@
             const num = localStorage.getItem('ms_user_num');
             const name = localStorage.getItem('ms_user_name');
             const movie = MOVIE_DATA.title;
+            const msgId = MOVIE_DATA.directLink.split('/').pop().replace(/[^0-9]/g, '');
 
             try {
                 const res = await fetch(`${API_BASE_URL}/send-movie`, {
@@ -307,7 +304,7 @@
                 });
                 if(res.ok) {
                     closeAllPopups();
-                    document.getElementById('congrats_msg').innerText = `${name}, ඔබ ඉල්ලූ ${movie} දැන් ඔබේ WhatsApp ගිණුමට ලැබෙනු ඇත.`;
+                    document.getElementById('congrats_msg').innerText = `${name}, ඉල්ලීම සාර්ථකයි.`;
                     document.getElementById('popup_congrats').style.display = 'flex';
                 }
             } catch (e) { alert("Server Busy!"); }
