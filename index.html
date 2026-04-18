@@ -14,21 +14,17 @@
     <link href="https://unpkg.com/videojs-netflix-theme@1.0.1/dist/videojs-netflix-theme.css" rel="stylesheet">
 
     <script>
-        // 🛠️ පිරිසිදු API URL එක (අන්තිමට කිසිම දෙයක් දාන්න එපා)
+        // 🛠️ API URL (අන්තිමට / හෝ * එපා)
         const API_BASE_URL = "https://api.moviestream.lat"; 
         
         const MOVIE_DATA = {
             poster: "https://cinesubz.net/wp-content/uploads/2022/01/g841pE2duYUJDUsy6i2NXqCzVBO.jpg", 
             title: "AKHANDA", 
-            tags: "Action • Drama • Devotional • Telugu",
-            year: "2021",
-            duration: "2h 47m",
-            quality: "4K ULTRA HD",
-            rating: "8.1/10 IMDB",
-            language: "Telugu (Sinhala Subtitles)",
-            description: "Akhanda කියන්නේ action සහ devotional elements එකට එකතු වූ Telugu චිත්‍රපටයක් වන අතර, හොඳ හා නරක අතර සටනක් වටා කතාව ගොඩනැගෙයි. මේ කතාවේ Akhanda නම් බලවත් චරිතය සමාජයේ අසාධාරණය සහ දූෂණයට විරුද්ධව සටන් කරයි.",
             backdrop: "https://i.pinimg.com/736x/d9/f5/84/d9f584ae1e47ee835a03f266477e4718.jpg", 
-            directLink: "https://t.me/c/3759526849/2", // මෙතන 2 තමයි Message ID එක
+            directLink: "https://t.me/c/3759526849/2", // Message ID එක පිරිසිදුවට මෙතනින් වෙන් කරගන්නවා
+            description: "Akhanda කියන්නේ action සහ devotional elements එකට එකතු වූ Telugu චිත්‍රපටයක් වන අතර, සමාජයේ අසාධාරණයට විරුද්ධව Akhanda නම් බලවත් චරිතය කරන සටන මෙහි දැක්වේ.",
+            duration: "2h 47m",
+            language: "Telugu (Sinhala Subtitles)",
             screenshots: [
                 "https://i.pinimg.com/1200x/d5/e6/88/d5e68863c7a20102be0a7f989780155b.jpg", 
                 "https://i.pinimg.com/736x/59/35/d8/5935d8e701b7b8873b6a7de2070dc9fa.jpg", 
@@ -39,62 +35,37 @@
 
     <style>
         :root { --netflix-red: #E50914; }
-        * { font-style: normal !important; }
-        
-        body { background-color: #000; color: white; overflow-x: hidden; font-family: 'Roboto', 'Noto Sans Sinhala', sans-serif; scroll-behavior: smooth; }
-        
-        .hero-section { position: relative; width: 100%; min-height: 95dvh; background-size: cover; background-position: center; display: flex; align-items: center; }
-        .hero-overlay { background: linear-gradient(to right, #000 15%, rgba(0,0,0,0.3) 60%, transparent 100%), linear-gradient(to top, #000 0%, transparent 40%); position: absolute; inset: 0; }
-
+        body { background-color: #000; color: white; font-family: 'Roboto', 'Noto Sans Sinhala', sans-serif; overflow-x: hidden; }
+        .hero-section { position: relative; min-height: 95dvh; background-size: cover; background-position: center; display: flex; align-items: center; }
+        .hero-overlay { background: linear-gradient(to right, #000 15%, transparent 100%), linear-gradient(to top, #000 0%, transparent 40%); position: absolute; inset: 0; }
         .video-js { width: 100%; max-width: 1000px; aspect-ratio: 16/9; border-radius: 8px; margin: 0 auto; box-shadow: 0 0 50px rgba(229, 9, 20, 0.4); }
-        #video_display_area { display: none; padding: 40px 0; background: #000; border-bottom: 1px solid #111; }
-
-        .btn-play { background: #fff; color: #000; transition: 0.3s; font-weight: 900; border-radius: 4px; border: none; outline: none; }
+        #video_display_area { display: none; padding: 40px 0; background: #000; }
+        .btn-play { background: #fff; color: #000; font-weight: 900; transition: 0.3s; }
         .btn-play:hover { background: var(--netflix-red); color: #fff; transform: scale(1.05); }
-
-        .btn-whatsapp { background: #25D366; transition: 0.3s; border-radius: 4px; border: none; outline: none; }
-        .btn-whatsapp:hover { transform: scale(1.05); filter: brightness(1.1); }
-
-        .poster-img { width: 220px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.1); box-shadow: 0 30px 60px rgba(0,0,0,0.9); }
-        
-        .ss-card { border-radius: 6px; overflow: hidden; border: 1px solid #222; transition: 0.4s ease; background: #111; cursor: pointer; }
-        .ss-card:hover { border-color: var(--netflix-red); transform: scale(1.05); box-shadow: 0 10px 20px rgba(0,0,0,0.5); }
-        .ss-card img { width: 100%; aspect-ratio: 16/9; object-fit: cover; opacity: 0.8; transition: 0.4s; }
-        .ss-card:hover img { opacity: 1; }
-
-        .custom-popup { backdrop-filter: blur(25px); background: rgba(0,0,0,0.9); }
-        .sh-text { font-family: 'Noto Sans Sinhala', sans-serif; line-height: 1.6; }
-
-        .footer-main { background: #000; border-top: 1px solid #1a1a1a; padding: 60px 20px 20px 20px; }
-        .footer-bottom { background: #050505; padding: 25px; border-top: 1px solid #111; text-align: center; width: 100%; }
+        .btn-whatsapp { background: #25D366; transition: 0.3s; }
+        .btn-whatsapp:hover { transform: scale(1.05); }
+        .poster-img { width: 220px; border-radius: 8px; box-shadow: 0 30px 60px rgba(0,0,0,0.9); }
+        .custom-popup { backdrop-filter: blur(20px); background: rgba(0,0,0,0.85); }
+        .ss-card img { width: 100%; aspect-ratio: 16/9; object-fit: cover; border-radius: 6px; opacity: 0.8; transition: 0.4s; }
+        .ss-card:hover img { opacity: 1; transform: scale(1.05); }
     </style>
 </head>
 <body>
 
-    <nav class="fixed top-0 w-full z-[5000] flex items-center justify-between px-6 md:px-12 py-6 bg-gradient-to-b from-black/90 to-transparent">
-        <h1 class="text-2xl font-black tracking-tighter uppercase italic">MOVIE<span class="text-red-600">STREAM</span></h1>
-        <div class="flex gap-4 text-white/70 text-sm"><i class="fa-brands fa-whatsapp text-xl"></i></div>
+    <nav class="fixed top-0 w-full z-[50] flex items-center justify-between px-6 py-6 bg-gradient-to-b from-black to-transparent">
+        <h1 class="text-2xl font-black italic">MOVIE<span class="text-red-600">STREAM</span></h1>
     </nav>
 
     <div id="hero" class="hero-section">
         <div class="hero-overlay"></div>
-        <div class="relative z-10 w-full max-w-7xl mx-auto px-6 md:px-12 pt-20 grid grid-cols-1 lg:grid-cols-3 gap-12 items-center">
-            
-            <div class="flex justify-center animate__animated animate__fadeInDown">
-                <img id="movie_poster" src="" class="poster-img" alt="Poster">
-            </div>
-
-            <div class="lg:col-span-2 animate__animated animate__fadeInLeft text-center lg:text-left">
-                <div class="flex items-center justify-center lg:justify-start gap-3 mb-4">
-                    <span class="bg-red-600 px-2 py-0.5 rounded text-[10px] font-black uppercase tracking-widest text-white">Ultra HD</span>
-                    <span class="text-gray-400 font-bold text-xs uppercase" id="movie_duration"></span>
-                </div>
-                <h1 id="movie_title" class="text-5xl md:text-8xl font-black mb-4 uppercase tracking-tighter"></h1>
-                <p id="movie_desc" class="text-gray-300 sh-text opacity-80 max-w-2xl mb-10 text-sm md:text-base"></p>
-                
+        <div class="relative z-10 w-full max-w-7xl mx-auto px-6 grid lg:grid-cols-3 gap-12 items-center">
+            <div class="flex justify-center"><img id="movie_poster" src="" class="poster-img animate__animated animate__fadeInDown"></div>
+            <div class="lg:col-span-2 text-center lg:text-left animate__animated animate__fadeInLeft">
+                <h1 id="movie_title" class="text-6xl md:text-8xl font-black mb-4 uppercase tracking-tighter"></h1>
+                <p id="movie_desc" class="text-gray-300 mb-10 max-w-2xl mx-auto lg:mx-0"></p>
                 <div class="flex flex-wrap justify-center lg:justify-start gap-4">
-                    <button onclick="warnOnline()" class="btn-play px-8 md:px-10 py-4 flex items-center gap-3 uppercase text-sm tracking-widest"><i class="fa-solid fa-play"></i> Online Watch</button>
-                    <button onclick="handleWhatsAppClick()" class="btn-whatsapp text-white px-8 md:px-10 py-4 font-black flex items-center gap-3 uppercase text-sm tracking-widest"><i class="fa-brands fa-whatsapp text-2xl"></i> Get on WhatsApp</button>
+                    <button onclick="warnOnline()" class="btn-play px-10 py-4 uppercase text-sm tracking-widest"><i class="fa-solid fa-play mr-2"></i> Online Watch</button>
+                    <button onclick="openStep1()" class="btn-whatsapp text-white px-10 py-4 font-black uppercase text-sm tracking-widest"><i class="fa-brands fa-whatsapp text-xl mr-2"></i> Get on WhatsApp</button>
                 </div>
             </div>
         </div>
@@ -102,107 +73,40 @@
 
     <section id="video_display_area">
         <div class="max-w-5xl mx-auto px-4">
-            <div class="flex items-center justify-between mb-4">
-                <h2 class="text-lg font-black uppercase tracking-widest text-red-600"><i class="fa-solid fa-signal animate-pulse mr-2"></i> Streaming Link Active</h2>
-                <button onclick="closeVideo()" class="text-white hover:text-red-600 transition-all"><i class="fa-solid fa-xmark text-4xl"></i></button>
+            <div class="flex justify-between items-center mb-4">
+                <h2 class="text-red-600 font-black uppercase tracking-widest"><i class="fa-solid fa-signal animate-pulse"></i> Link Active</h2>
+                <button onclick="closeVideo()"><i class="fa-solid fa-xmark text-3xl hover:text-red-600"></i></button>
             </div>
-            <video id="vid-player" class="video-js vjs-netflix-theme" controls preload="auto" playsinline crossorigin="anonymous"></video>
+            <video id="vid-player" class="video-js vjs-netflix-theme" controls preload="auto" crossorigin="anonymous"></video>
         </div>
     </section>
 
-    <div class="bg-black px-6 md:px-12 py-10 border-t border-white/5">
-        <div class="max-w-7xl mx-auto">
-            <div class="bg-[#0a0a0a] p-8 rounded-xl border border-white/5 grid grid-cols-2 md:grid-cols-4 gap-8">
-                <div><p class="text-gray-500 uppercase text-[10px] mb-1 tracking-widest">Language</p><p class="font-bold text-sm uppercase text-gray-200" id="m_lang"></p></div>
-                <div><p class="text-gray-500 uppercase text-[10px] mb-1 tracking-widest">Format</p><p class="font-bold text-sm text-red-600 uppercase">4K HEVC</p></div>
-                <div><p class="text-gray-500 uppercase text-[10px] mb-1 tracking-widest">Subs</p><p class="font-bold text-sm text-gray-200 uppercase">Sinhala / English</p></div>
-                <div><p class="text-gray-500 uppercase text-[10px] mb-1 tracking-widest">Quality</p><p class="font-bold text-sm text-gray-200 uppercase">Premium</p></div>
-            </div>
+    <div class="bg-black py-12 px-6">
+        <div id="screen_list" class="max-w-7xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-4"></div>
+    </div>
+
+    <div id="popup_online_warn" class="fixed inset-0 z-[100] hidden custom-popup items-center justify-center p-6">
+        <div class="bg-[#111] border border-white/10 p-8 rounded-2xl max-w-md text-center">
+            <h3 class="text-white font-black text-xl mb-4">DATA WARNING</h3>
+            <p class="text-gray-400 mb-6">ඔබ Online නැරඹීමට උත්සාහ කරයි. මෙය WhatsApp Package එකෙන් වැඩ නොකරනු ඇත.</p>
+            <button onclick="playOnlineNow()" class="w-full bg-white text-black py-4 rounded font-black mb-2">ඔව්, දිගටම යන්න</button>
+            <button onclick="closeAllPopups()" class="text-gray-500 text-xs">අවලංගු කරන්න</button>
         </div>
     </div>
 
-    <div class="bg-black px-6 md:px-12 py-12">
-        <div class="max-w-7xl mx-auto text-center md:text-left">
-            <h3 class="text-white font-black uppercase text-lg mb-8 border-l-4 border-red-600 pl-4 tracking-widest inline-block">Screenshots</h3>
-            <div id="screen_list" class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4"></div>
+    <div id="popup_step1" class="fixed inset-0 z-[100] hidden custom-popup items-center justify-center p-6">
+        <div class="bg-[#111] p-8 rounded-2xl max-w-md w-full">
+            <h3 class="text-white font-black text-xl mb-6">WhatsApp Number</h3>
+            <input type="tel" id="user_num" placeholder="947XXXXXXXX" class="w-full bg-black border border-white/10 p-4 rounded text-white text-xl mb-4 text-center">
+            <button onclick="validateStep1()" class="w-full btn-whatsapp py-4 rounded font-black text-white">Next Step</button>
         </div>
     </div>
 
-    <footer class="footer-main pb-0">
-        <div class="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-12 pb-12">
-            <div>
-                <h1 class="text-xl font-black tracking-tighter uppercase mb-4 italic">MOVIE<span class="text-red-600">STREAM</span></h1>
-                <p class="text-gray-500 text-xs leading-relaxed sh-text">MovieStream යනු ඔබට අවශ්‍ය නවතම සිංහල උපසිරැසි ගැන්වූ චිත්‍රපට සහ ටෙලි කතා මාලා ඉතා උසස් ගුණාත්මක භාවයෙන් යුතුව නැරඹීමට සහ ලබාගැනීමට හැකි හොඳම පද්ධතියයි.</p>
-            </div>
-            <div>
-                <h4 class="text-white font-bold uppercase text-xs mb-4 tracking-widest">Legal Info</h4>
-                <ul class="text-gray-500 text-xs space-y-2 uppercase font-bold">
-                    <li class="hover:text-red-600 cursor-pointer">DMCA Notice</li>
-                    <li class="hover:text-red-600 cursor-pointer">Privacy Policy</li>
-                </ul>
-            </div>
-            <div class="text-center lg:text-right">
-                <p class="text-red-600 font-black text-sm mb-2 uppercase">24/7 Cloud Support</p>
-                <p class="text-gray-500 text-[10px] uppercase tracking-widest">Providing Premium Media Services</p>
-            </div>
-        </div>
-        <div class="footer-bottom">
-            <p class="text-[10px] text-gray-500 tracking-[0.4em] uppercase font-bold">
-                Copyright © 2026 MOVIESTREAM PLATFORM | POWERED BY KAVEESHA THEEKSHANA
-            </p>
-        </div>
-    </footer>
-
-    <div id="popup_online_warn" class="fixed inset-0 z-[9999] hidden custom-popup items-center justify-center p-6 text-center">
-        <div class="bg-[#0f0f0f] border border-white/10 p-8 rounded-2xl w-full max-w-md">
-            <i class="fa-solid fa-circle-exclamation text-yellow-500 text-5xl mb-4"></i>
-            <h3 class="text-white font-black text-xl mb-4 uppercase tracking-tighter">Data Warning!</h3>
-            <p class="sh-text text-gray-300 mb-6 text-sm">ඔබ Online නැරඹීමට උත්සාහ කරයි. මෙහිදී Data වැයවිය හැක.</p>
-            <div class="flex flex-col gap-3">
-                <button onclick="playOnlineNow()" class="w-full bg-white text-black py-4 rounded font-black uppercase text-xs">දිගටම යන්න</button>
-                <button onclick="closeAllPopups()" class="text-gray-500 text-[10px] font-bold uppercase mt-2">අවලංගු කරන්න</button>
-            </div>
-        </div>
-    </div>
-
-    <div id="popup_step1" class="fixed inset-0 z-[9999] hidden custom-popup items-center justify-center p-6">
-        <div class="bg-[#0f0f0f] border border-white/10 p-8 rounded-2xl w-full max-w-md animate__animated animate__fadeInUp">
-            <h3 class="text-white font-black text-xl mb-6 uppercase tracking-tighter">Step 1: Your Number</h3>
-            <input type="tel" id="user_num" placeholder="947XXXXXXXX" class="w-full bg-black border border-white/10 p-4 rounded text-white text-center text-xl mb-4 outline-none focus:border-red-600">
-            <div id="num_error" class="hidden text-red-500 text-[10px] mb-4 font-bold uppercase text-center italic">94 අංකයෙන් ආරම්භ කරන්න.</div>
-            <div class="flex gap-2">
-                <button onclick="closeAllPopups()" class="w-1/3 bg-gray-800 py-4 rounded font-bold uppercase text-white text-xs">Back</button>
-                <button onclick="validateStep1()" class="w-2/3 btn-whatsapp py-4 rounded font-black uppercase text-white text-xs">Next Step</button>
-            </div>
-        </div>
-    </div>
-
-    <div id="popup_step2" class="fixed inset-0 z-[9999] hidden custom-popup items-center justify-center p-6">
-        <div class="bg-[#0f0f0f] border border-white/10 p-8 rounded-2xl w-full max-w-md animate__animated animate__fadeInRight">
-            <h3 class="text-white font-black text-xl mb-6 uppercase tracking-tighter">Step 2: Your Name</h3>
-            <input type="text" id="user_name" placeholder="Enter Your Name" class="w-full bg-black border border-white/10 p-4 rounded text-white text-center text-xl mb-6 outline-none focus:border-blue-500">
-            <div class="flex gap-2">
-                <button onclick="openStep1()" class="w-1/3 bg-gray-800 py-4 rounded font-bold uppercase text-white text-xs">Back</button>
-                <button onclick="validateStep2()" class="w-2/3 btn-whatsapp py-4 rounded font-black uppercase text-white text-xs">Finish</button>
-            </div>
-        </div>
-    </div>
-
-    <div id="popup_step3" class="fixed inset-0 z-[9999] hidden custom-popup items-center justify-center p-6 text-center">
-        <div class="bg-[#0f0f0f] border border-red-600/30 p-8 rounded-2xl w-full max-w-md animate__animated animate__zoomIn">
-            <div class="text-red-600 text-5xl mb-4"><i class="fa-solid fa-shield-halved"></i></div>
-            <h3 class="text-white font-black text-xl mb-2 uppercase" id="final_greet"></h3>
-            <p class="sh-text text-gray-300 text-xs mb-6">WhatsApp ආරක්ෂිත පියවරක් ලෙස අංකය <b>Save</b> කරන්න.</p>
-            <button onclick="finalRequest()" class="w-full btn-whatsapp py-4 rounded font-black uppercase text-white shadow-lg">Confirm & Send</button>
-        </div>
-    </div>
-
-    <div id="popup_congrats" class="fixed inset-0 z-[10000] hidden custom-popup items-center justify-center p-6 text-center">
-        <div class="bg-[#0a0a0a] border border-white/10 p-10 rounded-3xl w-full max-w-md">
-            <div class="text-6xl mb-4">🎉</div>
-            <h3 class="text-white font-black text-2xl mb-2 uppercase">Request Success!</h3>
-            <p id="congrats_msg" class="sh-text text-gray-300 text-sm mb-6"></p>
-            <button onclick="location.reload()" class="w-full bg-white text-black py-4 rounded-xl font-black uppercase text-xs">හරි</button>
+    <div id="popup_congrats" class="fixed inset-0 z-[100] hidden custom-popup items-center justify-center p-6 text-center">
+        <div class="bg-[#111] p-10 rounded-2xl max-w-md w-full">
+            <div class="text-5xl mb-4">🎉</div>
+            <h3 class="text-white font-black text-xl mb-4">REQUEST SUCCESS!</h3>
+            <button onclick="location.reload()" class="w-full bg-white text-black py-4 rounded font-black">හරි</button>
         </div>
     </div>
 
@@ -215,99 +119,64 @@
             document.getElementById('movie_poster').src = MOVIE_DATA.poster;
             document.getElementById('movie_title').innerText = MOVIE_DATA.title;
             document.getElementById('movie_desc').innerText = MOVIE_DATA.description;
-            document.getElementById('movie_duration').innerText = MOVIE_DATA.duration;
-            document.getElementById('m_lang').innerText = MOVIE_DATA.language;
-
             MOVIE_DATA.screenshots.forEach(s => {
-                document.getElementById('screen_list').innerHTML += `
-                <div class="ss-card animate__animated animate__fadeInUp">
-                    <img src="${s}" alt="Screenshot" loading="lazy">
-                </div>`;
+                document.getElementById('screen_list').innerHTML += `<div class="ss-card"><img src="${s}"></div>`;
             });
-
-            const savedNum = localStorage.getItem('ms_user_num');
-            const savedName = localStorage.getItem('ms_user_name');
-            if(savedNum) document.getElementById('user_num').value = savedNum;
-            if(savedName) document.getElementById('user_name').value = savedName;
         };
 
         function closeAllPopups() {
-            ['popup_step1', 'popup_step2', 'popup_step3', 'popup_online_warn', 'popup_congrats'].forEach(id => {
+            ['popup_step1', 'popup_online_warn', 'popup_congrats'].forEach(id => {
                 document.getElementById(id).style.display = 'none';
             });
         }
 
         function warnOnline() { closeAllPopups(); document.getElementById('popup_online_warn').style.display = 'flex'; }
+        function openStep1() { closeAllPopups(); document.getElementById('popup_step1').style.display = 'flex'; }
 
         function playOnlineNow() {
             closeAllPopups();
             const area = document.getElementById('video_display_area');
             
-            // 🛠️ Message ID එක විතරක් ගමු (අනවශ්‍ය ලකුණු අයින් කරලා)
-            let msgId = MOVIE_DATA.directLink.split('/').pop().replace(/[^0-9]/g, '');
+            // 🛠️ පිරිසිදු Message ID එක පමණක් ලබා ගැනීම (පරණ ලෙඩේ Fix කළා)
+            const pathParts = MOVIE_DATA.directLink.split('/');
+            const msgId = pathParts[pathParts.length - 1].replace(/[^0-9]/g, ''); 
             
             area.style.display = 'block';
             area.scrollIntoView({ behavior: 'smooth' });
 
             if (!vjsPlayer) {
-                vjsPlayer = videojs('vid-player', {
-                    fluid: true,
-                    playbackRates: [0.5, 1, 1.5, 2],
-                });
+                vjsPlayer = videojs('vid-player', { fluid: true });
             }
-
-            // 🚀 ලින්ක් එක හැදෙන විදිහ: https://api.moviestream.lat/stream/2
-            vjsPlayer.src({ 
-                type: 'video/mp4', 
-                src: `${API_BASE_URL}/stream/${msgId}` 
-            });
+            
+            const streamUrl = `${API_BASE_URL}/stream/${msgId}`;
+            console.log("Stream URL:", streamUrl); // මෙතන දැන් පිරිසිදු URL එක එනවා
+            
+            vjsPlayer.src({ type: 'video/mp4', src: streamUrl });
+            vjsPlayer.load();
             vjsPlayer.play();
         }
 
-        function handleWhatsAppClick() { openStep1(); }
-        function openStep1() { closeAllPopups(); document.getElementById('popup_step1').style.display = 'flex'; }
         function validateStep1() {
             const num = document.getElementById('user_num').value.trim();
-            if(!num.startsWith('94') || num.length < 11) {
-                document.getElementById('num_error').classList.remove('hidden');
-            } else {
+            if(num.length >= 11) {
                 localStorage.setItem('ms_user_num', num);
-                document.getElementById('num_error').classList.add('hidden');
-                openStep2();
+                finalRequest();
             }
-        }
-        function openStep2() { closeAllPopups(); document.getElementById('popup_step2').style.display = 'flex'; }
-        function validateStep2() {
-            const name = document.getElementById('user_name').value.trim();
-            if(name.length < 2) return;
-            localStorage.setItem('ms_user_name', name);
-            openStep3();
-        }
-        function openStep3() {
-            const name = localStorage.getItem('ms_user_name');
-            document.getElementById('final_greet').innerText = `Welcome, ${name}!`;
-            closeAllPopups();
-            document.getElementById('popup_step3').style.display = 'flex';
         }
 
         async function finalRequest() {
             const num = localStorage.getItem('ms_user_num');
-            const name = localStorage.getItem('ms_user_name');
-            const movie = MOVIE_DATA.title;
-            const msgId = MOVIE_DATA.directLink.split('/').pop().replace(/[^0-9]/g, '');
-
             try {
                 const res = await fetch(`${API_BASE_URL}/send-movie`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ number: num, userName: name, movieName: movie, directLink: MOVIE_DATA.directLink })
+                    body: JSON.stringify({ number: num, movieName: MOVIE_DATA.title, directLink: MOVIE_DATA.directLink })
                 });
                 if(res.ok) {
                     closeAllPopups();
-                    document.getElementById('congrats_msg').innerText = `${name}, ඉල්ලීම සාර්ථකයි.`;
                     document.getElementById('popup_congrats').style.display = 'flex';
                 }
-            } catch (e) { alert("Server Busy!"); }
+            } catch (e) { alert("Error!"); }
         }
 
         function closeVideo() { if(vjsPlayer) vjsPlayer.pause(); document.getElementById('video_display_area').style.display = 'none'; }
