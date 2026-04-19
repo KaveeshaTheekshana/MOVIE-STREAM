@@ -100,6 +100,12 @@
                  "https://i.pinimg.com/736x/a6/93/f1/a693f16a0e229324a60d1c3d0477ca43.jpg",
                 "https://i.pinimg.com/736x/66/bc/ad/66bcad15adfa2a5411ae5066f6e06e91.jpg" 
             ],
+            
+            // 🔴 මෙතනින් තමයි පහළ තියෙන Movie Cards පාලනය කරන්නේ
+            /*moreMovies: [
+                { title: "New Release", tags: "ACTION / 2026", img: "https://via.placeholder.com/300x450/111/fff?text=New+Movie", url: "https://yourwebsite.com/new-release" },
+                { title: "Upcoming", tags: "DRAMA / 2026", img: "https://via.placeholder.com/300x450/111/fff?text=Upcoming", url: "https://yourwebsite.com/upcoming" }
+            ]*/
         };
 
         let currentSeasonIndex = 0;
@@ -110,30 +116,68 @@
     <style>
         :root { --netflix-red: #E50914; }
         * { font-style: normal !important; -webkit-tap-highlight-color: transparent; }
-        body { background-color: #000; color: white; overflow-x: hidden; font-family: 'Roboto', 'Noto Sans Sinhala', sans-serif; user-select: none; }
-        .hero-section { position: relative; width: 100%; min-height: 95vh; background-size: cover; background-position: center; display: flex; align-items: center; }
-        @media (max-width: 768px) { .hero-section { background-size: contain; background-position: top center; } }
+        body { background-color: #000; color: white; overflow-x: hidden; font-family: 'Roboto', 'Noto Sans Sinhala', sans-serif; scroll-behavior: smooth; -webkit-user-select: none; -moz-user-select: none; -ms-user-select: none; user-select: none; }
+        
+        /* 🔴 Mobile Background Fix Start */
+        .hero-section { position: relative; width: 100%; min-height: 95vh; min-height: 95dvh; background-size: cover; background-position: center; background-repeat: no-repeat; display: flex; align-items: center; }
+        @media (max-width: 768px) {
+            .hero-section { background-size: contain; background-position: top center; }
+        }
+
         .hero-overlay { background: linear-gradient(to right, #000 15%, rgba(0,0,0,0.3) 60%, transparent 100%), linear-gradient(to top, #000 0%, transparent 40%); position: absolute; inset: 0; }
-        @media (max-width: 768px) { .hero-overlay { background: linear-gradient(to top, #000 10%, rgba(0,0,0,0.8) 50%, transparent 100%); } }
-        #movie_title { font-weight: 900; letter-spacing: -3px; line-height: 0.9; text-transform: uppercase; background: linear-gradient(to bottom, #ffffff 50%, #888888 100%); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; filter: drop-shadow(0px 10px 20px rgba(0,0,0,0.9)); }
-        @media (max-width: 768px) { #movie_title { font-size: 3.8rem !important; letter-spacing: -2px; } }
+        @media (max-width: 768px) {
+            .hero-overlay { background: linear-gradient(to top, #000 10%, rgba(0,0,0,0.8) 50%, transparent 100%) !important; }
+        }
+        /* 🔴 Mobile Background Fix End */
+
+        #movie_title {
+            font-weight: 900; letter-spacing: -3px; line-height: 0.9; text-transform: uppercase;
+            background: linear-gradient(to bottom, #ffffff 50%, #888888 100%);
+            -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; color: transparent;
+            filter: drop-shadow(0px 10px 20px rgba(0,0,0,0.9)); word-wrap: break-word;
+        }
+
+        @media (max-width: 768px) {
+            #movie_title { font-size: 3.8rem !important; letter-spacing: -2px; }
+        }
+
         .video-js { width: 100%; max-width: 1000px; aspect-ratio: 16/9; border-radius: 8px; margin: 0 auto; box-shadow: 0 0 50px rgba(229, 9, 20, 0.4); }
-        #video_display_area { display: none; padding: 40px 0; background: #000; }
-        .btn-play { background: #fff; color: #000; transition: 0.3s; font-weight: 900; border-radius: 4px; border: none; }
+        #video_display_area { display: none; padding: 40px 0; background: #000; border-bottom: 1px solid #111; }
+
+        .btn-play { background: #fff; color: #000; transition: 0.3s; font-weight: 900; border-radius: 4px; border: none; outline: none; }
         .btn-play:hover { background: var(--netflix-red); color: #fff; transform: scale(1.05); }
-        .btn-whatsapp { background: #25D366; transition: 0.3s; border-radius: 4px; border: none; }
+
+        .btn-whatsapp { background: #25D366; transition: 0.3s; border-radius: 4px; border: none; outline: none; }
         .btn-whatsapp:hover { transform: scale(1.05); filter: brightness(1.1); }
+
         .poster-img { width: 220px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.1); box-shadow: 0 30px 60px rgba(0,0,0,0.9); }
-        .ss-card { border-radius: 6px; overflow: hidden; border: 1px solid #222; transition: 0.4s ease; background: #111; }
-        .ss-card img { width: 100%; aspect-ratio: 16/9; object-fit: cover; opacity: 0.8; }
-        .custom-popup { -webkit-backdrop-filter: blur(15px); backdrop-filter: blur(15px); background: rgba(0,0,0,0.75); display: none; align-items: center; justify-content: center; position: fixed; inset: 0; z-index: 9999; padding: 24px; }
+        
+        .ss-card { border-radius: 6px; overflow: hidden; border: 1px solid #222; transition: 0.4s ease; background: #111; cursor: pointer; }
+        .ss-card:hover { border-color: var(--netflix-red); transform: scale(1.05); box-shadow: 0 10px 20px rgba(0,0,0,0.5); }
+        .ss-card img { width: 100%; aspect-ratio: 16/9; object-fit: cover; opacity: 0.8; transition: 0.4s; }
+        .ss-card:hover img { opacity: 1; }
+
+        .movie-card { border-radius: 6px; overflow: hidden; border: 1px solid #1a1a1a; transition: 0.4s ease; background: #0a0a0a; cursor: pointer; }
+        .movie-card:hover { border-color: var(--netflix-red); transform: translateY(-10px); box-shadow: 0 10px 30px rgba(229, 9, 20, 0.3); }
+        .movie-card img { width: 100%; aspect-ratio: 2/3; object-fit: cover; transition: 0.4s; }
+
+        .social-link { width: 35px; height: 35px; display: flex; align-items: center; justify-content: center; border-radius: 50%; background: #111; transition: 0.3s; font-size: 16px; border: 1px solid #222; color: #fff; }
+        .social-link.fb:hover { color: #1877F2; border-color: #1877F2; transform: scale(1.1); }
+        .social-link.tg:hover { color: #0088cc; border-color: #0088cc; transform: scale(1.1); }
+        .social-link.wa:hover { color: #25D366; border-color: #25D366; transform: scale(1.1); }
+
+        .custom-popup { -webkit-backdrop-filter: blur(15px); backdrop-filter: blur(15px); background: rgba(0,0,0,0.75); display: none; align-items: center; justify-content: center; position: fixed; inset: 0; z-index: 9999; padding: 24px; transition: 0.3s ease; }
         .sh-text { font-family: 'Noto Sans Sinhala', sans-serif; line-height: 1.6; }
+
         .footer-main { background: #000; border-top: 1px solid #1a1a1a; padding: 60px 20px 20px 20px; }
-        .footer-bottom { background: #050505; padding: 25px; border-top: 1px solid #111; text-align: center; }
-        .back-btn { background: rgba(255,255,255,0.1); width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; border-radius: 50%; border: 1px solid rgba(255,255,255,0.2); color: white; }
+        .footer-bottom { background: #050505; padding: 25px; border-top: 1px solid #111; text-align: center; width: 100%; }
+        
+        /* Back Button Style */
+        .back-btn { background: rgba(255,255,255,0.1); width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; border-radius: 50%; cursor: pointer; transition: 0.3s; border: 1px solid rgba(255,255,255,0.2); color: white; }
+        .back-btn:hover { background: var(--netflix-red); border-color: var(--netflix-red); }
+
         .season-btn { background: #111; border: 1px solid rgba(255,255,255,0.2); color: white; padding: 10px 20px; border-radius: 4px; font-size: 12px; font-weight: bold; cursor: pointer; }
         .season-btn.active { background: var(--netflix-red); border-color: var(--netflix-red); }
-        .social-link { width: 35px; height: 35px; display: flex; align-items: center; justify-content: center; border-radius: 50%; background: #111; border: 1px solid #222; color: #fff; }
     </style>
 </head>
 <body oncontextmenu="return false;">
@@ -148,10 +192,12 @@
 
     <div id="hero" class="hero-section">
         <div class="hero-overlay"></div>
-        <div class="relative z-10 w-full max-w-7xl mx-auto px-6 md:px-12 pt-20 grid grid-cols-1 lg:grid-cols-3 gap-12 items-center">
+        <div class="relative z-10 w-full max-w-7xl mx-auto px-6 md:px-12 pt-20 grid grid-cols-1 lg:grid-cols-3 gap-12 items-center mt-12 md:mt-0">
+            
             <div class="flex justify-center animate__animated animate__fadeInDown">
-                <img id="movie_poster" src="" class="poster-img" alt="Poster">
+                <img id="movie_poster" src="" class="poster-img" alt="Poster" fetchpriority="high">
             </div>
+
             <div class="lg:col-span-2 animate__animated animate__fadeInLeft text-center lg:text-left">
                 <div class="flex items-center justify-center lg:justify-start gap-3 mb-4">
                     <span class="bg-red-600 px-2 py-0.5 rounded text-[10px] font-black uppercase tracking-widest text-white">Ultra HD</span>
@@ -160,6 +206,7 @@
                 <h1 id="movie_title" class="text-6xl md:text-9xl mb-2"></h1>
                 <p id="movie_tags" class="text-red-500 font-bold text-xs uppercase tracking-[0.2em] mb-6 opacity-90"></p>
                 <p id="movie_desc" class="text-gray-300 sh-text opacity-80 max-w-2xl mb-8 text-sm md:text-base"></p>
+
                 <div id="tv_series_selector" class="mb-8 hidden text-left flex flex-col items-center lg:items-start">
                     <p class="text-gray-400 text-xs font-bold uppercase tracking-widest mb-3">Select Season</p>
                     <div id="season_buttons" class="flex flex-wrap justify-center lg:justify-start gap-2 mb-4 w-full"></div>
@@ -167,6 +214,7 @@
                     <select id="episode_select" onchange="updateSelectedEpisode()" class="w-full md:w-auto bg-[#111] border border-white/20 text-white p-3 rounded outline-none focus:border-red-600 font-bold text-sm min-w-[250px]">
                     </select>
                 </div>
+                
                 <div class="flex flex-wrap justify-center lg:justify-start gap-4">
                     <button onclick="warnOnline()" class="btn-play px-8 md:px-10 py-4 flex items-center gap-3 uppercase text-sm tracking-widest"><i class="fa-solid fa-play"></i> Online Watch</button>
                     <button onclick="handleWhatsAppRequest()" class="btn-whatsapp text-white px-8 md:px-10 py-4 font-black flex items-center gap-3 uppercase text-sm tracking-widest"><i class="fa-brands fa-whatsapp text-2xl"></i> Get on WhatsApp</button>
@@ -208,7 +256,7 @@
         <div class="bg-[#0f0f0f] border border-white/10 p-8 rounded-2xl w-full max-w-md animate__animated animate__fadeInUp">
             <h3 class="text-white font-black text-xl mb-6 uppercase tracking-tighter">Step 1: Your Number</h3>
             <p class="sh-text text-gray-400 mb-4 uppercase font-bold text-[10px]">වට්ස්ඇප් අංකය ඇතුලත් කරන්න (94xxxxxxxxx)</p>
-            <input type="tel" id="user_num" placeholder="947XXXXXXXX" class="w-full bg-black border border-white/10 p-4 rounded text-white text-center text-xl mb-4 outline-none focus:border-red-600">
+            <input type="tel" id="user_num" placeholder="947XXXXXXXX" class="w-full bg-black border border-white/10 p-4 rounded text-white text-center text-xl mb-4 outline-none focus:border-red-600 transition-all">
             <div id="num_error" class="hidden text-red-500 text-[10px] mb-4 font-bold uppercase italic text-center">94 අංකයෙන් ආරම්භ කරන්න.</div>
             <div class="flex gap-2">
                 <button onclick="closeAllPopups()" class="w-1/3 bg-gray-800 py-4 rounded font-bold uppercase text-white text-xs">Back</button>
@@ -287,22 +335,29 @@
         </div>
     </div>
 
+    <section id="more_movies_section" class="bg-black px-6 md:px-12 pb-16" style="display: none;">
+        <div class="max-w-7xl mx-auto text-center md:text-left">
+            <h3 class="text-white font-black uppercase text-lg mb-8 border-l-4 border-red-600 pl-4 tracking-widest inline-block">More Like This</h3>
+            <div id="more_movies_list" class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-4"></div>
+        </div>
+    </section>
+
     <footer class="footer-main pb-0">
         <div class="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-12 pb-12">
             <div>
                 <h1 class="text-xl font-black tracking-tighter uppercase mb-4 italic">MOVIE<span class="text-red-600">STREAM</span></h1>
                 <p class="text-gray-500 text-xs leading-relaxed sh-text mb-6">MovieStream යනු ඔබට අවශ්‍ය නවතම සිංහල උපසිරැසි ගැන්වූ චිත්‍රපට සහ ටෙලි කතා මාලා ඉතා උසස් ගුණාත්මක භාවයෙන් යුතුව නැරඹීමට සහ ලබාගැනීමට හැකි හොඳම පද්ධතියයි.</p>
                 <div class="flex gap-3">
-                    <a href="#" class="social-link"><i class="fa-brands fa-facebook-f"></i></a>
-                    <a href="#" class="social-link"><i class="fa-brands fa-telegram"></i></a>
-                    <a href="https://wa.me/message/BATSM4DKAILZF1" target="_blank" class="social-link"><i class="fa-brands fa-whatsapp"></i></a>
+                    <a href="#" class="social-link fb"><i class="fa-brands fa-facebook-f"></i></a>
+                    <a href="#" class="social-link tg"><i class="fa-brands fa-telegram"></i></a>
+                    <a href="https://wa.me/message/BATSM4DKAILZF1" target="_blank" class="social-link wa"><i class="fa-brands fa-whatsapp"></i></a>
                 </div>
             </div>
             <div>
                 <h4 class="text-white font-bold uppercase text-xs mb-4 tracking-widest">Legal Info</h4>
                 <ul class="text-gray-500 text-xs space-y-2 uppercase font-bold">
-                    <li>MovieStream Notice</li>
-                    <li>Privacy Policy</li>
+                    <li class="hover:text-red-600 cursor-pointer transition">MovieStream Notice</li>
+                    <li class="hover:text-red-600 cursor-pointer transition">Privacy Policy</li>
                 </ul>
             </div>
             <div class="text-center lg:text-right">
@@ -353,7 +408,6 @@
         }
 
         window.onload = () => {
-            // No automatic popup on load
             checkExistingCountdownBackground();
             document.getElementById('hero').style.backgroundImage = `url('${MOVIE_DATA.backdrop}')`;
             document.getElementById('movie_poster').src = MOVIE_DATA.poster;
@@ -362,11 +416,31 @@
             document.getElementById('movie_desc').innerText = MOVIE_DATA.description;
             document.getElementById('movie_duration').innerText = MOVIE_DATA.duration;
             document.getElementById('m_lang').innerText = MOVIE_DATA.language;
+
             if (MOVIE_DATA.isSeries) { document.getElementById('tv_series_selector').style.display = 'block'; renderSeasons(); renderEpisodes(); }
+
             const screenList = document.getElementById('screen_list');
-            MOVIE_DATA.screenshots.forEach(s => {
-                screenList.innerHTML += `<div class="ss-card"><img src="${s}" alt="Screenshot"></div>`;
+            MOVIE_DATA.screenshots.forEach((s, index) => {
+                screenList.innerHTML += `
+                <div class="ss-card animate__animated animate__fadeInUp" style="animation-delay: ${index * 0.15}s">
+                    <img src="${s}" alt="Screenshot" loading="lazy">
+                </div>`;
             });
+
+            const moreMoviesSection = document.getElementById('more_movies_section');
+            const moreMoviesList = document.getElementById('more_movies_list');
+            
+            if (MOVIE_DATA.moreMovies && MOVIE_DATA.moreMovies.length > 0) {
+                moreMoviesSection.style.display = 'block';
+                MOVIE_DATA.moreMovies.forEach((m, index) => {
+                    moreMoviesList.innerHTML += `
+                    <div onclick="window.location.href='${m.url}'" class="movie-card animate__animated animate__fadeInUp" style="animation-delay: ${index * 0.1}s">
+                        <img src="${m.img}" alt="Movie" loading="lazy">
+                        <div class="p-3 text-center"><p class="text-xs font-bold uppercase text-white truncate">${m.title}</p><p class="text-[9px] text-red-600 font-black">${m.tags}</p></div>
+                    </div>`;
+                });
+            }
+
             if(localStorage.getItem('ms_user_num')) document.getElementById('user_num').value = localStorage.getItem('ms_user_num');
             if(localStorage.getItem('ms_user_name')) {
                 document.getElementById('user_name').value = localStorage.getItem('ms_user_name');
@@ -414,7 +488,26 @@
             const msgId = currentLink.split('/').pop();
             area.style.display = 'block';
             area.scrollIntoView({ behavior: 'smooth' });
-            if (!vjsPlayer) { vjsPlayer = videojs('vid-player', { fluid: true }); }
+
+            if (!vjsPlayer) { 
+                vjsPlayer = videojs('vid-player', { 
+                    fluid: true,
+                    playbackRates: [0.5, 1, 1.25, 1.5, 2],
+                    controlBar: { skipButtons: { forward: 10, backward: 10 } }
+                }); 
+                
+                vjsPlayer.on('fullscreenchange', function() {
+                    if (vjsPlayer.isFullscreen() && window.innerWidth < 768) {
+                        if(screen.orientation && screen.orientation.lock) {
+                            screen.orientation.lock('landscape').catch(e => console.log("Rotate blocked"));
+                        }
+                    } else {
+                        if(screen.orientation && screen.orientation.unlock) {
+                            screen.orientation.unlock();
+                        }
+                    }
+                });
+            }
             vjsPlayer.src({ type: 'video/mp4', src: `${API_BASE_URL}/stream/${msgId}` });
             vjsPlayer.play();
         }
@@ -478,7 +571,6 @@
                 if (res.status === 429) {
                     let data = await res.json();
                     let totalMins = data.remainingMinutes || 120;
-                    // බොට් එවන සැබෑ වෙලාවට අනුව Timer එක පටන් ගැනීම
                     startCountdownFromValue(Date.now() + (totalMins * 60000));
                     document.getElementById('limit_user_num_display').innerText = "User: " + num;
                     closeAllPopups();
