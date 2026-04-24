@@ -23,10 +23,8 @@
         .nav-blur { background: rgba(0, 26, 51, 0.4); backdrop-filter: blur(20px); border-bottom: 1px solid rgba(255,255,255,0.05); z-index: 5000; }
 
         .hero-bg { min-height: 100vh; position: relative; display: flex; align-items: center; overflow: hidden; background: transparent; }
-        /* Changed to absolute so it only stays inside the hero section */
         #hero-3d-canvas { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; pointer-events: none; }
         
-        /* Added a sharp fade to black at the bottom to blend with the rest of the page */
         .hero-overlay { 
             background: linear-gradient(to top, #020202 0%, #020202 5%, transparent 40%), 
                         radial-gradient(circle at 20% 50%, rgba(0,210,255,0.1) 0%, rgba(0,0,0,0.5) 100%); 
@@ -46,8 +44,8 @@
 
         main { position: relative; z-index: 10; background: #020202; padding-top: 2rem; }
 
-        .movie-card { perspective: 1000px; transition: 0.4s; flex-shrink: 0; cursor: pointer; }
-        .card-inner { width: 140px; border-radius: 12px; overflow: hidden; border: 1px solid rgba(255,255,255,0.05); transition: 0.5s cubic-bezier(0.23, 1, 0.32, 1); background: #0a0a0a; position: relative; }
+        .movie-card { perspective: 1000px; transition: 0.4s; flex-shrink: 0; cursor: pointer; display: flex; flex-col; }
+        .card-inner { width: 140px; aspect-ratio: 2/3; border-radius: 12px; overflow: hidden; border: 1px solid rgba(255,255,255,0.05); transition: 0.5s cubic-bezier(0.23, 1, 0.32, 1); background: #0a0a0a; position: relative; }
         @media (min-width: 768px) { .card-inner { width: 180px; } }
         
         .movie-card:hover .card-inner { transform: translateY(-10px) rotateX(5deg) scale(1.05); border-color: var(--n-red); box-shadow: 0 15px 35px rgba(229, 9, 20, 0.4); }
@@ -76,27 +74,45 @@
             background: linear-gradient(90deg, transparent, var(--n-blue), transparent); box-shadow: 0 0 20px var(--n-blue);
         }
 
-        /* View All Grid Mode Styles */
-        .grid-view-container { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.5rem; }
-        @media (min-width: 768px) { .grid-view-container { grid-template-columns: repeat(4, 1fr); gap: 2rem; } }
-        @media (min-width: 1024px) { .grid-view-container { grid-template-columns: repeat(5, 1fr); gap: 2rem; } }
-        .grid-view-container .movie-card { width: 100%; }
-        .grid-view-container .card-inner { width: 100%; }
+        .grid-view-container { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem; width: 100%; }
+        @media (min-width: 640px) { .grid-view-container { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1.5rem; } }
+        @media (min-width: 768px) { .grid-view-container { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 1.5rem; } }
+        @media (min-width: 1024px) { .grid-view-container { grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 2rem; } }
+        .grid-view-container .movie-card { width: 100%; display: flex; flex-direction: column; }
+        .grid-view-container .card-inner { width: 100%; aspect-ratio: 2/3; height: auto; }
         
-        /* Search Dropdown Styles */
         .suggestion-item { display: flex; align-items: center; gap: 12px; padding: 12px; border-bottom: 1px solid rgba(255,255,255,0.05); cursor: pointer; transition: 0.3s; }
         .suggestion-item:hover { background: rgba(255,255,255,0.1); }
         .suggestion-item:last-child { border-bottom: none; }
         
         .sinhala-font { font-family: 'Noto Sans Sinhala', sans-serif !important; }
+
+        .custom-checkbox {
+            appearance: none; -webkit-appearance: none;
+            width: 16px; height: 16px;
+            border: 1px solid rgba(255,255,255,0.2); border-radius: 4px;
+            background: rgba(0,0,0,0.5); cursor: pointer; position: relative;
+            outline: none; transition: 0.2s; flex-shrink: 0;
+        }
+        .custom-checkbox:checked {
+            background: var(--n-blue); border-color: var(--n-blue); box-shadow: 0 0 10px rgba(0, 210, 255, 0.5);
+        }
+        .custom-checkbox:checked::after {
+            content: '✔'; position: absolute; color: black; font-size: 10px; font-weight: 900;
+            top: 50%; left: 50%; transform: translate(-50%, -50%);
+        }
+        .filter-label { cursor: pointer; font-size: 11px; font-weight: 600; color: #aaa; text-transform: uppercase; letter-spacing: 0.05em; transition: 0.2s; }
+        .group:hover .filter-label { color: white; }
     </style>
 </head>
 <body oncontextmenu="return false;">
 
-    <nav class="fixed top-0 w-full z-[1000] nav-blur px-4 md:px-16 py-4 flex justify-between items-center">
-        <div class="flex items-center gap-4">
-            <a href="index.html" class="text-xl md:text-2xl font-black uppercase font-[Orbitron] tracking-tighter text-white drop-shadow-[0_0_10px_#00d2ff]">MOVIE<span class="text-[#00d2ff]">STREAM</span></a>
-            <div id="top_user_name" class="hidden text-gray-400 text-[10px] font-black uppercase tracking-[0.2em] pl-4 border-l border-white/10"></div>
+    <nav class="fixed top-0 w-full z-[1000] nav-blur px-4 md:px-16 py-3 md:py-4 flex flex-col md:flex-row justify-between items-center gap-3 md:gap-0">
+        <div class="flex items-center justify-between w-full md:w-auto">
+            <div class="flex items-center gap-4">
+                <a href="index.html" class="text-xl md:text-2xl font-black uppercase font-[Orbitron] tracking-tighter text-white drop-shadow-[0_0_10px_#00d2ff]">MOVIE<span class="text-[#00d2ff]">STREAM</span></a>
+                <div id="top_user_name" class="hidden text-gray-400 text-[10px] font-black uppercase tracking-[0.2em] pl-4 border-l border-white/10"></div>
+            </div>
         </div>
         
         <div class="hidden lg:flex gap-6 text-[10px] font-black tracking-widest uppercase relative z-50">
@@ -108,7 +124,7 @@
             <a href="?view_cat=Sinhala Dubbed" class="hover:text-red-500 transition text-white sinhala-font tracking-normal">සිංහල හඬකැවූ</a>
         </div>
 
-        <div class="relative group flex items-center w-[55%] md:w-auto search-container">
+        <div class="relative group flex items-center w-full md:w-auto search-container">
             <i class="fa fa-search absolute left-3 text-[#00d2ff] text-xs pointer-events-none z-10"></i>
             <input type="text" id="main_search" onfocus="if(this.value.length >= 2) document.getElementById('search_suggestions').classList.remove('hidden')" oninput="liveSearch(this.value)" placeholder="Search Movies..." class="w-full bg-white/10 border border-white/20 rounded-full pl-9 pr-9 py-2 text-[10px] md:text-xs outline-none focus:border-[#00d2ff] transition-all text-white relative z-10">
             <i class="fa fa-times absolute right-3 text-gray-400 text-xs cursor-pointer hover:text-red-500 hidden z-20" id="clear_search" onclick="clearSearch()"></i>
@@ -118,7 +134,7 @@
         </div>
     </nav>
 
-    <header id="hero" class="hero-bg pt-[120px] pb-10 md:pt-0 md:pb-0">
+    <header id="hero" class="hero-bg pt-[140px] md:pt-[120px] pb-10 md:pb-0">
         <canvas id="hero-3d-canvas"></canvas>
         <div class="hero-overlay"></div>
         <div class="hero-content px-4 md:px-16 w-full max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-12 lg:gap-20">
@@ -131,11 +147,11 @@
                     <div class="h-[1px] w-12 md:w-24 bg-gradient-to-r from-[#00d2ff] to-transparent"></div>
                 </div>
                 
-                <h1 id="hero_title" class="text-4xl sm:text-5xl md:text-7xl lg:text-8xl font-black mb-4 md:mb-6 uppercase leading-[1.1] md:leading-[0.9] font-[Orbitron] text-transparent bg-clip-text bg-gradient-to-b from-white to-gray-400 drop-shadow-[0_10px_20px_rgba(0,0,0,0.8)]">
+                <h1 id="hero_title" class="text-4xl sm:text-5xl md:text-7xl lg:text-8xl font-black mb-4 md:mb-6 uppercase leading-[1.1] md:leading-[0.9] font-[Orbitron] text-transparent bg-clip-text bg-gradient-to-b from-white to-gray-400 drop-shadow-[0_10px_20px_rgba(0,0,0,0.8)] w-full break-words whitespace-normal">
                     Loading...
                 </h1>
                 
-                <p id="hero_desc" class="text-gray-300 text-xs md:text-sm max-w-xl mb-10 leading-loose border-l-2 border-[#00d2ff]/50 pl-4 font-[Noto Sans Sinhala] bg-gradient-to-r from-black/40 to-transparent py-2 rounded-r-lg line-clamp-4 md:line-clamp-none">
+                <p id="hero_desc" class="text-gray-300 text-xs md:text-sm max-w-xl mb-10 leading-loose border-l-2 border-[#00d2ff]/50 pl-4 font-[Noto Sans Sinhala] bg-gradient-to-r from-black/40 to-transparent py-2 rounded-r-lg w-full break-words whitespace-normal">
                 </p>
                 
                 <div class="flex items-center gap-4" id="hero_btn_area">
@@ -159,18 +175,34 @@
         </div>
     </header>
 
-    <main class="relative z-30 px-4 md:px-16 pb-32 min-h-screen max-w-[1800px] mx-auto pt-8">
+    <main class="relative z-30 px-4 md:px-16 pb-32 min-h-screen max-w-[1800px] mx-auto flex flex-col md:flex-row gap-8 pt-8">
         
-        <div id="local_search_area" class="hidden mb-10 max-w-xl mx-auto pt-10">
-            <div class="relative w-full bg-white/5 border border-[#00d2ff]/30 rounded-full overflow-hidden backdrop-blur-md focus-within:border-[#00d2ff] transition-colors">
-                <i class="fa fa-search absolute left-4 top-1/2 -translate-y-1/2 text-[#00d2ff]"></i>
-                <input type="text" id="local_filter" oninput="filterViewAll(this.value)" placeholder="Find movies in this category..." class="w-full bg-transparent border-none py-3 pl-12 pr-4 text-xs text-white outline-none">
+        <aside class="w-full md:w-60 flex-shrink-0 order-1" id="filter_sidebar">
+            <div class="bg-white/5 border border-white/10 rounded-2xl p-6 md:sticky top-24 backdrop-blur-md">
+                <h3 class="text-white font-black uppercase tracking-widest text-xs mb-8 border-l-4 border-[#00d2ff] pl-3">Filters</h3>
+                
+                <div class="mb-8">
+                    <h4 class="text-[#00d2ff] font-black uppercase text-[10px] tracking-[0.2em] mb-4">Category</h4>
+                    <div id="filter_categories" class="space-y-1"></div>
+                </div>
+                
+                </div>
+        </aside>
+
+        <div class="flex-1 w-full overflow-hidden order-2">
+            
+            <div id="dynamic_sections" class="space-y-16 w-full"></div>
+
+            <div id="filtered_results_area" class="hidden w-full">
+                <div class="flex items-center justify-between mb-4 border-l-4 border-red-500 pl-3">
+                    <h2 class="text-xl md:text-2xl font-black uppercase text-white">Filtered Results</h2>
+                    <button onclick="clearFilters()" class="text-[9px] bg-red-600/20 text-red-500 border border-red-500/50 px-3 py-1.5 rounded-full font-black uppercase tracking-widest hover:bg-red-600 hover:text-white transition">Clear All</button>
+                </div>
+                <p id="filtered_count" class="text-gray-400 text-[10px] font-bold uppercase tracking-widest mb-8"></p>
+                <div id="filtered_grid" class="grid-view-container"></div>
             </div>
-            <p id="local_result_count" class="text-center text-gray-500 text-[10px] uppercase font-bold mt-2 tracking-widest"></p>
+            
         </div>
-
-        <div id="dynamic_sections" class="space-y-16 w-full"></div>
-
     </main>
 
     <footer class="bg-[#050505] pt-20 pb-12 px-6 border-t border-white/5 relative z-30 overflow-hidden">
@@ -200,7 +232,7 @@
     <script>
         const DB_URL = "https://panel.moviestream.lat/api/movies";
         let MASTER_DATA = [];
-        let VIEW_ALL_DATA = [];
+        let selectedCategories = [];
 
         // Close search suggestion when click outside
         document.addEventListener('click', (e) => {
@@ -222,12 +254,16 @@
 
                 const res = await fetch(`${DB_URL}?v=${new Date().getTime()}`);
                 MASTER_DATA = await res.json();
+                
+                initFilters();
 
                 const urlParams = new URLSearchParams(window.location.search);
                 const viewCat = urlParams.get('view_cat');
 
                 if (viewCat) {
-                    renderViewAllMode(viewCat);
+                    const box = document.querySelector(`.cat-checkbox[value="${viewCat}"]`);
+                    if(box) box.checked = true;
+                    applyFilters();
                 } else {
                     const trending = MASTER_DATA.filter(m => m.isTrending === true || m.isTrending === "true");
                     const heroMovie = trending.length > 0 ? trending[0] : (MASTER_DATA.length > 0 ? MASTER_DATA[0] : null);
@@ -243,6 +279,86 @@
                 document.body.classList.add('loaded'); 
             }
         };
+
+        function initFilters() {
+            const categories = [
+                { id: "Action", name: "Action" }, 
+                { id: "Lovely", name: "Romance" }, 
+                { id: "Horror", name: "Horror" }, 
+                { id: "Animation", name: "Animation" }, 
+                { id: "TV Series", name: "TV Series" },
+                { id: "Sinhala Dubbed", name: "සිංහල හඬකැවූ", fontClass: "sinhala-font tracking-normal" }
+            ];
+
+            const catContainer = document.getElementById('filter_categories');
+            categories.forEach(cat => {
+                catContainer.innerHTML += `
+                    <label class="flex items-center gap-3 group mb-3">
+                        <input type="checkbox" value="${cat.id}" class="custom-checkbox cat-checkbox" onchange="applyFilters()">
+                        <span class="filter-label ${cat.fontClass || ''}">${cat.name}</span>
+                    </label>
+                `;
+            });
+        }
+
+        function applyFilters() {
+            const catBoxes = document.querySelectorAll('.cat-checkbox:checked');
+            selectedCategories = Array.from(catBoxes).map(b => b.value);
+
+            const isFiltering = selectedCategories.length > 0;
+
+            if (isFiltering) {
+                document.getElementById('hero').style.display = 'none';
+                document.getElementById('dynamic_sections').style.display = 'none';
+                document.getElementById('filtered_results_area').style.display = 'block';
+
+                let filtered = MASTER_DATA.filter(m => {
+                    if(!m || !m.title) return false;
+                    let catMatch = selectedCategories.length === 0 || selectedCategories.includes(m.category);
+                    return catMatch;
+                });
+
+                renderFilteredGrid(filtered);
+            } else {
+                document.getElementById('hero').style.display = 'flex';
+                document.getElementById('dynamic_sections').style.display = 'block';
+                document.getElementById('filtered_results_area').style.display = 'none';
+                window.history.pushState({}, document.title, window.location.pathname);
+            }
+        }
+
+        function clearFilters() {
+            document.querySelectorAll('.custom-checkbox').forEach(b => b.checked = false);
+            applyFilters();
+        }
+
+        function renderFilteredGrid(data) {
+            const container = document.getElementById('filtered_grid');
+            const countText = document.getElementById('filtered_count');
+            
+            if(data.length === 0) {
+                container.innerHTML = `<div class="col-span-full text-center py-20 opacity-50"><i class="fa-solid fa-ghost text-6xl text-[#00d2ff] mb-4"></i><h2 class="text-xl md:text-2xl font-black uppercase text-white tracking-widest">No Movies Found</h2></div>`;
+                countText.innerText = "0 Items Found";
+                return;
+            }
+
+            countText.innerText = `Showing ${data.length} Masterpieces`;
+
+            let html = ``;
+            data.forEach(m => {
+                html += `
+                    <div class="movie-card flex flex-col" onclick="location.href='movie-details.html?id=${m._id}'">
+                        <div class="card-inner w-full relative">
+                            <img src="${m.imageUrl}" class="w-full h-full object-cover absolute inset-0" loading="lazy">
+                            <div class="absolute top-3 right-3 badge-4k">${m.quality || '4K'}</div>
+                        </div>
+                        <h3 class="mt-4 text-[11px] font-black text-white uppercase tracking-wider w-full break-words whitespace-normal line-clamp-2">${m.title}</h3>
+                        <p class="text-[9px] text-[#00d2ff] uppercase font-bold mt-1 tracking-widest">${m.year || '2026'}</p>
+                    </div>
+                `;
+            });
+            container.innerHTML = html;
+        }
 
         function updateHero(m) {
             if(!m) return;
@@ -284,97 +400,10 @@
                 
                 let html = `<div id="cat_${safeId}"><div class="flex justify-between items-center mb-6 border-l-4 border-[#00d2ff] pl-3"><h2 class="text-base md:text-xl font-black uppercase text-white ${cat.fontClass}">${cat.name}</h2><a href="?view_cat=${encodeURIComponent(cat.id)}" class="text-[10px] font-black uppercase text-[#00d2ff]">See All <i class="fa fa-chevron-right ml-1"></i></a></div><div class="flex gap-4 md:gap-6 overflow-x-auto hide-scrollbar pb-6">`;
                 uniqueFiltered.slice(0, 10).forEach(m => {
-                    html += `<div class="movie-card" onclick="location.href='movie-details.html?id=${m._id}'"><div class="card-inner"><img src="${m.imageUrl}" class="w-full aspect-[2/3] object-cover" loading="lazy"><div class="absolute top-2 right-2 badge-4k">${m.quality || '4K'}</div></div><p class="mt-3 text-[10px] font-bold text-gray-400 truncate uppercase">${(m.title || "")}</p></div>`;
+                    html += `<div class="movie-card flex flex-col w-[140px] md:w-[180px] shrink-0" onclick="location.href='movie-details.html?id=${m._id}'"><div class="card-inner w-full relative"><img src="${m.imageUrl}" class="w-full h-full object-cover absolute inset-0" loading="lazy"><div class="absolute top-2 right-2 badge-4k">${m.quality || '4K'}</div></div><h3 class="mt-3 text-[10px] font-bold text-gray-400 uppercase w-full break-words whitespace-normal line-clamp-2">${(m.title || "")}</h3></div>`;
                 });
                 container.innerHTML += html + '</div></div>';
             });
-        }
-
-        // View All Functions (Restored)
-        function renderViewAllMode(catId) {
-            document.getElementById('hero').style.minHeight = '50vh';
-            document.getElementById('hero').style.paddingTop = '100px';
-            document.getElementById('hero_badge_area').style.display = 'none';
-            document.getElementById('hero_btn_area').style.display = 'none';
-            document.getElementById('hero_poster_area').style.display = 'none';
-            document.getElementById('hero_desc').style.display = 'none';
-            
-            const titleElement = document.getElementById('hero_title');
-            const originalClass = "text-4xl sm:text-5xl md:text-7xl lg:text-8xl font-black mb-4 md:mb-6 uppercase leading-[1.1] md:leading-[0.9] font-[Orbitron] text-transparent bg-clip-text bg-gradient-to-b from-white to-gray-400 drop-shadow-[0_10px_20px_rgba(0,0,0,0.8)]";
-            
-            if (catId === 'Lovely') {
-                titleElement.className = originalClass;
-                titleElement.innerText = 'ROMANCE';
-            }
-            else if (catId === 'Sinhala Dubbed') {
-                titleElement.className = 'text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black mb-4 md:mb-6 uppercase leading-[1.4] text-white drop-shadow-[0_10px_20px_rgba(0,0,0,0.8)] sinhala-font px-4';
-                titleElement.innerText = 'සිංහල හඬකැවූ චිත්‍රපට';
-            }
-            else {
-                titleElement.className = originalClass;
-                titleElement.innerText = catId.toUpperCase();
-            }
-            
-            titleElement.style.textAlign = 'center';
-            titleElement.parentElement.style.width = '100%';
-            titleElement.parentElement.style.alignItems = 'center';
-
-            document.getElementById('local_search_area').style.display = 'block';
-
-            const uniqueTitles = new Set();
-            VIEW_ALL_DATA = [];
-            MASTER_DATA.forEach(m => {
-                if(m.category === catId) {
-                    const t = (m.title||"").toLowerCase().trim();
-                    if (!uniqueTitles.has(t)) {
-                        uniqueTitles.add(t);
-                        VIEW_ALL_DATA.push(m);
-                    }
-                }
-            });
-
-            renderGridList(VIEW_ALL_DATA, catId);
-        }
-
-        function renderGridList(data, catId) {
-            const container = document.getElementById('dynamic_sections');
-            const countText = document.getElementById('local_result_count');
-            
-            if(data.length === 0) {
-                container.innerHTML = `<div class="text-center py-20 opacity-50"><i class="fa-solid fa-ghost text-6xl text-[#00d2ff] mb-4"></i><h2 class="text-2xl font-black uppercase text-white tracking-widest">No Content Found</h2></div>`;
-                countText.innerText = "0 Items Found";
-                return;
-            }
-
-            let displayName = catId === 'Lovely' ? 'Romance' : catId;
-            if (catId === 'Sinhala Dubbed') displayName = 'සිංහල හඬකැවූ';
-            
-            countText.innerText = `Showing ${data.length} Masterpieces in ${displayName}`;
-
-            let html = `<div class="grid-view-container">`;
-            data.forEach(m => {
-                html += `
-                    <div class="movie-card" onclick="location.href='movie-details.html?id=${m._id}'">
-                        <div class="card-inner">
-                            <img src="${m.imageUrl}" class="w-full aspect-[2/3] object-cover" loading="lazy">
-                            <div class="absolute top-3 right-3 badge-4k">${m.quality || '4K'}</div>
-                        </div>
-                        <h3 class="mt-4 text-[11px] font-black text-white truncate uppercase tracking-wider">${m.title}</h3>
-                        <p class="text-[9px] text-[#00d2ff] uppercase font-bold mt-1 tracking-widest">${m.year || '2026'}</p>
-                    </div>
-                `;
-            });
-            html += `</div>`;
-            container.innerHTML = html;
-        }
-
-        function filterViewAll(q) {
-            if(q.trim() === '') {
-                renderGridList(VIEW_ALL_DATA, new URLSearchParams(window.location.search).get('view_cat'));
-                return;
-            }
-            const filtered = VIEW_ALL_DATA.filter(m => (m.title||"").toLowerCase().includes(q.toLowerCase()));
-            renderGridList(filtered, new URLSearchParams(window.location.search).get('view_cat'));
         }
 
         function liveSearch(q) {
@@ -407,7 +436,7 @@
                     <div class="suggestion-item" onclick="location.href='movie-details.html?id=${m._id}'">
                         <img src="${m.imageUrl}" class="w-10 h-14 object-cover rounded border border-white/10 shadow-md">
                         <div class="overflow-hidden flex flex-col justify-center">
-                            <h4 class="text-white text-[11px] md:text-[12px] font-black uppercase truncate">${m.title}</h4>
+                            <h4 class="text-white text-[11px] md:text-[12px] font-black uppercase truncate w-full break-words">${m.title}</h4>
                             <p class="text-[9px] text-[#00d2ff] font-bold uppercase mt-0.5">${m.year || ''} • ${m.quality || 'HD'}</p>
                         </div>
                     </div>
@@ -428,7 +457,6 @@
         const canvas = document.getElementById('hero-3d-canvas');
         const renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true });
         
-        // Match dimensions strictly to hero section size
         const heroSection = document.getElementById('hero');
         renderer.setSize(heroSection.offsetWidth, heroSection.offsetHeight);
         renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
@@ -445,7 +473,6 @@
         const particlePos = [];
         const particleVel = [];
 
-        // Adjust spread based on mobile vs PC so it doesn't go off screen
         const pSpreadX = window.innerWidth < 768 ? window.innerWidth * 1.5 : 3000;
 
         for (let i = 0; i < particleCount; i++) {
@@ -461,7 +488,6 @@
         const coreMaterial = new THREE.MeshBasicMaterial({ color: 0xff00aa, wireframe: true, transparent: true, opacity: 0.5 });
         const jellyfishList = [];
 
-        // Group Jellyfish closer to the center on mobile
         const jfSpreadX = window.innerWidth < 768 ? window.innerWidth : 1500;
 
         for(let i=0; i<5; i++) {
