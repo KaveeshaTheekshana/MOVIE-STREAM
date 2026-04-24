@@ -399,7 +399,17 @@
                 
                 if(player && document.getElementById('video_display_area').style.display === 'block') {
                     const msgId = ep.downloadLink.split('/').pop();
-                    player.src({ src: `${API_BASE_URL}/stream/${msgId}` });
+                    
+                    // Episode change වෙනකොටත් Auto format detect කරන්න
+                    let vType = 'video/mp4';
+                    const dLink = (ep.downloadLink || "").toLowerCase();
+                    if (dLink.includes('.mkv')) vType = 'video/x-matroska';
+                    else if (dLink.includes('.webm')) vType = 'video/webm';
+                    else if (dLink.includes('.ogg')) vType = 'video/ogg';
+                    else if (dLink.includes('.m3u8')) vType = 'application/x-mpegURL';
+                    else if (dLink.includes('.mpd')) vType = 'application/dash+xml';
+
+                    player.src({ type: vType, src: `${API_BASE_URL}/stream/${msgId}` });
                     player.poster(ep.imageUrl);
                     player.play();
                 }
@@ -498,7 +508,6 @@
             fetch(`${API_BASE_URL}/send-movie`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                // 🟢 මෙතැනට subtitleUrl එකතු කළා
                 body: JSON.stringify({ number: num, userName: name, movieName: MOVIE_DATA.title, directLink: MOVIE_DATA.downloadLink, subtitleUrl: MOVIE_DATA.subtitleUrl })
             })
             .then(res => {
@@ -519,15 +528,25 @@
 
             const videoUrl = `${API_BASE_URL}/stream/${msgId}`;
 
+            // 🟢 මෙතැනින් තමයි File Format එක Auto Detect කරන්නේ 
+            let vType = 'video/mp4'; // Default එක විදිහට mp4 තියනවා
+            const dLink = (MOVIE_DATA.downloadLink || "").toLowerCase();
+            
+            if (dLink.includes('.mkv')) vType = 'video/x-matroska';
+            else if (dLink.includes('.webm')) vType = 'video/webm';
+            else if (dLink.includes('.ogg')) vType = 'video/ogg';
+            else if (dLink.includes('.m3u8')) vType = 'application/x-mpegURL'; // Live streams (HLS) වලට
+            else if (dLink.includes('.mpd')) vType = 'application/dash+xml'; // DASH streams වලට
+
             if (!player) {
-                // 🟢 මෙතැනින් type: 'video/mp4' ඉවත් කළා, එවිට ඕනෑම format එකක් play වේ.
                 player = videojs('player', { 
                     fluid: true, 
                     playbackRates: [0.5, 1, 1.25, 1.5, 2],
                     controlBar: { skipButtons: { forward: 10, backward: 10 } }
                 });
 
-                player.src({ src: videoUrl });
+                // Auto detect කරපු type එක මෙතනට pass වෙනවා
+                player.src({ type: vType, src: videoUrl });
                 player.poster(MOVIE_DATA.imageUrl);
                 player.play();
 
@@ -537,7 +556,7 @@
                     }
                 });
             } else {
-                player.src({ src: videoUrl });
+                player.src({ type: vType, src: videoUrl });
                 player.poster(MOVIE_DATA.imageUrl);
                 player.play();
             }
