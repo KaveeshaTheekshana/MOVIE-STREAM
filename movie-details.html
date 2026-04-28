@@ -197,9 +197,8 @@
     <section id="video_display_area">
         <div class="max-w-5xl mx-auto px-4 text-right">
             <button onclick="closeVideo()" class="text-white text-3xl md:text-4xl mb-4 hover:text-red-600 transition"><i class="fa-solid fa-xmark"></i></button>
-            <div class="player-wrapper">
-                <video id="player" class="video-js vjs-big-play-centered" controls preload="auto" playsinline crossorigin="anonymous"></video>
-            </div>
+            <div class="player-wrapper" id="player_container">
+                </div>
         </div>
     </section>
 
@@ -355,35 +354,6 @@
         let MOVIE_DATA = {};
         window.allMoviesData = []; 
         let player = null;
-
-        // 🌟 [NEW] Fetch SRT content via our Proxy API (Bypasses CORS entirely) 🌟
-        async function loadSubtitleDirectly(playerInstance, srtUrl) {
-            if (!srtUrl || srtUrl.trim() === '') return;
-            try {
-                const proxyUrl = `${API_BASE_URL}/proxy-subtitle?url=${encodeURIComponent(srtUrl)}`;
-                const res = await fetch(proxyUrl);
-                
-                if (!res.ok) throw new Error("Failed to fetch subtitle via proxy");
-                
-                const vttText = await res.text();
-                
-                // 1. Create Local Blob from Fetched VTT
-                const blob = new Blob([vttText], { type: 'text/vtt' });
-                const blobUrl = URL.createObjectURL(blob);
-                
-                // 2. Add Track Using local Blob URL (Browser won't block this)
-                playerInstance.addRemoteTextTrack({
-                    kind: 'captions',
-                    src: blobUrl,
-                    srclang: 'si',
-                    label: 'Sinhala Sub',
-                    default: true 
-                }, false);
-
-            } catch(e) {
-                console.error("Subtitle load error:", e);
-            }
-        }
 
         window.onload = async () => {
             try {
@@ -636,6 +606,7 @@
             });
         }
 
+        // 🌟 [ULTIMATE FIX] - Player එක සම්පූර්ණයෙන්ම අලුතින් හදලා <track> එක දාන ක්‍රමය 🌟
         async function playNowDirectly() {
             closeAllPopups();
             const msgId = MOVIE_DATA.downloadLink.split('/').pop();
@@ -652,35 +623,60 @@
             else if (dLink.includes('.m3u8')) vType = 'application/x-mpegURL'; 
             else if (dLink.includes('.mpd')) vType = 'application/dash+xml'; 
 
-            if (!player) {
-                player = videojs('player', { 
-                    fluid: true, 
-                    playbackRates: [0.5, 1, 1.25, 1.5, 2],
-                    controlBar: { skipButtons: { forward: 10, backward: 10 } }
-                });
+            // පරණ Player එක සම්පූර්ණයෙන්ම අයින් කරලා අලුතින් HTML Video Tag එකක් හදනවා
+            if (player) {
+                player.dispose();
+                player = null;
+                document.getElementById('player_container').innerHTML = '<video id="player" class="video-js vjs-big-play-centered" controls preload="auto" playsinline crossorigin="anonymous"></video>';
+            }
 
-                player.on('fullscreenchange', function() {
-                    if (player.isFullscreen() && /Mobi|Android|iPhone/i.test(navigator.userAgent)) {
-                        try { screen.orientation.lock('landscape'); } catch(e) {}
+            const videoEl = document.getElementById('player');
+
+            // Source එක Add කරනවා
+            const sourceEl = document.createElement('source');
+            sourceEl.src = videoUrl;
+            sourceEl.type = vType;
+            videoEl.appendChild(sourceEl);
+
+            // Subtitle ෆයිල් එක Proxy එකෙන් අරන් <track> Tag එකක් විදිහට එකතු කරනවා
+            if (MOVIE_DATA.subtitleUrl) {
+                try {
+                    const proxyUrl = `${API_BASE_URL}/proxy-subtitle?url=${encodeURIComponent(MOVIE_DATA.subtitleUrl)}`;
+                    const res = await fetch(proxyUrl);
+                    if (res.ok) {
+                        const vttText = await res.text();
+                        const blob = new Blob([vttText], { type: 'text/vtt' });
+                        const blobUrl = URL.createObjectURL(blob);
+                        
+                        const trackEl = document.createElement('track');
+                        trackEl.kind = 'captions';
+                        trackEl.label = 'Sinhala Sub';
+                        trackEl.srclang = 'si';
+                        trackEl.src = blobUrl;
+                        trackEl.default = true; // ඔටෝම On වෙන්න
+                        videoEl.appendChild(trackEl);
+                    } else {
+                        console.error("Subtitle Fetch Failed. Status:", res.status);
                     }
-                });
-            } 
-            
-            player.src({ type: vType, src: videoUrl });
-            player.poster(MOVIE_DATA.imageUrl);
-
-            const tracks = player.remoteTextTracks();
-            if (tracks) {
-                let numTracks = tracks.length;
-                for (let i = numTracks - 1; i >= 0; i--) {
-                    player.removeRemoteTextTrack(tracks[i]);
+                } catch (e) {
+                    console.error("Subtitle API Error:", e);
                 }
             }
 
-            if (MOVIE_DATA.subtitleUrl) {
-                await loadSubtitleDirectly(player, MOVIE_DATA.subtitleUrl);
-            }
+            // 🌟 Track එක දැම්මට පස්සේ තමයි Video.js Initialize කරන්නේ!
+            player = videojs('player', { 
+                fluid: true, 
+                playbackRates: [0.5, 1, 1.25, 1.5, 2],
+                controlBar: { skipButtons: { forward: 10, backward: 10 } }
+            });
 
+            player.on('fullscreenchange', function() {
+                if (player.isFullscreen() && /Mobi|Android|iPhone/i.test(navigator.userAgent)) {
+                    try { screen.orientation.lock('landscape'); } catch(e) {}
+                }
+            });
+            
+            player.poster(MOVIE_DATA.imageUrl);
             player.play();
             document.getElementById('video_display_area').scrollIntoView({ behavior: 'smooth' });
         }
