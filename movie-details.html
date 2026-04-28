@@ -37,13 +37,11 @@
         .video-js .vjs-big-play-button { background-color: rgba(229,9,20,0.8); border: none; border-radius: 50%; width: 80px; height: 80px; line-height: 80px; margin-top: -40px; margin-left: -40px; }
         .video-js:hover .vjs-big-play-button { background-color: var(--neon-red); }
         
-        /* 🌟 Loading Spinner Style */
         .video-js .vjs-loading-spinner {
             border-color: rgba(229, 9, 20, 0.7) !important;
             border-top-color: #E50914 !important;
         }
 
-        /* 🌟 CC (Subtitle) Button Icon Red Color */
         .video-js .vjs-subs-caps-button .vjs-icon-placeholder::before {
             color: #E50914 !important;
         }
@@ -358,11 +356,10 @@
         window.allMoviesData = []; 
         let player = null;
 
-        // 🌟 [NEW] Fetch SRT content via our Proxy API (Bypasses CORS entirely)
+        // 🌟 [NEW] Fetch SRT content via our Proxy API (Bypasses CORS entirely) 🌟
         async function loadSubtitleDirectly(playerInstance, srtUrl) {
             if (!srtUrl || srtUrl.trim() === '') return;
             try {
-                // Fetch the VTT string from our proxy endpoint
                 const proxyUrl = `${API_BASE_URL}/proxy-subtitle?url=${encodeURIComponent(srtUrl)}`;
                 const res = await fetch(proxyUrl);
                 
@@ -370,52 +367,22 @@
                 
                 const vttText = await res.text();
                 
-                // Add the text track directly to the player
-                const track = playerInstance.addTextTrack('captions', 'Sinhala Sub', 'si');
-                track.mode = 'showing'; // Force it to show by default
+                // 1. Create Local Blob from Fetched VTT
+                const blob = new Blob([vttText], { type: 'text/vtt' });
+                const blobUrl = URL.createObjectURL(blob);
                 
-                // Parse VTT and add cues
-                const lines = vttText.split('\n');
-                let i = 2; // Skip WEBVTT header
-                while (i < lines.length) {
-                    if (lines[i].includes('-->')) {
-                        const timeLine = lines[i];
-                        const textLines = [];
-                        i++;
-                        while (i < lines.length && lines[i].trim() !== '') {
-                            textLines.push(lines[i]);
-                            i++;
-                        }
-                        
-                        const [startStr, endStr] = timeLine.split(' --> ');
-                        if (startStr && endStr) {
-                            const start = parseVttTime(startStr);
-                            const end = parseVttTime(endStr);
-                            const text = textLines.join('\n');
-                            track.addCue(new VTTCue(start, end, text));
-                        }
-                    } else {
-                        i++;
-                    }
-                }
+                // 2. Add Track Using local Blob URL (Browser won't block this)
+                playerInstance.addRemoteTextTrack({
+                    kind: 'captions',
+                    src: blobUrl,
+                    srclang: 'si',
+                    label: 'Sinhala Sub',
+                    default: true 
+                }, false);
+
             } catch(e) {
                 console.error("Subtitle load error:", e);
             }
-        }
-
-        // Helper to convert VTT time string (00:00:00.000) to seconds
-        function parseVttTime(timeStr) {
-            const parts = timeStr.split(':');
-            let seconds = 0;
-            if (parts.length === 3) {
-                seconds += parseInt(parts[0], 10) * 3600; // Hours
-                seconds += parseInt(parts[1], 10) * 60;   // Minutes
-                seconds += parseFloat(parts[2]);          // Seconds
-            } else if (parts.length === 2) {
-                seconds += parseInt(parts[0], 10) * 60;
-                seconds += parseFloat(parts[1]);
-            }
-            return seconds;
         }
 
         window.onload = async () => {
@@ -702,9 +669,12 @@
             player.src({ type: vType, src: videoUrl });
             player.poster(MOVIE_DATA.imageUrl);
 
-            const tracks = player.textTracks();
-            for (let i = tracks.length - 1; i >= 0; i--) {
-                player.removeRemoteTextTrack(tracks[i]);
+            const tracks = player.remoteTextTracks();
+            if (tracks) {
+                let numTracks = tracks.length;
+                for (let i = numTracks - 1; i >= 0; i--) {
+                    player.removeRemoteTextTrack(tracks[i]);
+                }
             }
 
             if (MOVIE_DATA.subtitleUrl) {
