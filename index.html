@@ -104,7 +104,6 @@
         .filter-label { cursor: pointer; font-size: 11px; font-weight: 600; color: #aaa; text-transform: uppercase; letter-spacing: 0.05em; transition: 0.2s; }
         .group:hover .filter-label { color: white; }
 
-        /* 🌟 NEW: JOIN CHANNEL BUTTON (Works across PC & Mobile) */
         .join-channel-btn {
             background: linear-gradient(135deg, #25D366 0%, #128C7E 100%);
             color: white; padding: 6px 12px; border-radius: 50px;
@@ -128,7 +127,6 @@
             100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(37, 211, 102, 0); }
         }
 
-        /* 🌟 NEW: BUG REPORT BUTTON (Now inside Footer) */
         .bug-report-btn {
             background: linear-gradient(135deg, #ff0844 0%, #ffb199 100%);
             color: white; padding: 8px 16px; border-radius: 50px;
@@ -142,11 +140,16 @@
             box-shadow: 0 15px 25px rgba(255, 8, 68, 0.6), inset 0 -3px 0 rgba(0,0,0,0.2);
         }
 
-        /* Ad Container Optimization */
-        .ad-container {
-            width: 100%; max-width: 100vw; overflow: hidden; display: flex; justify-content: center; align-items: center;
-        }
+        .ad-container { width: 100%; max-width: 100vw; overflow: hidden; display: flex; justify-content: center; align-items: center; }
         .ad-container iframe { max-width: 100% !important; }
+
+        /* Infinite Scroll Loading Spinner CSS */
+        .loading-spinner { 
+            display: none; margin: 30px auto; width: 40px; height: 40px; 
+            border: 4px solid rgba(255,255,255,0.1); border-left-color: #00d2ff; 
+            border-radius: 50%; animation: spin 1s linear infinite; 
+        }
+        @keyframes spin { 100% { transform: rotate(360deg); } }
     </style>
 </head>
 <body oncontextmenu="return false;">
@@ -165,6 +168,7 @@
         </div>
         
         <div class="hidden lg:flex gap-6 items-center text-[10px] font-black tracking-widest uppercase relative z-50">
+            <a href="?view_cat=Popular" class="hover:text-red-500 transition text-[#00d2ff]">Popular</a>
             <a href="?view_cat=Action" class="hover:text-red-500 transition text-white">Action</a>
             <a href="?view_cat=Lovely" class="hover:text-red-500 transition text-white">Romance</a>
             <a href="?view_cat=Horror" class="hover:text-red-500 transition text-white">Horror</a>
@@ -200,6 +204,7 @@
         </script>
         <script src="https://www.highperformanceformat.com/2999bc2d942dff637df58423baf51c02/invoke.js"></script>
     </div>
+
     <header id="hero" class="hero-bg pt-[180px] md:pt-[120px] pb-10 md:pb-0">
         <canvas id="hero-3d-canvas"></canvas>
         <div class="hero-overlay"></div>
@@ -251,7 +256,6 @@
                     <h4 class="text-[#00d2ff] font-black uppercase text-[10px] tracking-[0.2em] mb-4">Category</h4>
                     <div id="filter_categories" class="space-y-1"></div>
                 </div>
-                
             </div>
         </aside>
 
@@ -268,6 +272,8 @@
                 <div id="filtered_grid" class="grid-view-container"></div>
             </div>
             
+            <div class="loading-spinner" id="loading-spinner"></div>
+            
         </div>
     </main>
 
@@ -277,6 +283,7 @@
         <div id="container-1291753d908d912e85d7f3ae3b117212"></div>
         <script src="https://pl29238420.profitablecpmratenetwork.com/14/12/3a/14123a31ddf83a815e2f9c12daa42188.js"></script>
     </div>
+    
     <footer class="bg-[#050505] pt-20 pb-12 px-6 border-t border-white/5 relative z-30 overflow-hidden">
         <div class="footer-glow"></div>
         <div class="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-12 items-center text-center md:text-left mb-10">
@@ -298,9 +305,8 @@
             </div>
 
             <div class="md:text-right">
-                <p class="text-white font-black text-xs uppercase tracking-widest drop-shadow-[0_0_10px_rgba(255,255,255,0.3)]">MovieStream</p>
-                <p class="text-gray-600 text-[9px] font-black uppercase mb-1 tracking-[0.2em]">Developer By Kaveesha Theekshana</p>
-                
+                <p class="text-gray-600 text-[9px] font-black uppercase mb-1 tracking-[0.2em]">Developer By</p>
+                <p class="text-white font-black text-xs uppercase tracking-widest drop-shadow-[0_0_10px_rgba(255,255,255,0.3)]">Movie Stream Admin Panel</p>
             </div>
         </div>
         <div class="max-w-7xl mx-auto border-t border-white/5 pt-6 text-center">
@@ -310,8 +316,15 @@
 
     <script>
         const DB_URL = "https://panel.moviestream.lat/api/movies";
+        const API_BASE = "https://stream.moviestream.lat";
+        
         let MASTER_DATA = [];
         let selectedCategories = [];
+        
+        // Infinite Scroll Variables
+        let currentPage = 1; 
+        let isFetching = false; 
+        let addedMovieIds = new Set();
 
         document.addEventListener('click', (e) => {
             if(!e.target.closest('.search-container')) {
@@ -319,8 +332,52 @@
             }
         });
 
+        // 🎯 The Robust Logic for Extracting API Data (Works deeply in JSON arrays)
+        function extractScrapedMovies(obj) {
+            if (!obj || typeof obj !== 'object') return [];
+            let extractedList = [];
+            
+            function findMovies(node) {
+                if (!node || typeof node !== 'object') return;
+                
+                const id = node.subjectId || node.id || node.vod_id || node.videoId;
+                const title = node.title || node.name || node.vod_name;
+                let rawPoster = node.cover || node.poster || node.pic || node.imageUrl || node.vod_pic;
+                let posterUrl = (typeof rawPoster === 'string') ? rawPoster : (rawPoster ? (rawPoster.url || rawPoster.pic || rawPoster.path || "") : "");
+
+                if (id && title && posterUrl && !addedMovieIds.has(id)) {
+                    extractedList.push({
+                        _id: id,
+                        title: title,
+                        imageUrl: `${API_BASE}/image-proxy?url=${encodeURIComponent(posterUrl)}`,
+                        quality: node.quality || node.vod_remarks || 'HD',
+                        year: node.year || (node.releaseDate ? node.releaseDate.substring(0,4) : null) || node.vod_year || '2026',
+                        category: 'Popular', 
+                        showMain: true,
+                        isScraped: true,
+                        detailPath: node.detailPath || node.path || '' 
+                    });
+                    addedMovieIds.add(id);
+                }
+                
+                for (let key in node) {
+                    if (node.hasOwnProperty(key)) {
+                        if (Array.isArray(node[key])) {
+                            node[key].forEach(child => findMovies(child));
+                        } else if (typeof node[key] === 'object') {
+                            findMovies(node[key]);
+                        }
+                    }
+                }
+            }
+            
+            findMovies(obj);
+            return extractedList;
+        }
+
         window.onload = async () => {
             try {
+                // User Name setup
                 const savedName = localStorage.getItem('ms_user_name');
                 if (savedName) {
                     const topUserName = document.getElementById('top_user_name');
@@ -330,8 +387,24 @@
                     }
                 }
 
-                const res = await fetch(`${DB_URL}?v=${new Date().getTime()}`);
-                MASTER_DATA = await res.json();
+                // 1. Initial Load of Scraped Movies (Page 1)
+                try {
+                    const scrapRes = await fetch(`${API_BASE}/api/home?page=1`);
+                    const scrapJson = await scrapRes.json();
+                    const newScrapedMovies = extractScrapedMovies(scrapJson.data);
+                    MASTER_DATA = [...MASTER_DATA, ...newScrapedMovies];
+                } catch(e) {
+                    console.error("Scraping API Error:", e);
+                }
+
+                // 2. Fetching Admin Panel Movies
+                try {
+                    const res = await fetch(`${DB_URL}?v=${new Date().getTime()}`);
+                    const adminMovies = await res.json();
+                    MASTER_DATA = [...MASTER_DATA, ...adminMovies];
+                } catch(e) {
+                    console.error("Database API Error:", e);
+                }
                 
                 initFilters();
 
@@ -346,6 +419,7 @@
                     const trending = MASTER_DATA.filter(m => m.isTrending === true || m.isTrending === "true");
                     const heroMovie = trending.length > 0 ? trending[0] : (MASTER_DATA.length > 0 ? MASTER_DATA[0] : null);
                     if(heroMovie) updateHero(heroMovie);
+                    
                     renderContent(MASTER_DATA);
                 }
                 
@@ -358,8 +432,53 @@
             }
         };
 
+        // 🎯 Infinite Scroll Logic (Loads more when scrolling down)
+        window.addEventListener('scroll', async () => {
+            if (window.innerHeight + window.scrollY >= document.body.offsetHeight - 1200) {
+                if (!isFetching) {
+                    isFetching = true;
+                    currentPage++;
+                    document.getElementById("loading-spinner").style.display = "block";
+
+                    try {
+                        const response = await fetch(`${API_BASE}/api/home?page=${currentPage}`);
+                        const result = await response.json();
+                        const newlyFetchedMovies = extractScrapedMovies(result.data);
+
+                        if (newlyFetchedMovies.length > 0) {
+                            MASTER_DATA = [...MASTER_DATA, ...newlyFetchedMovies];
+                            
+                            // UX Optimization: Inject dynamically without resetting scroll position
+                            const isFiltering = document.querySelectorAll('.cat-checkbox:checked').length > 0;
+                            if (isFiltering) {
+                                applyFilters(); 
+                            } else {
+                                const popularContainer = document.querySelector('#cat_Popular > div:nth-child(2)');
+                                if (popularContainer) {
+                                    let extraHtml = ``;
+                                    newlyFetchedMovies.forEach(m => {
+                                        const link = m.isScraped ? `movie-details.html?id=${m._id}&type=scraped&path=${m.detailPath || ''}` : `movie-details.html?id=${m._id}`;
+                                        extraHtml += `<div class="movie-card flex flex-col w-[140px] md:w-[180px] shrink-0" onclick="location.href='${link}'"><div class="card-inner w-full relative"><img src="${m.imageUrl}" class="w-full h-full object-cover absolute inset-0" loading="lazy"><div class="absolute top-2 right-2 badge-4k">${m.quality || 'HD'}</div></div><h3 class="mt-3 text-[10px] font-bold text-gray-400 uppercase w-full break-words whitespace-normal line-clamp-2">${(m.title || "")}</h3></div>`;
+                                    });
+                                    popularContainer.insertAdjacentHTML('beforeend', extraHtml);
+                                } else {
+                                    renderContent(MASTER_DATA);
+                                }
+                            }
+                        }
+                    } catch (error) {
+                        console.error("Pagination Load Error:", error);
+                    } finally {
+                        isFetching = false;
+                        document.getElementById("loading-spinner").style.display = "none";
+                    }
+                }
+            }
+        });
+
         function initFilters() {
             const categories = [
+                { id: "Popular", name: "Popular Movies (Trending)", fontClass: "text-[#00d2ff]" },
                 { id: "Action", name: "Action" }, 
                 { id: "Lovely", name: "Romance" }, 
                 { id: "Horror", name: "Horror" }, 
@@ -426,11 +545,12 @@
 
             let html = ``;
             data.forEach(m => {
+                const link = m.isScraped ? `movie-details.html?id=${m._id}&type=scraped&path=${m.detailPath || ''}` : `movie-details.html?id=${m._id}`;
                 html += `
-                    <div class="movie-card flex flex-col" onclick="location.href='movie-details.html?id=${m._id}'">
+                    <div class="movie-card flex flex-col" onclick="location.href='${link}'">
                         <div class="card-inner w-full relative">
-                            <img src="${m.imageUrl}" class="w-full h-full object-cover absolute inset-0" loading="lazy">
-                            <div class="absolute top-3 right-3 badge-4k">${m.quality || '4K'}</div>
+                            <img src="${m.imageUrl}" class="w-full h-full object-cover absolute inset-0" loading="lazy" onerror="this.src='https://via.placeholder.com/300x450?text=POPULAR+MOVIE'">
+                            <div class="absolute top-3 right-3 badge-4k">${m.quality || 'HD'}</div>
                         </div>
                         <h3 class="mt-4 text-[11px] font-black text-white uppercase tracking-wider w-full break-words whitespace-normal line-clamp-2">${m.title}</h3>
                         <p class="text-[9px] text-[#00d2ff] uppercase font-bold mt-1 tracking-widest">${m.year || '2026'}</p>
@@ -442,11 +562,12 @@
 
         function updateHero(m) {
             if(!m) return;
+            const link = m.isScraped ? `movie-details.html?id=${m._id}&type=scraped&path=${m.detailPath || ''}` : `movie-details.html?id=${m._id}`;
             document.getElementById('hero_title').innerText = m.title || "UNKNOWN TITLE";
             document.getElementById('hero_poster').src = m.imageUrl;
-            document.getElementById('hero_desc').innerText = m.description || "Immerse yourself in this stunning 4K masterpiece. Experience unparalleled visual quality and seamless cloud streaming exclusively on MovieStream Ultra.";
+            document.getElementById('hero_desc').innerText = m.description || "Immerse yourself in this stunning masterpiece. Experience unparalleled visual quality and seamless cloud streaming exclusively on MovieStream Ultra.";
             document.getElementById('hero_quality').innerText = m.quality || "HD";
-            document.getElementById('hero_btn').onclick = () => { location.href = "movie-details.html?id=" + m._id; };
+            document.getElementById('hero_btn').onclick = () => { location.href = link; };
         }
 
         function renderContent(data) {
@@ -454,6 +575,7 @@
             container.innerHTML = '';
             
             const cats = [
+                { id: "Popular", name: "🔥 Popular Movies", fontClass: "text-[#00d2ff]" },
                 { id: "Sinhala Dubbed", name: "සිංහල හඬකැවූ", fontClass: "sinhala-font tracking-normal" },
                 { id: "Action", name: "Action", fontClass: "" }, 
                 { id: "Lovely", name: "Romance", fontClass: "" }, 
@@ -481,8 +603,9 @@
                 let safeId = cat.id.replace(/\s+/g, '_');
                 
                 let html = `<div id="cat_${safeId}"><div class="flex justify-between items-center mb-6 border-l-4 border-[#00d2ff] pl-3"><h2 class="text-base md:text-xl font-black uppercase text-white ${cat.fontClass}">${cat.name}</h2><a href="?view_cat=${encodeURIComponent(cat.id)}" class="text-[10px] font-black uppercase text-[#00d2ff]">See All <i class="fa fa-chevron-right ml-1"></i></a></div><div class="flex gap-4 md:gap-6 overflow-x-auto hide-scrollbar pb-6">`;
-                uniqueFiltered.slice(0, 10).forEach(m => {
-                    html += `<div class="movie-card flex flex-col w-[140px] md:w-[180px] shrink-0" onclick="location.href='movie-details.html?id=${m._id}'"><div class="card-inner w-full relative"><img src="${m.imageUrl}" class="w-full h-full object-cover absolute inset-0" loading="lazy"><div class="absolute top-2 right-2 badge-4k">${m.quality || '4K'}</div></div><h3 class="mt-3 text-[10px] font-bold text-gray-400 uppercase w-full break-words whitespace-normal line-clamp-2">${(m.title || "")}</h3></div>`;
+                uniqueFiltered.forEach(m => {
+                    const link = m.isScraped ? `movie-details.html?id=${m._id}&type=scraped&path=${m.detailPath || ''}` : `movie-details.html?id=${m._id}`;
+                    html += `<div class="movie-card flex flex-col w-[140px] md:w-[180px] shrink-0" onclick="location.href='${link}'"><div class="card-inner w-full relative"><img src="${m.imageUrl}" class="w-full h-full object-cover absolute inset-0" loading="lazy" onerror="this.src='https://via.placeholder.com/300x450?text=POPULAR+MOVIE'"><div class="absolute top-2 right-2 badge-4k">${m.quality || 'HD'}</div></div><h3 class="mt-3 text-[10px] font-bold text-gray-400 uppercase w-full break-words whitespace-normal line-clamp-2">${(m.title || "")}</h3></div>`;
                 });
                 container.innerHTML += html + '</div></div>';
             });
@@ -514,15 +637,17 @@
             suggestions.classList.add('flex');
             
             if(filtered.length > 0) {
-                suggestions.innerHTML = filtered.slice(0, 6).map(m => `
-                    <div class="suggestion-item" onclick="location.href='movie-details.html?id=${m._id}'">
+                suggestions.innerHTML = filtered.slice(0, 6).map(m => {
+                    const link = m.isScraped ? `movie-details.html?id=${m._id}&type=scraped&path=${m.detailPath || ''}` : `movie-details.html?id=${m._id}`;
+                    return `
+                    <div class="suggestion-item" onclick="location.href='${link}'">
                         <img src="${m.imageUrl}" class="w-10 h-14 object-cover rounded border border-white/10 shadow-md">
                         <div class="overflow-hidden flex flex-col justify-center">
                             <h4 class="text-white text-[11px] md:text-[12px] font-black uppercase truncate w-full break-words">${m.title}</h4>
                             <p class="text-[9px] text-[#00d2ff] font-bold uppercase mt-0.5">${m.year || ''} • ${m.quality || 'HD'}</p>
                         </div>
                     </div>
-                `).join('');
+                `}).join('');
             } else {
                 suggestions.innerHTML = `<div class="p-5 text-center text-[10px] text-gray-500 font-bold uppercase tracking-widest">No Movies Found</div>`;
             }
@@ -534,7 +659,7 @@
             document.getElementById('clear_search').style.display = 'none';
         }
     </script>
-
+    
     <script>
         const canvas = document.getElementById('hero-3d-canvas');
         const renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true });
