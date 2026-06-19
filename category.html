@@ -1,9 +1,9 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="si">
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0, shrink-to-fit=no">
     <title id="page_title">MovieStream Ultra</title>
     <link rel="icon" type="image/svg+xml" href="title_icon.svg">
     <script src="https://cdn.tailwindcss.com"></script>
@@ -27,8 +27,11 @@
             -webkit-tap-highlight-color: transparent;
         }
 
-        html {
+        html, body {
             scroll-behavior: smooth;
+            overflow-x: hidden;
+            width: 100%;
+            touch-action: pan-y;
         }
 
         body {
@@ -340,7 +343,7 @@
                 if (anchor && anchor.href) {
                     const target = anchor.getAttribute('target');
                     const href = anchor.getAttribute('href');
-                    if (target === '_blank' || href.startsWith('javascript:') || href.startsWith('#')) return;
+                    if (target === '_blank' || href.startsWith('javascript:') || href.startsWith('#') || href.startsWith('blob:') || anchor.hasAttribute('download')) return;
 
                     // It's a valid internal/same-tab navigation
                     e.preventDefault();
@@ -925,7 +928,8 @@
             const num = document.getElementById('user_num').value.trim();
             if (!num.startsWith("94") || num.length !== 11 || isNaN(num)) {
                 closeAllPopups();
-                document.getElementById('warning_msg').innerText = "à¶šà¶»à·”à¶«à·à¶šà¶» à¶”à¶¶à¶œà·š WhatsApp à¶…à¶‚à¶šà¶º 947XXXXXXXX à¶†à¶šà·à¶»à¶ºà¶§ à¶±à·’à·€à·à¶»à¶¯à·’à·€ à¶‡à¶­à·”à·…à¶­à·Š à¶šà¶»à¶±à·Šà¶±.";
+                const msg = "සුභ පැතුම්! ඉල්ලීම අපේ පද්ධතිය විසින් ලබා ගත්තා. ඉල්ලීම සකස් කරමින් පවතී.";
+                document.getElementById('warning_msg').innerText = "à¶šà¶»à·”à¶«à· à¶šà¶» à¶”à¶¶à¶œà·š WhatsApp à¶…à¶‚à¶šà¶º 947XXXXXXXX à¶†à¶šà· à¶»à¶ºà¶§ à¶±à·’à·€à· à¶»à¶¯à·’à·€ à¶‡à¶­à·”à·…à¶­à·Š à¶šà¶»à¶±à·Šà¶±.";
                 document.getElementById('popup_warning').style.display = 'flex';
                 return;
             }
@@ -938,7 +942,7 @@
             const engRegex = /^[A-Za-z\s]+$/;
             if (!engRegex.test(name) || name === "") {
                 closeAllPopups();
-                document.getElementById('warning_msg').innerText = "à¶šà¶»à·”à¶«à·à¶šà¶» à¶”à¶¶à¶œà·š à¶±à¶¸ à¶‰à¶‚à¶œà·Šâ€à¶»à·“à·ƒà·’ à¶…à¶šà·”à¶»à·” (English Letters) à¶´à¶¸à¶«à¶šà·Š à¶·à·à·€à·’à¶­à· à¶šà¶» à¶‡à¶­à·”à·…à¶­à·Š à¶šà¶»à¶±à·Šà¶±.";
+                document.getElementById('warning_msg').innerText = "à¶šà¶»à·”à¶«à· à¶šà¶» à¶”à¶¶à¶œà·š à¶±à¶¸ à¶‰à¶‚à¶œà·Šâ€ à¶»à·“à·ƒà·’ à¶…à¶šà·”à¶»à·” (English Letters) à¶´à¶¸à¶«à¶šà·Š à¶·à· à·€à·’à¶­à·  à¶šà¶» à¶‡à¶­à·”à·…à¶­à·Š à¶šà¶»à¶±à·Šà¶±.";
                 document.getElementById('popup_warning').style.display = 'flex';
                 return;
             }
@@ -965,9 +969,10 @@
                 formattedName = `${MOVIE_DATA.title} S${s} E${e}`;
             }
 
-            const msg = MOVIE_DATA.category === 'TV Series'
-                ? `à¶±à·’à¶ºà¶¸à¶ºà·’ ${name}! ${formattedName} à¶ à·’à¶­à·Šâ€à¶»à¶´à¶§à¶º à¶¯à·à¶±à·Š à¶…à¶´à¶œà·š à¶´à¶¯à·Šà¶°à¶­à·’à¶º à·„à¶»à·„à· à¶”à¶¶à·š WhatsApp à·€à·™à¶­ à¶ºà·œà¶¸à·” à¶šà¶» à¶‡à¶­.`
-                : `à¶±à·’à¶ºà¶¸à¶ºà·’ ${name}! ${MOVIE_DATA.title} à¶ à·’à¶­à·Šâ€à¶»à¶´à¶§à¶º à¶¯à·à¶±à·Š à¶…à¶´à¶œà·š à¶´à¶¯à·Šà¶°à¶­à·’à¶º à·„à¶»à·„à· à¶”à¶¶à·š WhatsApp à·€à·™à¶­ à¶ºà·œà¶¸à·” à¶šà¶» à¶‡à¶­.`;
+            const msg = "සුභ පැතුම්! ඉල්ලීම අපේ පද්ධතිය විසින් ලබා ගත්තා. ඉල්ලීම සකස් කරමින් පවතී.";
+
+
+
 
             fetch(`${API_BASE_URL}/send-movie`, {
                 method: 'POST',
