@@ -4,7 +4,7 @@
 <head>
 
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0, shrink-to-fit=no">
     <title id="page_title">MovieStream Ultra</title>
     <link rel="icon" type="image/svg+xml" href="title_icon.svg">
     <script src="https://cdn.tailwindcss.com"></script>
@@ -29,8 +29,11 @@
             -webkit-tap-highlight-color: transparent;
         }
 
-        html {
+        html, body {
             scroll-behavior: smooth;
+            overflow-x: hidden;
+            width: 100%;
+            touch-action: pan-y;
         }
 
         body {
@@ -378,7 +381,7 @@
                 if (anchor && anchor.href) {
                     const target = anchor.getAttribute('target');
                     const href = anchor.getAttribute('href');
-                    if (target === '_blank' || href.startsWith('javascript:') || href.startsWith('#')) return;
+                    if (target === '_blank' || href.startsWith('javascript:') || href.startsWith('#') || href.startsWith('blob:') || anchor.hasAttribute('download')) return;
 
                     // It's a valid internal/same-tab navigation
                     e.preventDefault();
@@ -834,7 +837,22 @@
         window.allMoviesData = [];
         let player = null;
 
-        window.downloadSubtitleFile = async function (url, filename, btnElement) {
+        window.downloadSubtitleFile = async function (url, filename, btnElement, langKey) {
+            if (langKey && window.PRELOADED_SUBS && window.PRELOADED_SUBS[langKey]) {
+                const a = document.createElement('a');
+                a.href = window.PRELOADED_SUBS[langKey];
+                a.download = filename;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                if (btnElement) {
+                    const orig = btnElement.dataset.originalHtml || btnElement.innerHTML;
+                    btnElement.innerHTML = `<i class="fa-solid fa-check"></i> Done`;
+                    setTimeout(() => { btnElement.innerHTML = orig; }, 2000);
+                }
+                return;
+            }
+
             if (btnElement) {
                 btnElement.dataset.originalHtml = btnElement.innerHTML;
                 btnElement.innerHTML = `<i class="fa-solid fa-circle-notch fa-spin"></i> Wait...`;
@@ -857,7 +875,7 @@
                 document.body.appendChild(a);
                 a.click();
                 document.body.removeChild(a);
-                URL.revokeObjectURL(objUrl);
+                setTimeout(() => URL.revokeObjectURL(objUrl), 5000);
 
                 if (btnElement) {
                     btnElement.innerHTML = `<i class="fa-solid fa-check"></i> Done`;
@@ -1464,9 +1482,7 @@
                 formattedName = `${MOVIE_DATA.title} S${s} E${e}`;
             }
 
-            const msg = MOVIE_DATA.category === 'TV Series'
-                ? `නියමයි ${name}! ${formattedName} චිත්‍රපටය දෑන් අපගේ පද්ධතිය හරහා ඔබේ WhatsApp වෙත යොමු කර ඇත.`
-                : `නියමයි ${name}! ${MOVIE_DATA.title} චිත්‍රපටය දෑන් අපගේ පද්ධතිය හරහා ඔබේ WhatsApp වෙත යොමු කර ඇත.`;
+            const msg = "සුභ පැතුම්! ඉල්ලීම අපේ පද්ධතිය විසින් ලබා ගත්තා. ඉල්ලීම සකස් කරමින් පවතී.";
 
             let selectedSub = "";
             const subRadios = document.getElementsByName('wa_sub');
@@ -1501,9 +1517,9 @@
                 .then(data => {
                     if (data.status === 'Queued') {
                         closeAllPopups();
-                        const successMsgElem = document.getElementById('popup_success_msg');
+                        const successMsgElem = document.getElementById('congrats_msg');
                         if (successMsgElem) successMsgElem.innerText = msg;
-                        const successPopup = document.getElementById('popup_success');
+                        const successPopup = document.getElementById('popup_congrats');
                         if (successPopup) successPopup.style.display = 'flex';
                     } else if (data.status === 'Limit') {
                         closeAllPopups();
@@ -1561,13 +1577,26 @@
             let enSub = engCap ? engCap.url : (MOVIE_DATA.subtitleUrl || "");
             let taSub = taCap ? taCap.url : "";
 
+            window.PRELOADED_SUBS = {};
+
+            const fetchAndParse = async (url, key) => {
+                try {
+                    const res = await fetch(url);
+                    let text = await res.text();
+                    text = text.replace(/^WEBVTT.*\n?\n?/m, ''); // Remove WEBVTT header
+                    text = text.replace(/(\d{2}:\d{2}:\d{2})\.(\d{3})/g, '$1,$2'); // Replace . with , in timestamps
+                    const blob = new Blob([text], { type: 'text/srt' });
+                    window.PRELOADED_SUBS[key] = URL.createObjectURL(blob);
+                } catch(e) {}
+            };
+
             if (enSub) {
                 let enLangParam = isSourceEn ? 'en_native' : 'en';
-                fetch(`https://stream.moviestream.lat/api/subtitle/proxy?url=${encodeURIComponent(enSub)}&lang=${enLangParam}`).catch(e => { });
-                fetch(`https://stream.moviestream.lat/api/subtitle/proxy?url=${encodeURIComponent(enSub)}&lang=si&from=en`).catch(e => { });
+                fetchAndParse(`https://stream.moviestream.lat/api/subtitle/proxy?url=${encodeURIComponent(enSub)}&lang=${enLangParam}`, 'en');
+                fetchAndParse(`https://stream.moviestream.lat/api/subtitle/proxy?url=${encodeURIComponent(enSub)}&lang=si&from=en`, 'si');
             }
             if (taSub) {
-                fetch(`https://stream.moviestream.lat/api/subtitle/proxy?url=${encodeURIComponent(taSub)}&lang=ta_native`).catch(e => { });
+                fetchAndParse(`https://stream.moviestream.lat/api/subtitle/proxy?url=${encodeURIComponent(taSub)}&lang=ta_native`, 'ta');
             }
         }
 
@@ -1634,16 +1663,16 @@
                     let enProxyUrl = `https://stream.moviestream.lat/api/subtitle/proxy?url=${encodeURIComponent(enSub)}&lang=${enLangParam}`;
                     let siProxyUrl = `https://stream.moviestream.lat/api/subtitle/proxy?url=${encodeURIComponent(enSub)}&lang=si&from=en`;
 
-                    subBtnsContainer.innerHTML += `<button onclick="downloadSubtitleFile('${enProxyUrl}', '${MOVIE_DATA.title}_English.srt', this)" class="bg-[#1a1a1a] text-gray-300 border border-gray-600 px-3 py-1.5 rounded text-[10px] uppercase font-bold hover:bg-white hover:text-black transition">English</button>`;
-                    subBtnsContainer.innerHTML += `<button onclick="downloadSubtitleFile('${siProxyUrl}', '${MOVIE_DATA.title}_Sinhala.srt', this)" class="bg-[#1a1a1a] text-[#00d2ff] border border-[#00d2ff]/50 px-3 py-1.5 rounded text-[10px] uppercase font-bold hover:bg-[#00d2ff] hover:text-black transition">Sinhala</button>`;
+                    subBtnsContainer.innerHTML += `<button onclick="downloadSubtitleFile('${enProxyUrl}', '${MOVIE_DATA.title}_English.srt', this, 'en')" class="bg-[#1a1a1a] text-gray-300 border border-gray-600 px-3 py-1.5 rounded text-[10px] uppercase font-bold hover:bg-white hover:text-black transition">English</button>`;
+                    subBtnsContainer.innerHTML += `<button onclick="downloadSubtitleFile('${siProxyUrl}', '${MOVIE_DATA.title}_Sinhala.srt', this, 'si')" class="bg-[#1a1a1a] text-[#00d2ff] border border-[#00d2ff]/50 px-3 py-1.5 rounded text-[10px] uppercase font-bold hover:bg-[#00d2ff] hover:text-black transition">Sinhala</button>`;
                 }
                 if (taSub) {
                     let taProxyUrl = `https://stream.moviestream.lat/api/subtitle/proxy?url=${encodeURIComponent(taSub)}&lang=ta_native`;
-                    subBtnsContainer.innerHTML += `<button onclick="downloadSubtitleFile('${taProxyUrl}', '${MOVIE_DATA.title}_Tamil.srt', this)" class="bg-[#1a1a1a] text-gray-300 border border-gray-600 px-3 py-1.5 rounded text-[10px] uppercase font-bold hover:bg-white hover:text-black transition">Tamil</button>`;
+                    subBtnsContainer.innerHTML += `<button onclick="downloadSubtitleFile('${taProxyUrl}', '${MOVIE_DATA.title}_Tamil.srt', this, 'ta')" class="bg-[#1a1a1a] text-gray-300 border border-gray-600 px-3 py-1.5 rounded text-[10px] uppercase font-bold hover:bg-white hover:text-black transition">Tamil</button>`;
                 } else if (enSub) {
                     let taLangParam = isSourceTa ? 'ta_native' : 'ta';
                     let taProxyUrl = `https://stream.moviestream.lat/api/subtitle/proxy?url=${encodeURIComponent(enSub)}&lang=${taLangParam}&from=en`;
-                    subBtnsContainer.innerHTML += `<button onclick="downloadSubtitleFile('${taProxyUrl}', '${MOVIE_DATA.title}_Tamil.srt', this)" class="bg-[#1a1a1a] text-gray-300 border border-gray-600 px-3 py-1.5 rounded text-[10px] uppercase font-bold hover:bg-white hover:text-black transition">Tamil</button>`;
+                    subBtnsContainer.innerHTML += `<button onclick="downloadSubtitleFile('${taProxyUrl}', '${MOVIE_DATA.title}_Tamil.srt', this, 'ta')" class="bg-[#1a1a1a] text-gray-300 border border-gray-600 px-3 py-1.5 rounded text-[10px] uppercase font-bold hover:bg-white hover:text-black transition">Tamil</button>`;
                 }
             } else {
                 subBtnsContainer.innerHTML = '<span class="text-gray-500 text-[10px] font-bold uppercase">No Subtitles Found</span>';
