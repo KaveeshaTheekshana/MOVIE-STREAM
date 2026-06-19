@@ -1,0 +1,1804 @@
+<!DOCTYPE html>
+<html lang="si">
+
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title id="page_title">MovieStream Ultra</title>
+    <link rel="icon" type="image/svg+xml" href="title_icon.svg">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;900&family=Inter:wght@300;600;900&display=swap"
+        rel="stylesheet">
+
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Sinhala:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://vjs.zencdn.net/8.10.0/video-js.css" rel="stylesheet" />
+    <script src="https://vjs.zencdn.net/8.10.0/video.min.js"></script>
+
+    <style>
+        :root {
+            --neon-red: #E50914;
+            --neon-blue: #00d2ff;
+        }
+
+        * {
+            font-style: normal !important;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            background-color: #020202;
+            color: white;
+            font-family: 'Inter', 'Noto Sans Sinhala', sans-serif;
+            opacity: 0;
+            transition: opacity 1s;
+        }
+
+        body.loaded {
+            opacity: 1;
+        }
+
+        .hero-section {
+            position: relative;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            background-size: cover;
+            background-position: center;
+            transition: background 0.5s;
+        }
+
+        .hero-overlay {
+            background: radial-gradient(circle at 30% 50%, rgba(2, 2, 2, 0.6) 0%, rgba(2, 2, 2, 0.95) 80%), linear-gradient(to top, #020202 5%, transparent 40%);
+            position: absolute;
+            inset: 0;
+            backdrop-filter: blur(2px);
+        }
+
+        /* Responsive Poster */
+        .poster-img {
+            width: 320px;
+            border-radius: 20px;
+            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.9), 0 0 40px rgba(0, 210, 255, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            transition: 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .poster-img:hover {
+            transform: scale(1.05) rotateY(10deg);
+            box-shadow: 0 30px 70px rgba(0, 0, 0, 0.9), 0 0 60px rgba(0, 210, 255, 0.5);
+        }
+
+        @media (max-width: 768px) {
+            .poster-img {
+                width: 220px;
+            }
+        }
+
+        .btn-modern {
+            position: relative;
+            overflow: hidden;
+            transition: 0.4s;
+            backdrop-filter: blur(15px);
+            font-weight: 900;
+            cursor: pointer;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .btn-modern:hover {
+            transform: translateY(-4px) scale(1.02);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.5);
+            border-color: rgba(255, 255, 255, 0.4);
+        }
+
+        #video_display_area {
+            display: none;
+            background: #000;
+            padding: 20px 0;
+        }
+
+        .player-wrapper {
+            width: 100%;
+            max-width: 1000px;
+            aspect-ratio: 16/9;
+            margin: 0 auto;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 0 50px rgba(229, 9, 20, 0.3);
+            background: #000;
+        }
+
+        .video-js .vjs-control-bar {
+            background-color: rgba(0, 0, 0, 0.85);
+        }
+
+        .video-js .vjs-play-progress,
+        .video-js .vjs-slider-bar,
+        .video-js .vjs-volume-level {
+            background-color: var(--neon-red);
+        }
+
+        .video-js .vjs-big-play-button {
+            background-color: rgba(229, 9, 20, 0.8);
+            border: none;
+            border-radius: 50%;
+            width: 80px;
+            height: 80px;
+            line-height: 80px;
+            margin-top: -40px;
+            margin-left: -40px;
+        }
+
+        .video-js:hover .vjs-big-play-button {
+            background-color: var(--neon-red);
+        }
+
+        .video-js .vjs-text-track-cue>div {
+            background-color: transparent !important;
+            background: transparent !important;
+            text-shadow: 2px 2px 4px #000, -2px -2px 4px #000, 2px -2px 4px #000, -2px 2px 4px #000, 0px 4px 10px rgba(0, 0, 0, 0.8) !important;
+            font-family: 'Noto Sans Sinhala', 'Inter', sans-serif !important;
+            font-weight: bold !important;
+            font-size: 1.2em !important;
+        }
+
+        .custom-popup {
+            backdrop-filter: blur(25px);
+            background: rgba(0, 0, 0, 0.9);
+            display: none;
+            position: fixed;
+            inset: 0;
+            z-index: 9999;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        /* Smooth Mobile Popup */
+        .popup-box {
+            background: #0f0f0f;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 30px;
+            width: 90%;
+            max-width: 400px;
+            max-height: 85vh;
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
+            padding: 40px;
+            text-align: center;
+        }
+
+        @media (max-width: 768px) {
+            .popup-box {
+                padding: 30px 20px;
+                border-radius: 20px;
+            }
+        }
+
+        .popup-box::-webkit-scrollbar {
+            width: 4px;
+        }
+
+        .popup-box::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 4px;
+        }
+
+        .success-3d {
+            transform-style: preserve-3d;
+            animation: pop3D 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        @keyframes pop3D {
+            0% {
+                transform: scale(0.5) rotateY(30deg);
+                opacity: 0;
+            }
+
+            100% {
+                transform: scale(1) rotateY(0);
+                opacity: 1;
+            }
+        }
+
+        .floating {
+            animation: float 5s ease-in-out infinite;
+        }
+
+        @keyframes float {
+
+            0%,
+            100% {
+                transform: translateY(0);
+            }
+
+            50% {
+                transform: translateY(-15px);
+            }
+        }
+
+        .ss-card {
+            perspective: 1000px;
+        }
+
+        .ss-card img {
+            width: 100%;
+            border-radius: 12px;
+            border: 1px solid #222;
+            aspect-ratio: 16/9;
+            object-fit: cover;
+            transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.5s;
+            transform-style: preserve-3d;
+            cursor: pointer;
+        }
+
+        .ss-card:hover img {
+            transform: rotateY(10deg) rotateX(5deg) scale(1.05);
+            box-shadow: 0 20px 40px rgba(229, 9, 20, 0.3);
+            border-color: var(--neon-red);
+        }
+
+        .footer-blur {
+            background: rgba(5, 5, 5, 0.8);
+            backdrop-filter: blur(20px);
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .bug-report-btn {
+            background: linear-gradient(135deg, #ff0844 0%, #ffb199 100%);
+            color: white;
+            padding: 8px 18px;
+            border-radius: 50px;
+            font-size: 10px;
+            font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            box-shadow: 0 10px 20px rgba(255, 8, 68, 0.5), inset 0 -3px 0 rgba(0, 0, 0, 0.2);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            text-decoration: none;
+            animation: pulseBugBtn 2s infinite;
+            transition: 0.3s;
+            transform-style: preserve-3d;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            margin-top: 15px;
+        }
+
+        .bug-report-btn:hover {
+            transform: translateY(-3px) scale(1.05);
+            box-shadow: 0 15px 25px rgba(255, 8, 68, 0.6), inset 0 -3px 0 rgba(0, 0, 0, 0.2);
+        }
+
+        @keyframes pulseBugBtn {
+            0% {
+                transform: scale(1);
+                box-shadow: 0 0 0 0 rgba(255, 8, 68, 0.7);
+            }
+
+            70% {
+                transform: scale(1.05);
+                box-shadow: 0 0 0 10px rgba(255, 8, 68, 0);
+            }
+
+            100% {
+                transform: scale(1);
+                box-shadow: 0 0 0 0 rgba(255, 8, 68, 0);
+            }
+        }
+    </style>
+    <link rel="stylesheet" href="electric-border.css">
+    <link rel="stylesheet" href="border-glow.css">
+    <script src="https://pl29238324.effectivecpmnetwork.com/fe/a0/39/fea039617f028f9cf163140e6e6eb7eb.js"></script>
+
+
+</head>
+
+<body oncontextmenu="return false;">
+    <script src="https://pl29238420.effectivecpmnetwork.com/14/12/3a/14123a31ddf83a815e2f9c12daa42188.js"></script>
+
+
+    <!-- GLOBAL NETFLIX LOADER -->
+    <style>
+        #global_netflix_loader {
+            position: fixed;
+            inset: 0;
+            z-index: 999999;
+            background-color: #141414;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease;
+        }
+
+        #global_netflix_loader.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .nf-spinner {
+            width: 65px;
+            height: 65px;
+            border: 4px solid rgba(229, 9, 20, 0.2);
+            border-top-color: #e50914;
+            border-radius: 50%;
+            animation: nf-spin 1s linear infinite;
+        }
+
+        @keyframes nf-spin {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+    </style>
+    <link rel="stylesheet" href="electric-border.css">
+    <div id="global_netflix_loader">
+        <div class="nf-spinner"></div>
+    </div>
+    <script>
+        atOptions = {
+            'key': '2999bc2d942dff637df58423baf51c02',
+            'format': 'iframe',
+            'height': 60,
+            'width': 468,
+            'params': {}
+        };
+    </script>
+    <script src="https://www.highperformanceformat.com/2999bc2d942dff637df58423baf51c02/invoke.js"></script>
+
+    <script>
+        window.showGlobalLoader = function (url) {
+            const loader = document.getElementById('global_netflix_loader');
+            if (loader) {
+                loader.classList.add('active');
+                setTimeout(() => { window.location.href = url; }, 300);
+            } else {
+                window.location.href = url;
+            }
+        };
+
+        document.addEventListener("DOMContentLoaded", () => {
+            // Intercept all <a> tag clicks
+            document.body.addEventListener('click', function (e) {
+                const anchor = e.target.closest('a');
+                if (anchor && anchor.href) {
+                    const target = anchor.getAttribute('target');
+                    const href = anchor.getAttribute('href');
+                    if (target === '_blank' || href.startsWith('javascript:') || href.startsWith('#')) return;
+
+                    // It's a valid internal/same-tab navigation
+                    e.preventDefault();
+                    showGlobalLoader(href);
+                }
+            });
+
+            window.addEventListener('pageshow', (e) => {
+                if (e.persisted) {
+                    document.getElementById('global_netflix_loader').classList.remove('active');
+                }
+            });
+        });
+    </script>
+    <!-- END GLOBAL LOADER -->
+
+
+
+
+
+
+
+    <nav
+        class="fixed top-0 w-full z-[100] px-4 md:px-6 py-4 flex flex-col md:flex-row justify-between items-center bg-gradient-to-b from-black/90 to-transparent backdrop-blur-sm gap-2 md:gap-0">
+        <div class="flex items-center justify-between w-full md:w-auto">
+            <div class="flex items-center gap-3 md:gap-4">
+                <button onclick="window.history.back()"
+                    class="w-8 h-8 md:w-10 md:h-10 flex items-center justify-center bg-white/5 border border-white/10 rounded-full hover:bg-red-600 transition-all text-xs md:text-base"><i
+                        class="fa-solid fa-arrow-left"></i></button>
+                <h1 class="text-xl md:text-2xl font-black uppercase font-[Orbitron]">MOVIE<span
+                        class="text-red-600">STREAM</span></h1>
+            </div>
+            <div id="top_user_name"
+                class="hidden md:block text-gray-400 text-[9px] md:text-[10px] font-black uppercase tracking-[0.2em] pl-4 md:border-l border-white/10">
+            </div>
+        </div>
+        <div class="w-full md:hidden flex justify-center mt-2">
+            <button
+                onclick="document.getElementById('search_spotlight').style.display='flex'; setTimeout(()=>document.getElementById('search_spotlight').style.opacity='1', 10);"
+                class="w-full bg-white/10 border border-white/20 rounded-full py-2 text-[10px] text-gray-400 focus:outline-none"><i
+                    class="fa-solid fa-search mr-2 text-[#00d2ff]"></i> Search Movies...</button>
+        </div>
+    </nav>
+
+    <div id="hero" class="hero-section pt-[140px] md:pt-0 pb-10 md:pb-0">
+        <div class="hero-overlay"></div>
+        <div
+            class="relative z-10 w-full max-w-7xl mx-auto px-4 md:px-6 flex flex-col lg:flex-row gap-8 lg:gap-12 items-start justify-center pt-8 md:pt-20 lg:pt-32">
+
+            <div class="w-full lg:w-[300px] shrink-0 flex justify-center lg:justify-start">
+                <div class="trending-poster-wrapper floating relative inline-block">
+                    <img id="movie_poster" src=""
+                        class="poster-img trending-poster relative z-10 w-[200px] sm:w-[250px] lg:w-full rounded-xl shadow-2xl border border-white/10"
+                        alt="Poster">
+                </div>
+            </div>
+
+            <div class="flex-1 w-full text-center lg:text-left mt-4 lg:mt-0">
+                <div class="flex flex-col lg:flex-row justify-between items-center lg:items-start gap-4 mb-2">
+                    <h1 id="movie_title"
+                        class="text-4xl sm:text-5xl md:text-6xl font-black uppercase leading-[1.1] tracking-tight text-white drop-shadow-md max-w-3xl">
+                    </h1>
+
+                    <div id="imdb_rating_area" class="hidden flex-col items-center lg:items-end shrink-0 mt-2 lg:mt-0">
+                        <div class="flex items-center gap-2 text-yellow-500 font-black text-3xl md:text-4xl">
+                            <i class="fa-solid fa-star"></i> <span id="imdb_val"></span><span
+                                class="text-gray-400 text-sm md:text-base font-medium self-end mb-1">/10</span>
+                        </div>
+                        <div id="imdb_count"
+                            class="text-gray-500 text-[11px] md:text-xs mt-1 font-medium tracking-wide"></div>
+                    </div>
+                </div>
+
+                <div id="movie_meta_tags"
+                    class="flex flex-wrap items-center justify-center lg:justify-start gap-3 md:gap-4 text-[11px] md:text-sm text-gray-400 mb-6 font-medium mt-2">
+                    <span id="movie_year" class="text-white"></span>
+                    <span id="movie_age_rating"
+                        class="border border-gray-500 text-gray-300 px-1.5 py-0.5 text-[10px] hidden rounded">R</span>
+                    <span id="movie_duration" class="hidden"></span>
+                    <span id="movie_country" class="hidden"></span>
+                    <span id="movie_genre" class="hidden"></span>
+                </div>
+
+                <div id="tv_info" class="hidden mb-4 text-[#00d2ff] font-black tracking-widest uppercase text-xs"></div>
+
+                <p id="movie_desc"
+                    class="text-gray-300 text-xs md:text-sm leading-relaxed mb-8 border-t border-white/10 pt-6 max-w-4xl mx-auto lg:mx-0 opacity-90">
+                </p>
+
+                <div id="download_anchor"
+                    class="flex flex-col sm:flex-row justify-center lg:justify-start gap-3 md:gap-4 mt-6">
+                    <!-- Online Stream -->
+                    <button onclick="warnOnline()"
+                        class="btn-modern bg-white text-black px-8 md:px-10 py-3 md:py-4 rounded-xl text-[10px] md:text-xs uppercase font-black tracking-widest">Play
+                        Online</button>
+                    <!-- WhatsApp Download -->
+                    <button onclick="openWhatsAppStep1()"
+                        class="btn-modern bg-[#25D366] text-white px-8 md:px-10 py-3 md:py-4 rounded-xl text-[10px] md:text-xs uppercase font-black tracking-widest"><i
+                            class="fa-brands fa-whatsapp mr-2 text-sm md:text-lg"></i> Get via WhatsApp</button>
+                    <!-- Direct Browser Download -->
+                    <button onclick="directDownloadMovie()"
+                        class="btn-modern bg-[#00d2ff] text-black px-8 md:px-10 py-3 md:py-4 rounded-xl text-[10px] md:text-xs uppercase font-black tracking-widest"><i
+                            class="fa-solid fa-download mr-2 text-sm md:text-lg"></i> Download</button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <div id="search_spotlight"
+        class="fixed inset-0 z-[2000] hidden flex-col items-center pt-20 bg-black/95 backdrop-blur-xl opacity-0 transition-opacity duration-300"
+        style="transition: opacity 0.3s ease;">
+        <div class="absolute top-6 right-6 text-white text-3xl cursor-pointer hover:text-red-500"
+            onclick="closeSearchSpotlight()"><i class="fa fa-times"></i></div>
+
+        <div class="w-full max-w-2xl px-6 mb-8">
+            <div class="relative">
+                <i class="fa fa-search absolute left-4 top-1/2 -translate-y-1/2 text-[#00d2ff]"></i>
+                <input type="text" id="main_search" oninput="liveSearch(this.value)"
+                    placeholder="Type to search movies..."
+                    class="w-full bg-white/10 border border-white/20 rounded-full py-4 pl-12 pr-4 text-sm md:text-base text-white outline-none focus:border-[#00d2ff] transition-all">
+            </div>
+        </div>
+
+        <div id="spotlight_content"
+            class="flex gap-4 md:gap-8 flex-wrap justify-center w-full max-w-6xl px-4 pb-10 overflow-y-auto">
+        </div>
+    </div>
+
+    <section id="video_display_area">
+        <div class="max-w-5xl mx-auto px-4 text-right">
+            <button onclick="closeVideo()" class="text-white text-3xl md:text-4xl mb-4 hover:text-red-600 transition"><i
+                    class="fa-solid fa-xmark"></i></button>
+            <div class="w-full relative inline-block">
+                <div class="player-wrapper">
+
+
+
+                    <video id="player" class="video-js vjs-big-play-centered" controls preload="auto"
+                        playsinline></video>
+                </div>
+
+
+
+            </div>
+
+            <div id="subtitle_download_ui"
+                class="hidden mt-4 bg-black/80 backdrop-blur-md p-4 rounded-xl border border-white/10 text-left mb-4 shadow-[0_0_20px_rgba(229,9,20,0.1)]">
+                <h4 class="text-white font-black uppercase text-xs mb-3 tracking-widest flex items-center gap-2"><i
+                        class="fa-solid fa-download text-lg text-red-500"></i> Download Subtitles</h4>
+                <div class="flex gap-2 overflow-x-auto pb-2 custom-scrollbar" id="subtitle_download_buttons">
+                    <!-- Buttons injected via JS -->
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="relative z-10 px-4 md:px-6 pb-20 pt-10">
+        <div class="max-w-7xl mx-auto grid grid-cols-2 md:grid-cols-3 gap-3 md:gap-4">
+            <div class="bg-white/5 backdrop-blur-xl p-4 md:p-6 rounded-2xl border border-white/5 text-center">
+                <p class="text-gray-500 text-[9px] md:text-[10px] font-black uppercase mb-1 md:mb-2">Category</p>
+                <p id="m_cat" class="text-red-500 font-bold text-[10px] md:text-sm uppercase"></p>
+            </div>
+            <div class="bg-white/5 backdrop-blur-xl p-4 md:p-6 rounded-2xl border border-white/5 text-center">
+                <p class="text-gray-500 text-[9px] md:text-[10px] font-black uppercase mb-1 md:mb-2">Quality</p>
+                <p id="m_qual" class="text-green-500 font-bold text-[10px] md:text-sm uppercase"></p>
+            </div>
+            <div
+                class="bg-white/5 backdrop-blur-xl p-4 md:p-6 rounded-2xl border border-white/5 text-center col-span-2 md:col-span-1">
+                <p class="text-gray-500 text-[9px] md:text-[10px] font-black uppercase mb-1 md:mb-2">Size</p>
+                <p id="movie_size_bottom" class="text-blue-400 font-bold text-[10px] md:text-sm uppercase"></p>
+            </div>
+        </div>
+    </section>
+
+    <section id="episodes_section"
+        class="bg-[#0a0a0a] py-12 md:py-16 px-4 md:px-6 hidden border-t border-b border-white/5">
+        <div class="max-w-7xl mx-auto">
+            <div
+                class="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 border-l-4 border-blue-600 pl-4">
+                <h3 class="text-white font-black uppercase text-xs md:text-sm tracking-widest">Select Season & Episode
+                </h3>
+
+                <div class="flex gap-3 md:gap-4 w-full md:w-auto">
+                    <div class="flex-1 md:w-40">
+                        <label
+                            class="text-[8px] md:text-[9px] text-gray-500 font-bold uppercase mb-1 block">Season</label>
+                        <select id="season_selector" onchange="renderEpisodes(this.value)"
+                            class="w-full bg-[#111] text-white text-[10px] md:text-xs font-bold px-3 md:px-4 py-2 md:py-3 rounded-lg outline-none border border-white/20 focus:border-[#00d2ff] transition cursor-pointer">
+                        </select>
+                    </div>
+                    <div class="flex-1 md:w-40">
+                        <label
+                            class="text-[8px] md:text-[9px] text-gray-500 font-bold uppercase mb-1 block">Episode</label>
+                        <select id="episode_selector" onchange="changeEpisode(this.value)"
+                            class="w-full bg-[#111] text-white text-[10px] md:text-xs font-bold px-3 md:px-4 py-2 md:py-3 rounded-lg outline-none border border-white/20 focus:border-[#00d2ff] transition cursor-pointer">
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="screenshots_section" class="bg-black py-16 md:py-20 px-4 md:px-6 hidden">
+        <div class="max-w-7xl mx-auto">
+            <h3
+                class="text-white font-black uppercase text-xs md:text-sm mb-8 md:mb-12 border-l-4 border-red-600 pl-4 tracking-widest">
+                Visual Preview</h3>
+            <div id="screen_list" class="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8"></div>
+        </div>
+    </section>
+
+
+    <!-- Native Banner Ad -->
+    <div class="ad-container"
+        style="width:100%; display:flex; justify-content:center; margin: 25px 0; z-index: 10; min-height: 100px;">
+
+
+    </div>
+
+    <div id="footer_border_glow" style="margin: 20px;">
+        <footer class="footer-blur pt-16 md:pt-20 pb-8 md:pb-10 px-6">
+            <div
+                class="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-10 md:gap-16 items-center text-center md:text-left">
+                <div>
+                    <h1 class="text-xl md:text-2xl font-black uppercase font-[Orbitron]">MOVIE<span
+                            class="text-red-600">STREAM</span></h1>
+                    <p class="text-gray-500 text-[9px] md:text-[10px] uppercase mt-2 md:mt-4 tracking-widest">Sri
+                        Lanka's
+                        Premium Cloud Entertainment System.</p>
+                </div>
+
+                <div class="flex flex-col items-center justify-center">
+                    <div class="flex justify-center gap-4 md:gap-6">
+                        <a href="#"
+                            class="w-10 h-10 md:w-12 md:h-12 flex items-center justify-center rounded-full bg-white/5 border border-white/10 hover:border-red-600 transition-all text-lg md:text-xl"><i
+                                class="fa-brands fa-facebook-f"></i></a>
+                        <a href="https://whatsapp.com/channel/0029VbCL1LPLo4hizMmec92S" target="_blank"
+                            class="w-10 h-10 md:w-12 md:h-12 flex items-center justify-center rounded-full bg-white/5 border border-white/10 hover:border-green-500 transition-all text-lg md:text-xl"><i
+                                class="fa-brands fa-whatsapp"></i></a>
+                        <a href="#"
+                            class="w-10 h-10 md:w-12 md:h-12 flex items-center justify-center rounded-full bg-white/5 border border-white/10 hover:border-blue-400 transition-all text-lg md:text-xl"><i
+                                class="fa-brands fa-telegram"></i></a>
+                    </div>
+                    <a href="https://wa.me/94710388481?text=Hi%20Admin,%20I%20found%20a%20bug%20on%20MovieStream:"
+                        target="_blank" class="bug-report-btn">
+                        <i class="fa-solid fa-bug animate-bounce"></i> Report Bug
+                    </a>
+                </div>
+
+                <div
+                    class="md:text-right text-[8px] md:text-[10px] font-black text-gray-500 uppercase tracking-widest leading-loose">
+                    Â© 2026 MovieStream Platform<br>Developer By Kaveesha Theekshana
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <div id="popup_warning" class="custom-popup">
+        <div class="popup-box border-red-600/50 animate__animated animate__zoomIn">
+            <i class="fa-solid fa-triangle-exclamation text-red-600 text-4xl md:text-5xl mb-4 md:mb-6"></i>
+            <h3 class="text-white font-black text-lg md:text-xl mb-4 uppercase">Error!</h3>
+            <p id="warning_msg" class="text-gray-300 mb-6 md:mb-8 text-xs md:text-sm leading-relaxed"></p>
+            <button onclick="closeAllPopups(); openWhatsAppStep1(true);"
+                class="w-full bg-red-600 text-white py-3 md:py-4 rounded-xl font-black uppercase text-[10px] md:text-xs transition hover:bg-red-700 shadow-[0_0_15px_rgba(229,9,20,0.4)]">Get
+                Movie via WhatsApp</button>
+        </div>
+    </div>
+
+    <div id="popup_bot_error" class="custom-popup">
+        <div class="popup-box border-red-500/50 animate__animated animate__zoomIn">
+            <div class="text-red-500 text-5xl md:text-6xl mb-4"><i class="fa-solid fa-server"></i></div>
+            <h3 class="text-white font-black text-lg md:text-xl mb-2 uppercase">System Down!</h3>
+            <p class="text-gray-300 text-[10px] md:text-xs mb-6">Technical Error: à¶…à¶´à¶œà·š à¶´à¶¯à·Šà¶°à¶­à·’à¶ºà·š
+                à¶¯à·à·‚à¶ºà¶šà·Š à·ƒà·’à¶¯à·” à·€à·“ à¶‡à¶­
+                à¶šà¶»à·”à¶«à·à¶šà¶» Developed à·ƒà¶¸à·Šà¶¶à¶±à·Šà¶° à¶šà¶» à¶œà¶±à·Šà¶±.</p>
+            <div class="flex flex-col gap-2">
+                <button onclick="closeAllPopups()"
+                    class="w-full bg-red-600 py-3 md:py-4 rounded-xl font-black uppercase text-white shadow-[0_0_15px_rgba(229,9,20,0.4)] text-[10px] md:text-xs">à¶­à·šà¶»à·”à¶«à·</button>
+            </div>
+        </div>
+    </div>
+    <div id="popup_quality_select" class="custom-popup bg-black/80 backdrop-blur-xl">
+        <div
+            class="popup-box bg-[#0a0a0a]/90 border border-white/10 shadow-[0_0_50px_rgba(0,210,255,0.15)] animate__animated animate__zoomIn max-w-sm rounded-3xl overflow-hidden relative">
+            <div
+                class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-[#00d2ff] to-transparent">
+            </div>
+            <div
+                class="absolute -top-10 -right-10 w-32 h-32 bg-[#00d2ff] rounded-full blur-[80px] opacity-20 pointer-events-none">
+            </div>
+            <div
+                class="absolute -bottom-10 -left-10 w-32 h-32 bg-[#ff003c] rounded-full blur-[80px] opacity-10 pointer-events-none">
+            </div>
+
+            <button onclick="closeAllPopups()"
+                class="absolute top-4 right-4 w-8 h-8 flex items-center justify-center rounded-full bg-white/5 hover:bg-white/10 text-gray-400 hover:text-white transition-colors z-10"><i
+                    class="fa-solid fa-xmark"></i></button>
+
+            <div class="text-center pt-2 pb-6 border-b border-white/5 relative z-10">
+                <div
+                    class="w-16 h-16 mx-auto mb-3 rounded-full bg-gradient-to-br from-[#00d2ff]/20 to-transparent border border-[#00d2ff]/30 flex items-center justify-center shadow-[0_0_15px_rgba(0,210,255,0.2)]">
+                    <i class="fa-solid fa-cloud-arrow-down text-2xl text-[#00d2ff]"></i>
+                </div>
+                <h3 class="text-white font-black text-xl uppercase tracking-widest">Select Quality</h3>
+                <p class="text-[10px] text-gray-400 mt-1 uppercase font-bold tracking-widest">Direct File Download
+                </p>
+            </div>
+
+            <div class="flex flex-col gap-3 w-full my-6 relative z-10 px-2">
+                <button onclick="triggerDownload('480p')"
+                    class="w-full bg-white/5 border border-white/10 text-gray-300 py-3.5 rounded-2xl font-bold uppercase text-[11px] transition-all hover:bg-white/10 hover:border-white/30 hover:-translate-y-1 flex items-center justify-between px-5 group">
+                    <span class="flex items-center gap-3"><i
+                            class="fa-solid fa-mobile-screen-button text-gray-500 group-hover:text-white transition-colors"></i>
+                        480p Mobile SD</span>
+                    <i class="fa-solid fa-download text-gray-600 group-hover:text-[#00d2ff] transition-colors"></i>
+                </button>
+
+                <button onclick="triggerDownload('720p')"
+                    class="w-full bg-gradient-to-r from-[#00d2ff]/10 to-transparent border border-[#00d2ff]/30 text-white py-3.5 rounded-2xl font-bold uppercase text-[11px] transition-all hover:border-[#00d2ff]/70 hover:-translate-y-1 flex items-center justify-between px-5 shadow-[0_5px_15px_rgba(0,210,255,0.05)] group">
+                    <span class="flex items-center gap-3"><i class="fa-solid fa-tv text-[#00d2ff]"></i> 720p
+                        Standard HD</span>
+                    <i class="fa-solid fa-download text-[#00d2ff]/50 group-hover:text-[#00d2ff] transition-colors"></i>
+                </button>
+
+                <button onclick="triggerDownload('1080p')"
+                    class="w-full bg-gradient-to-r from-[#00d2ff] to-[#00a3cc] border border-[#00d2ff] text-black py-4 rounded-2xl font-black uppercase text-[11px] transition-all hover:shadow-[0_10px_25px_rgba(0,210,255,0.4)] hover:-translate-y-1 flex items-center justify-between px-5">
+                    <span class="flex items-center gap-3"><i class="fa-solid fa-desktop text-black/70"></i> 1080p
+                        Full HD</span>
+                    <div class="bg-black/20 w-7 h-7 rounded-full flex items-center justify-center"><i
+                            class="fa-solid fa-download text-sm"></i></div>
+                </button>
+            </div>
+
+            <div class="pt-5 border-t border-white/5 relative z-10 text-center">
+                <h3 class="text-gray-500 font-bold text-[9px] mb-3 uppercase tracking-[0.2em]"><i
+                        class="fa-solid fa-closed-captioning text-gray-600 mr-1"></i> Optional Subtitles</h3>
+                <div id="popup_subtitle_downloads" class="flex flex-wrap justify-center gap-2 w-full pb-2">
+                    <!-- Subtitles injected here -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="popup_online_warn" class="custom-popup">
+        <div class="popup-box border-[#00d2ff]/30 animate__animated animate__zoomIn max-w-sm">
+            <i
+                class="fa-solid fa-circle-exclamation text-[#00d2ff] text-5xl mb-4 drop-shadow-[0_0_15px_rgba(0,210,255,0.2)]"></i>
+            <h3 class="text-white font-black text-lg md:text-xl mb-4 uppercase">Data Warning</h3>
+            <p class="text-gray-300 mb-6 md:mb-8 text-xs md:text-sm leading-relaxed">මෙය නැරඹීමට Normal Data වැය වේ.
+                ඔබ සතුව WhatsApp Package පමණක් තිබේ නම් කරුණාකර WhatsApp හරහා ලබා ගන්න.</p>
+            <div class="flex flex-col gap-3 w-full">
+                <button onclick="playNowDirectly()"
+                    class="w-full bg-white text-black py-3.5 rounded-xl font-black uppercase text-[10px] md:text-xs hover:bg-gray-200 transition">ඔව්,
+                    දිගටම යන්න</button>
+                <button onclick="openWhatsAppStep1()"
+                    class="w-full bg-[#25D366] text-white py-3.5 rounded-xl font-black uppercase text-[10px] md:text-xs hover:bg-[#20ba5a] transition flex items-center justify-center gap-2"><i
+                        class="fa-brands fa-whatsapp text-sm md:text-base"></i> WhatsApp එකට ගන්න</button>
+                <button onclick="closeAllPopups()"
+                    class="mt-4 text-gray-500 hover:text-white text-xs uppercase font-bold tracking-widest transition">අවලංගු
+                    කරන්න</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="popup_step1" class="custom-popup">
+        <div class="popup-box border-white/10 animate__animated animate__fadeInUp">
+            <h3 class="text-white font-black text-lg md:text-xl mb-4 md:mb-6 uppercase text-center">Step 1: Number
+            </h3>
+            <input type="tel" id="user_num" placeholder="947XXXXXXXX"
+                class="w-full bg-black border border-white/10 p-3 md:p-4 rounded-xl text-white text-center text-lg md:text-xl mb-4 outline-none focus:border-green-500">
+            <div class="flex gap-2">
+                <button onclick="closeAllPopups()"
+                    class="w-1/3 bg-gray-800 text-white py-3 md:py-4 rounded-xl font-bold uppercase text-[9px] md:text-[10px]">Back</button>
+                <button onclick="validateStep1()"
+                    class="w-2/3 bg-[#25D366] py-3 md:py-4 rounded-xl font-black uppercase text-white text-[10px] md:text-xs">Next</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="popup_step2" class="custom-popup">
+        <div class="popup-box border-white/10 animate__animated animate__fadeInRight">
+            <h3 class="text-white font-black text-lg md:text-xl mb-4 md:mb-6 uppercase text-center">Step 2: Name
+            </h3>
+            <input type="text" id="user_name" placeholder="English වලින් පමණි"
+                class="w-full bg-black border border-white/10 p-3 md:p-4 rounded-xl text-white text-center text-lg md:text-xl mb-4 md:mb-6 outline-none focus:border-green-500">
+            <div class="flex gap-2">
+                <button onclick="openWhatsAppStep1()"
+                    class="w-1/3 bg-gray-800 text-white py-3 md:py-4 rounded-xl font-bold uppercase text-[9px] md:text-[10px]">Back</button>
+                <button onclick="validateStep2()"
+                    class="w-2/3 bg-[#25D366] py-3 md:py-4 rounded-xl font-black uppercase text-white text-[10px] md:text-xs">Finish</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="popup_step3" class="custom-popup">
+        <div class="popup-box border-green-500/30 animate__animated animate__zoomIn">
+            <div class="text-green-500 text-5xl md:text-6xl mb-4"><i class="fa-brands fa-whatsapp"></i></div>
+            <h3 class="text-white font-black text-lg md:text-xl mb-2 uppercase" id="final_greet"></h3>
+            <p class="text-gray-300 text-[10px] md:text-xs mb-6 text-left md:text-center leading-relaxed">ඔබගේ
+                ඉල්ලීම අපගේ පද්ධතිය වෙත යොමු කිරීමට සූදානම්.<br>අප විසින් Message එකක් එවන නම්බර් එක ඔබේ දුරකථනයේ
+                <span class="text-white font-bold">MovieStream</span> ලෙස Save කර ගන්න එමගින් Movies ලබා ගැනීමේදී
+                සිදු විය හැකි බාධාවන් මග හරවා ගත හැක.දැනටමත් Save කර ඇත්නම් මෙම පණිවිඩය නොසලකා හැර ඉදිරියට යන්න.
+            </p>
+            <div class="flex flex-col gap-2 md:gap-3">
+                <div id="whatsapp_subtitle_selector"
+                    class="hidden mb-6 bg-black/40 p-4 rounded-xl border border-white/10 text-left">
+                    <h4
+                        class="text-white text-[10px] font-black uppercase mb-3 text-center border-b border-white/10 pb-2">
+                        <i class="fa-solid fa-closed-captioning text-red-500 mr-2"></i>Select Soft Subtitle
+                    </h4>
+                    <div id="wa_subtitle_options"
+                        class="flex flex-col gap-2 max-h-40 overflow-y-auto custom-scrollbar pr-2">
+                    </div>
+                </div>
+                <button onclick="sendToVPSBot()"
+                    class="w-full bg-[#25D366] py-3 md:py-4 rounded-xl font-black uppercase text-[10px] md:text-xs text-white shadow-[0_0_15px_rgba(37,211,102,0.4)] transition hover:scale-[1.02]">Confirm
+                    & Send Movie</button>
+                <button onclick="showCancelWarning()"
+                    class="w-full bg-red-600 py-3 md:py-4 rounded-xl font-black uppercase text-[10px] md:text-xs text-white shadow-[0_0_15px_rgba(229,9,20,0.4)] transition hover:scale-[1.02]">Movie
+                    එක එපා</button>
+                <button onclick="openWhatsAppStep2()"
+                    class="w-full bg-gray-800 py-2 md:py-2.5 rounded-xl font-bold uppercase text-white text-[9px] md:text-[10px] tracking-widest opacity-80 hover:opacity-100 transition">Back</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="popup_cancel_warn" class="custom-popup text-center">
+        <div class="popup-box border-red-500/50 success-3d">
+            <div class="text-red-500 text-5xl md:text-6xl mb-4"><i class="fa-solid fa-face-frown"></i></div>
+            <h3 class="text-white font-black text-xl md:text-2xl mb-2 uppercase">අවලංගුයි!</h3>
+            <p class="text-gray-300 text-xs md:text-sm mb-6 leading-relaxed font-bold">ඔබගේ ඉල්ලීම සාර්ථකව අවලංගු
+                කරන ලදී.</p>
+            <button onclick="closeCancelWarning()"
+                class="w-full bg-red-600 text-white py-3 md:py-4 rounded-xl font-black uppercase text-[10px] md:text-xs shadow-[0_0_15px_rgba(229,9,20,0.4)] transition hover:scale-[1.02]">OK</button>
+        </div>
+    </div>
+
+    <div id="popup_congrats" class="custom-popup text-center">
+        <div class="popup-box border-green-500/50 success-3d">
+            <div class="text-green-500 text-5xl md:text-6xl mb-4"><i class="fa-solid fa-circle-check"></i></div>
+            <h3 class="text-white font-black text-xl md:text-2xl mb-2 uppercase">සාර්ථකයි!</h3>
+            <p id="congrats_msg" class="text-gray-300 text-xs md:text-sm mb-6 leading-relaxed font-bold"></p>
+            <button onclick="closeAllPopups()"
+                class="w-full bg-white text-black py-3 md:py-4 rounded-xl font-black uppercase text-[10px] md:text-xs shadow-[0_0_15px_rgba(255,255,255,0.4)] transition hover:scale-[1.02]">OK</button>
+        </div>
+    </div>
+
+    <script>
+        const DB_API_URL = "https://panel.moviestream.lat/api/movies";
+        const API_BASE_URL = "https://api.moviestream.lat";
+        let MOVIE_DATA = {};
+        window.allMoviesData = [];
+        let player = null;
+
+        window.downloadSubtitleFile = async function (url, filename, btnElement) {
+            if (btnElement) {
+                btnElement.dataset.originalHtml = btnElement.innerHTML;
+                btnElement.innerHTML = `<i class="fa-solid fa-circle-notch fa-spin"></i> Wait...`;
+                btnElement.disabled = true;
+                btnElement.classList.add('opacity-70', 'cursor-not-allowed');
+            }
+            try {
+                const response = await fetch(url);
+                let text = await response.text();
+
+                // Convert VTT to SRT format
+                text = text.replace(/^WEBVTT.*\n?\n?/m, ''); // Remove WEBVTT header
+                text = text.replace(/(\d{2}:\d{2}:\d{2})\.(\d{3})/g, '$1,$2'); // Replace . with , in timestamps
+
+                const blob = new Blob([text], { type: 'text/srt' });
+                const objUrl = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = objUrl;
+                a.download = filename;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(objUrl);
+
+                if (btnElement) {
+                    btnElement.innerHTML = `<i class="fa-solid fa-check"></i> Done`;
+                    btnElement.classList.replace('text-gray-300', 'text-green-400');
+                    btnElement.classList.replace('text-[#00d2ff]', 'text-green-400');
+                    btnElement.classList.add('border-green-400');
+                    setTimeout(() => {
+                        btnElement.innerHTML = btnElement.dataset.originalHtml;
+                        btnElement.classList.remove('border-green-400', 'text-green-400');
+                        btnElement.classList.add(btnElement.dataset.originalHtml.includes('Sinhala') ? 'text-[#00d2ff]' : 'text-gray-300');
+                        btnElement.disabled = false;
+                        btnElement.classList.remove('opacity-70', 'cursor-not-allowed');
+                    }, 3000);
+                }
+            } catch (e) {
+                console.error('Subtitle download failed', e);
+                if (btnElement) {
+                    btnElement.innerHTML = `<i class="fa-solid fa-triangle-exclamation"></i> Error`;
+                    btnElement.classList.add('text-red-500', 'border-red-500');
+                    setTimeout(() => {
+                        btnElement.innerHTML = btnElement.dataset.originalHtml;
+                        btnElement.classList.remove('text-red-500', 'border-red-500');
+                        btnElement.disabled = false;
+                        btnElement.classList.remove('opacity-70', 'cursor-not-allowed');
+                    }, 3000);
+                }
+            }
+        };
+
+        window.onload = async () => {
+            try {
+                const urlParams = new URLSearchParams(window.location.search);
+                const movieId = urlParams.get('id') || urlParams.get('subjectId');
+                const reqS = parseInt(urlParams.get('s')) || 1;
+                const reqE = parseInt(urlParams.get('e')) || 1;
+                const scrapedVideoUrl = urlParams.get('videoUrl');
+
+                if (!movieId) {
+                    showGlobalLoader('index.html');
+                    return;
+                }
+
+                // Track page view
+                try {
+                    fetch(`${API_BASE_URL}/track/view/${movieId}`, { method: 'POST' }).catch(e => console.error('Track Error:', e));
+                } catch (e) { }
+
+
+                const savedNum = localStorage.getItem('ms_user_num');
+                const savedName = localStorage.getItem('ms_user_name');
+                if (savedNum) document.getElementById('user_num').value = savedNum;
+                if (savedName) {
+                    document.getElementById('user_name').value = savedName;
+                    document.getElementById('top_user_name').innerText = `Hey, ${savedName}`;
+                    if (window.innerWidth > 768) {
+                        document.getElementById('top_user_name').classList.remove('hidden');
+                    }
+                }
+
+                // First, check if we have a proper detailPath passed via URL
+                let foundApiMovie = null;
+                const detailPathParam = urlParams.get('path');
+
+                if (detailPathParam) {
+                    try {
+                        const detailRes = await fetch(`https://stream.moviestream.lat/api/detail2/${detailPathParam}`);
+                        if (detailRes.ok) {
+                            const detailJson = await detailRes.json();
+                            if (detailJson.data && detailJson.data.subject) {
+                                foundApiMovie = detailJson.data.subject;
+                            }
+                        }
+                    } catch (e) {
+                        console.log("detail2 proxy fetch failed", e);
+                    }
+                }
+
+                // If path is missing or failed, attempt to fetch from details/:id proxy (which returns recommendations as fallback)
+                if (!foundApiMovie) {
+                    try {
+                        const apiResponse = await fetch(`https://stream.moviestream.lat/api/details/${movieId}`);
+                        if (apiResponse.ok) {
+                            const apiJson = await apiResponse.json();
+                            if (apiJson && apiJson.data && apiJson.data.items) {
+                                foundApiMovie = apiJson.data.items.find(m => m.subjectId === movieId) || apiJson.data.items[0];
+                            }
+                        }
+                    } catch (err) {
+                        console.log("Proxy API fetch failed, falling back to local DB if available.", err);
+                    }
+                }
+
+                // Fallback to local DB if API fails
+                if (!foundApiMovie) {
+                    try {
+                        const res = await fetch(`${DB_API_URL}?v=${new Date().getTime()}`);
+                        window.allMoviesData = await res.json();
+                        MOVIE_DATA = window.allMoviesData.find(m => m._id === movieId);
+                    } catch (e) {
+                        console.log("Local DB fetch failed");
+                    }
+                } else {
+                    let coverUrl = foundApiMovie.cover?.url || foundApiMovie.cover;
+                    if (typeof coverUrl === 'string' && coverUrl.includes('url=')) {
+                        const match = coverUrl.match(/url=([^;]+)/);
+                        if (match) coverUrl = match[1];
+                    }
+
+                    // Format Duration
+                    let durationStr = "";
+                    if (foundApiMovie.duration) {
+                        let d = foundApiMovie.duration;
+                        let h = Math.floor(d / 3600);
+                        let m = Math.floor((d % 3600) / 60);
+                        if (h > 0) durationStr += h + " h ";
+                        durationStr += m + " m";
+                    }
+
+                    // Format Genres
+                    let genresStr = foundApiMovie.genre ? foundApiMovie.genre.replace(/,/g, '  ') : "";
+
+                    MOVIE_DATA = {
+                        _id: foundApiMovie.subjectId || foundApiMovie.id || movieId,
+                        detailPath: foundApiMovie.detailPath || detailPathParam || foundApiMovie.subjectId || foundApiMovie.id || movieId,
+                        title: foundApiMovie.title,
+                        category: foundApiMovie.genre ? foundApiMovie.genre.split(',')[0] : "Movie",
+                        quality: "4K Ultra",
+                        fileSize: "Unknown",
+                        description: foundApiMovie.description || (window.allMoviesData ? window.allMoviesData.find(m => m._id === movieId)?.description : null) || "මෙම සිනමා නිර්මාණය දැන් ඉතා උසස් ගුණාත්මක භාවයෙන් යුතුව ලබා ගත හැක.",
+                        imageUrl: coverUrl,
+                        bgImage: coverUrl,
+                        downloadLink: scrapedVideoUrl || "",
+                        subtitleUrl: "",
+                        year: foundApiMovie.releaseDate ? foundApiMovie.releaseDate.split('-')[0] : "2026",
+                        imdbRating: foundApiMovie.imdbRatingValue,
+                        imdbCount: foundApiMovie.imdbRatingCount || "",
+                        country: foundApiMovie.countryName || "",
+                        duration: durationStr,
+                        genres: genresStr
+                    };
+
+                    // Fetch full description using detail2 proxy
+                    try {
+                        const detailRes = await fetch(`https://stream.moviestream.lat/api/detail2/${foundApiMovie.detailPath}`);
+                        if (detailRes.ok) {
+                            const detailJson = await detailRes.json();
+                            if (detailJson.data && detailJson.data.subject && detailJson.data.subject.description) {
+                                MOVIE_DATA.description = detailJson.data.subject.description;
+                            }
+                        }
+                    } catch (e) { console.log("Detail2 fetch failed"); }
+                }
+
+                if (!MOVIE_DATA) {
+                    document.getElementById('movie_title').innerText = "CONTENT UNAVAILABLE";
+                    document.getElementById('movie_desc').innerText = "The movie you are looking for is no longer available on our servers.";
+                    document.getElementById('hero_badge_area').style.display = 'none';
+                    document.getElementById('download_anchor').style.display = 'none';
+                    return;
+                }
+
+                // --- SERIES LOGIC UI ---
+                let isSeries = foundApiMovie && foundApiMovie.subjectType === 2;
+                if (isSeries) {
+                    try {
+                        const detailPath = foundApiMovie.detailPath || MOVIE_DATA._id;
+                        const sRes = await fetch(`https://stream.moviestream.lat/api/series-info?path=${detailPath}`);
+                        if (sRes.ok) {
+                            const seasons = await sRes.json();
+                            if (seasons && seasons.length > 0) {
+                                renderSeriesUI(seasons, reqS, reqE, movieId);
+                            }
+                        }
+                    } catch (e) { console.log("Series info fetch failed"); }
+                }
+
+                // 🟢 NEW: Fetch the proxy video link from our VPS API
+                try {
+                    const detailPath = MOVIE_DATA.detailPath || MOVIE_DATA._id;
+                    let videoApiUrl = `https://stream.moviestream.lat/api/video-link?id=${MOVIE_DATA._id}&path=${detailPath}`;
+                    if (isSeries) {
+                        videoApiUrl += `&s=${reqS}&e=${reqE}`;
+                    }
+                    const streamRes = await fetch(videoApiUrl);
+                    if (streamRes.ok) {
+                        const streamData = await streamRes.json();
+                        if (streamData.url) {
+                            MOVIE_DATA.downloadLink = streamData.url;
+                            MOVIE_DATA.captions = streamData.captions || [];
+                            MOVIE_DATA.streams = streamData.streams || [];
+                        }
+                    }
+                } catch (e) {
+                    console.log("Failed to fetch proxy video link", e);
+                }
+
+                // Pre-warm subtitle cache in background
+                preWarmSubtitles();
+
+                document.getElementById('movie_poster').src = MOVIE_DATA.imageUrl;
+                window.MAIN_SHOW_TITLE = MOVIE_DATA.title;
+                document.getElementById('movie_title').innerText = MOVIE_DATA.title;
+                document.getElementById('movie_year').innerText = MOVIE_DATA.year || "2026";
+                document.getElementById('m_cat').innerText = MOVIE_DATA.category;
+
+                document.getElementById('m_qual').innerText = MOVIE_DATA.quality || "4K Ultra";
+                document.getElementById('movie_size_bottom').innerText = MOVIE_DATA.fileSize || "1.4 GB";
+
+                if (MOVIE_DATA.imdbRating && MOVIE_DATA.imdbRating !== "0.0" && MOVIE_DATA.imdbRating !== "0") {
+                    document.getElementById('imdb_rating_area').classList.remove('hidden');
+                    document.getElementById('imdb_rating_area').classList.add('flex');
+                    document.getElementById('imdb_val').innerText = MOVIE_DATA.imdbRating;
+                    if (MOVIE_DATA.imdbCount) {
+                        document.getElementById('imdb_count').innerText = MOVIE_DATA.imdbCount + " people rated";
+                    }
+                }
+
+                if (MOVIE_DATA.duration) {
+                    let dEl = document.getElementById('movie_duration');
+                    dEl.innerText = "• " + MOVIE_DATA.duration;
+                    dEl.classList.remove('hidden');
+                }
+                if (MOVIE_DATA.country) {
+                    let cEl = document.getElementById('movie_country');
+                    cEl.innerText = "• " + MOVIE_DATA.country;
+                    cEl.classList.remove('hidden');
+                }
+                if (MOVIE_DATA.genres) {
+                    let gEl = document.getElementById('movie_genre');
+                    gEl.innerText = "• " + MOVIE_DATA.genres;
+                    gEl.classList.remove('hidden');
+                }
+
+                document.getElementById('movie_desc').innerText = MOVIE_DATA.description || "මෙම සිනමා නිර්මාණය දැන් ඉතා උසස් ගුණාත්මක භාවයෙන් යුතුව ලබා ගත හැක.";
+                document.getElementById('page_title').innerText = `${MOVIE_DATA.title} | MovieStream`;
+
+                const bgUrl = MOVIE_DATA.bgImage || MOVIE_DATA.imageUrl;
+                document.getElementById('hero').style.backgroundImage = `url('${bgUrl}')`;
+
+                if (MOVIE_DATA.category === 'TV Series') {
+                    document.getElementById('tv_info').innerText = `Season ${MOVIE_DATA.season || '-'} • Episode ${MOVIE_DATA.episode || '-'}`;
+                    document.getElementById('tv_info').classList.remove('hidden');
+
+                    if (window.allMoviesData) {
+                        window.SHOW_EPISODES = window.allMoviesData.filter(m => m.title.toLowerCase() === MOVIE_DATA.title.toLowerCase());
+
+                        if (window.SHOW_EPISODES.length > 0) {
+                            document.getElementById('episodes_section').classList.remove('hidden');
+
+                            const seasons = [...new Set(window.SHOW_EPISODES.map(ep => ep.season).filter(Boolean))].sort();
+                            const seasonSelect = document.getElementById('season_selector');
+                            seasonSelect.innerHTML = '';
+
+                            seasons.forEach(s => {
+                                const opt = document.createElement('option');
+                                opt.value = s;
+                                opt.innerText = `Season ${s.replace(/[^0-9]/g, '')}`;
+                                if (s === MOVIE_DATA.season) opt.selected = true;
+                                seasonSelect.appendChild(opt);
+                            });
+
+                            renderEpisodes(MOVIE_DATA.season || seasons[0]);
+                        }
+                    }
+                }
+
+                const screens = [MOVIE_DATA.ss1, MOVIE_DATA.ss2, MOVIE_DATA.ss3].filter(s => s && s.trim() !== "");
+                if (screens.length > 0) {
+                    document.getElementById('screenshots_section').classList.remove('hidden');
+                    const screenList = document.getElementById('screen_list');
+                    screenList.innerHTML = '';
+                    screens.forEach(s => {
+                        screenList.innerHTML += `<div class="ss-card animate__animated animate__fadeInUp"><img src="${s}"></div>`;
+                    });
+                }
+            } catch (e) {
+                console.error("Fetch Error: ", e);
+                document.getElementById('movie_title').innerText = "OFFLINE MODE";
+            } finally {
+                document.body.classList.add('loaded');
+            }
+        };
+
+        function renderEpisodes(selectedSeason) {
+            const epSelect = document.getElementById('episode_selector');
+            epSelect.innerHTML = '';
+
+            const filteredEps = window.SHOW_EPISODES.filter(ep => ep.season === selectedSeason);
+
+            filteredEps.sort((a, b) => {
+                const epA = Number(a.episode?.replace(/[^0-9]/g, '')) || 0;
+                const epB = Number(b.episode?.replace(/[^0-9]/g, '')) || 0;
+                return epA - epB;
+            }).forEach(ep => {
+                const opt = document.createElement('option');
+                opt.value = ep._id;
+                opt.innerText = `Episode ${ep.episode || '-'}`;
+                if (ep._id === MOVIE_DATA._id) opt.selected = true;
+                epSelect.appendChild(opt);
+            });
+
+            if (!filteredEps.find(e => e._id === MOVIE_DATA._id)) {
+                if (filteredEps.length > 0) {
+                    changeEpisode(filteredEps[0]._id);
+                }
+            }
+        }
+
+        function changeEpisode(epId) {
+            const ep = window.SHOW_EPISODES.find(e => e._id === epId);
+            if (ep) {
+                MOVIE_DATA = ep;
+
+                window.history.pushState({ path: `movie-details.html?id=${epId}` }, '', `movie-details.html?id=${epId}`);
+
+                // 🟢 PRE-WARM SUBTITLE CACHE IN BACKGROUND (Instant)
+                preWarmSubtitles();
+
+                document.getElementById('tv_info').innerText = `Season ${ep.season || '-'} • Episode ${ep.episode || '-'}`;
+
+                document.getElementById('movie_size_bottom').innerText = ep.fileSize || "1.4 GB";
+                document.getElementById('m_qual').innerText = ep.quality || "4K Ultra";
+                document.getElementById('hero_quality').innerText = ep.quality || "4K";
+                document.getElementById('main_hero_quality').innerText = ep.quality || "4K";
+
+                document.getElementById('movie_desc').innerText = ep.description || "මෙම සිනමා නිර්මාණය දැන් ඉතා උසස් ගුණාත්මක භාවයෙන් යුතුව ලබා ගත හැක.";
+
+                if (player && document.getElementById('video_display_area').style.display === 'block') {
+                    playNowDirectly();
+                }
+            }
+        }
+
+        function closeSearchSpotlight() {
+            const spot = document.getElementById('search_spotlight');
+            spot.style.opacity = '0';
+            setTimeout(() => spot.style.display = 'none', 300);
+            document.getElementById('main_search').value = '';
+        }
+
+        function liveSearch(q) {
+            const content = document.getElementById('spotlight_content');
+            if (q.length < 2) { content.innerHTML = ''; return; }
+
+            const uniqueTitles = new Set();
+            const filtered = [];
+            window.allMoviesData.forEach(m => {
+                if (!m.title) return;
+                if (m.title.toLowerCase().includes(q.toLowerCase())) {
+                    const t = m.title.toLowerCase().trim();
+                    if (!uniqueTitles.has(t)) {
+                        uniqueTitles.add(t);
+                        filtered.push(m);
+                    }
+                }
+            });
+
+            if (filtered.length > 0) {
+                content.innerHTML = filtered.slice(0, 6).map(m => `
+                    <div class="w-[140px] md:w-[200px] cursor-pointer transition transform hover:scale-105" onclick="window.open('movie-details.html?id=${m._id}&path=${m.detailPath || ""}', '_blank')">
+                        <img src="${m.imageUrl}" class="w-full aspect-[2/3] object-cover rounded-xl shadow-lg border border-white/20">
+                        <h3 class="text-white font-black text-[10px] md:text-xs mt-2 uppercase text-center truncate">${m.title}</h3>
+                    </div>
+                `).join('');
+            } else {
+                content.innerHTML = `<div class="p-5 text-center text-xs text-gray-500 font-bold uppercase tracking-widest w-full">No Movies Found</div>`;
+            }
+        }
+
+        function closeAllPopups() { document.querySelectorAll('.custom-popup').forEach(p => p.style.display = 'none'); }
+        function changeEpisodeLoader(newS, newE, movieId) {
+            const loader = document.getElementById('full_page_loader');
+            if (loader) {
+                loader.style.display = 'flex';
+                setTimeout(() => {
+                    showGlobalLoader(`movie-details.html?id=${movieId}&s=${newS}&e=${newE}`);
+                }, 800);
+            } else {
+                showGlobalLoader(`movie-details.html?id=${movieId}&s=${newS}&e=${newE}`);
+            }
+        }
+
+        function renderSeriesUI(seasons, currentS, currentE, movieId) {
+            let container = document.getElementById('series_ui');
+            if (!container) {
+                container = document.createElement('div');
+                container.id = 'series_ui';
+                container.className = 'mt-8 mb-8 text-left w-full max-w-4xl border-t border-white/10 pt-6';
+
+                const downloadAnchor = document.getElementById('download_anchor');
+                if (downloadAnchor) {
+                    downloadAnchor.parentNode.insertBefore(container, downloadAnchor);
+                }
+            }
+
+            let seasonOptions = seasons.map(s => `<option value="${s.se}" ${s.se == currentS ? 'selected' : ''}>Season ${s.se}</option>`).join('');
+
+            const currentSeasonObj = seasons.find(s => s.se == currentS) || seasons[0];
+            const maxEp = currentSeasonObj.maxEp || 1;
+
+            let episodeButtons = '';
+            for (let i = 1; i <= maxEp; i++) {
+                const isActive = (i == currentE);
+                const btnClass = isActive
+                    ? 'bg-[#e50914] text-white font-black border border-[#e50914] shadow-[0_0_15px_rgba(229,9,20,0.5)] scale-105'
+                    : 'bg-black/60 text-gray-400 border border-white/10 hover:bg-white/10 hover:text-white hover:scale-105';
+
+                episodeButtons += `<button onclick="changeEpisodeLoader(${currentSeasonObj.se}, ${i}, '${movieId}')" class="py-3 rounded-lg text-sm text-center transition-all duration-300 ${btnClass}">${i}</button>`;
+            }
+
+            container.innerHTML = `
+            <div class="flex items-center gap-4 mb-6">
+                <select id="season_select" class="bg-transparent border-none text-white text-xl md:text-2xl font-black outline-none hover:text-[#e50914] transition-colors appearance-none pr-6 cursor-pointer" style="background-image: url('data:image/svg+xml;utf8,<svg fill=%22white%22 height=%2224%22 viewBox=%220 0 24 24%22 width=%2224%22 xmlns=%22http://www.w3.org/2000/svg%22><path d=%22M7 10l5 5 5-5z%22/><path d=%22M0 0h24v24H0z%22 fill=%22none%22/></svg>'); background-repeat: no-repeat; background-position-x: 100%; background-position-y: 50%;">
+                    ${seasonOptions}
+                </select>
+                <span class="text-gray-500 text-lg">|</span>
+                <span class="text-gray-300 text-sm font-medium tracking-widest uppercase">${maxEp} Episodes</span>
+            </div>
+            <div class="grid grid-cols-5 md:grid-cols-10 gap-3 max-h-64 overflow-y-auto custom-scrollbar pr-2 pb-2" id="episode_grid">
+                ${episodeButtons}
+            </div>
+        `;
+
+            document.getElementById('season_select').addEventListener('change', (e) => {
+                const newS = e.target.value;
+                changeEpisodeLoader(newS, 1, movieId);
+            });
+
+            // Update TV Info Header
+            const tvInfo = document.getElementById('tv_info');
+            if (tvInfo) {
+                tvInfo.innerText = `SEASON ${currentS} • EPISODE ${currentE}`;
+                tvInfo.classList.remove('hidden');
+                tvInfo.classList.add('text-[#e50914]');
+                tvInfo.classList.remove('text-[#00d2ff]');
+            }
+        }
+
+        function warnOnline() { closeAllPopups(); document.getElementById('popup_online_warn').style.display = 'flex'; }
+        function openWhatsAppStep1(bypassCheck = false) {
+            let engCap = null;
+            let taCap = null;
+            if (MOVIE_DATA && MOVIE_DATA.captions && MOVIE_DATA.captions.length > 0) {
+                engCap = MOVIE_DATA.captions.find(c => {
+                    const l = c.lan || c.lang || "";
+                    return l.toLowerCase().includes('en');
+                });
+                taCap = MOVIE_DATA.captions.find(c => {
+                    const l = c.lan || c.lang || "";
+                    return l.toLowerCase().includes('ta') || l.toLowerCase().includes('tamil');
+                });
+                if (!engCap) engCap = MOVIE_DATA.captions[0];
+            }
+            let enSub = engCap ? engCap.url : (MOVIE_DATA ? MOVIE_DATA.subtitleUrl : "");
+            let taSub = taCap ? taCap.url : "";
+
+            // If it's Sinhala Movies, bypass this check since they often don't need subs
+            if (!bypassCheck && !enSub && !taSub && MOVIE_DATA && MOVIE_DATA.category !== "Sinhala Movies" && MOVIE_DATA.category !== "Sinhala Dubbed") {
+                closeAllPopups();
+                document.getElementById('warning_msg').innerText = "Subtitle file not found. Please contact the developer.";
+                document.getElementById('popup_warning').style.display = 'flex';
+                return;
+            }
+
+            closeAllPopups();
+            document.getElementById('popup_step1').style.display = 'flex';
+            for (let i = 0; i < tracks.length; i++) {
+                if (tracks[i].kind === 'captions' || tracks[i].kind === 'subtitles') {
+                    if (lang === 'off') {
+                        tracks[i].mode = 'hidden';
+                    } else if (tracks[i].language === lang) {
+                        tracks[i].mode = 'showing';
+                    } else {
+                        tracks[i].mode = 'hidden';
+                    }
+                }
+            }
+        }
+
+        function resetToButtons() {
+            closeAllPopups();
+            document.getElementById('download_anchor').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function validateStep1() {
+            const num = document.getElementById('user_num').value.trim();
+            if (!num.startsWith("94") || num.length !== 11 || isNaN(num)) {
+                closeAllPopups();
+                document.getElementById('warning_msg').innerText = "à¶šà¶»à·”à¶«à·à¶šà¶» à¶”à¶¶à¶œà·š WhatsApp à¶…à¶‚à¶šà¶º 947XXXXXXXX à¶†à¶šà·à¶»à¶ºà¶§ à¶±à·’à·€à·à¶»à¶¯à·’à·€ à¶‡à¶­à·”à·…à¶­à·Š à¶šà¶»à¶±à·Šà¶±.";
+                document.getElementById('popup_warning').style.display = 'flex';
+                return;
+            }
+            localStorage.setItem('ms_user_num', num);
+            closeAllPopups(); document.getElementById('popup_step2').style.display = 'flex';
+        }
+
+        function validateStep2() {
+            const name = document.getElementById('user_name').value.trim();
+            const engRegex = /^[A-Za-z\s]+$/;
+            if (!engRegex.test(name) || name === "") {
+                closeAllPopups();
+                document.getElementById('warning_msg').innerText = "à¶šà¶»à·”à¶«à·à¶šà¶» à¶”à¶¶à¶œà·š à¶±à¶¸ à¶‰à¶‚à¶œà·Šâ€à¶»à·“à·ƒà·’ à¶…à¶šà·”à¶»à·” (English Letters) à¶´à¶¸à¶«à¶šà·Š à¶·à·à·€à·’à¶­à· à¶šà¶» à¶‡à¶­à·”à·…à¶­à·Š à¶šà¶»à¶±à·Šà¶±.";
+                document.getElementById('popup_warning').style.display = 'flex';
+                return;
+            }
+
+            localStorage.setItem('ms_user_name', name);
+            document.getElementById('final_greet').innerText = `Hey ${name}!`;
+            document.getElementById('top_user_name').innerText = `Hey, ${name}!`;
+            if (window.innerWidth > 768) {
+                document.getElementById('top_user_name').classList.remove('hidden');
+            }
+
+            buildSubtitleSelectionUI();
+            closeAllPopups(); document.getElementById('popup_step3').style.display = 'flex';
+        }
+
+        function buildSubtitleSelectionUI() {
+            const container = document.getElementById('whatsapp_subtitle_selector');
+            const optionsDiv = document.getElementById('wa_subtitle_options');
+            if (!container || !optionsDiv) return;
+            optionsDiv.innerHTML = '';
+
+            let engCap = null;
+            let taCap = null;
+            let isSourceEn = false;
+            let isSourceTa = false;
+
+            if (MOVIE_DATA.captions && MOVIE_DATA.captions.length > 0) {
+                engCap = MOVIE_DATA.captions.find(c => {
+                    const l = c.lan || c.lang || "";
+                    return l.toLowerCase().includes('en');
+                });
+                taCap = MOVIE_DATA.captions.find(c => {
+                    const l = c.lan || c.lang || "";
+                    return l.toLowerCase().includes('ta') || l.toLowerCase().includes('tamil');
+                });
+                if (engCap) isSourceEn = true;
+                if (taCap) isSourceTa = true;
+                if (!engCap) engCap = MOVIE_DATA.captions[0];
+            }
+
+            let enSub = engCap ? engCap.url : (MOVIE_DATA.subtitleUrl || "");
+            let taSub = taCap ? taCap.url : "";
+
+            if (enSub || taSub) {
+                container.classList.remove('hidden');
+                optionsDiv.innerHTML += `
+                <label class="flex items-center gap-3 p-2 rounded-lg hover:bg-white/5 cursor-pointer transition border border-transparent hover:border-white/10">
+                    <input type="radio" name="wa_sub" value="" class="accent-red-500 w-4 h-4 cursor-pointer" checked>
+                    <span class="text-gray-300 text-xs font-bold uppercase tracking-wide">None / Hardcoded</span>
+                </label>
+            `;
+
+                if (enSub) {
+                    let enLangParam = isSourceEn ? 'en_native' : 'en';
+                    let enProxyUrl = `https://stream.moviestream.lat/api/subtitle/proxy?url=${encodeURIComponent(enSub)}&lang=${enLangParam}`;
+                    let siProxyUrl = `https://stream.moviestream.lat/api/subtitle/proxy?url=${encodeURIComponent(enSub)}&lang=si&from=en`;
+
+                    optionsDiv.innerHTML += `
+                    <label class="flex items-center gap-3 p-2 rounded-lg hover:bg-white/5 cursor-pointer transition border border-transparent hover:border-[#00d2ff]/30">
+                        <input type="radio" name="wa_sub" value="${siProxyUrl}" class="accent-[#00d2ff] w-4 h-4 cursor-pointer">
+                        <span class="text-[#00d2ff] text-xs font-black uppercase tracking-wide">Sinhala</span>
+                    </label>
+                    <label class="flex items-center gap-3 p-2 rounded-lg hover:bg-white/5 cursor-pointer transition border border-transparent hover:border-white/10">
+                        <input type="radio" name="wa_sub" value="${enProxyUrl}" class="accent-red-500 w-4 h-4 cursor-pointer">
+                        <span class="text-gray-300 text-xs font-bold uppercase tracking-wide">English</span>
+                    </label>
+                `;
+                }
+                if (taSub) {
+                    let taProxyUrl = `https://stream.moviestream.lat/api/subtitle/proxy?url=${encodeURIComponent(taSub)}&lang=ta_native`;
+                    optionsDiv.innerHTML += `
+                    <label class="flex items-center gap-3 p-2 rounded-lg hover:bg-white/5 cursor-pointer transition border border-transparent hover:border-white/10">
+                        <input type="radio" name="wa_sub" value="${taProxyUrl}" class="accent-red-500 w-4 h-4 cursor-pointer">
+                        <span class="text-gray-300 text-xs font-bold uppercase tracking-wide">Tamil</span>
+                    </label>
+                `;
+                } else if (enSub) {
+                    let taLangParam = isSourceTa ? 'ta_native' : 'ta';
+                    let taProxyUrl = `https://stream.moviestream.lat/api/subtitle/proxy?url=${encodeURIComponent(enSub)}&lang=${taLangParam}&from=en`;
+                    optionsDiv.innerHTML += `
+                    <label class="flex items-center gap-3 p-2 rounded-lg hover:bg-white/5 cursor-pointer transition border border-transparent hover:border-white/10">
+                        <input type="radio" name="wa_sub" value="${taProxyUrl}" class="accent-red-500 w-4 h-4 cursor-pointer">
+                        <span class="text-gray-300 text-xs font-bold uppercase tracking-wide">Tamil</span>
+                    </label>
+                `;
+                }
+            } else {
+                container.classList.add('hidden');
+            }
+        }
+
+        function sendToVPSBot() {
+            const num = localStorage.getItem('ms_user_num');
+            const name = localStorage.getItem('ms_user_name');
+
+            closeAllPopups();
+
+            let formattedName = MOVIE_DATA.title;
+            if (MOVIE_DATA.category === 'TV Series') {
+                let s = String(MOVIE_DATA.season || '1').padStart(2, '0');
+                let e = String(MOVIE_DATA.episode || '1').padStart(2, '0');
+                formattedName = `${MOVIE_DATA.title} S${s} E${e}`;
+            }
+
+            const msg = MOVIE_DATA.category === 'TV Series'
+                ? `නියමයි ${name}! ${formattedName} චිත්‍රපටය දෑන් අපගේ පද්ධතිය හරහා ඔබේ WhatsApp වෙත යොමු කර ඇත.`
+                : `නියමයි ${name}! ${MOVIE_DATA.title} චිත්‍රපටය දෑන් අපගේ පද්ධතිය හරහා ඔබේ WhatsApp වෙත යොමු කර ඇත.`;
+
+            let selectedSub = "";
+            const subRadios = document.getElementsByName('wa_sub');
+            if (subRadios) {
+                for (let i = 0; i < subRadios.length; i++) {
+                    if (subRadios[i].checked) {
+                        selectedSub = subRadios[i].value;
+                        break;
+                    }
+                }
+            }
+
+            let directLinkForWa = MOVIE_DATA.downloadLink;
+            if (MOVIE_DATA.streams && MOVIE_DATA.streams.length > 0) {
+                const stream720 = MOVIE_DATA.streams.find(s => s.quality && s.quality.includes('720'));
+                if (stream720 && stream720.url) {
+                    directLinkForWa = stream720.url;
+                }
+            }
+
+            fetch(`${API_BASE_URL}/send-movie`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ number: num, userName: name, movieName: formattedName, directLink: directLinkForWa, subtitleUrl: selectedSub })
+            })
+                .then(res => {
+                    try {
+                        fetch(`${API_BASE_URL}/track/whatsapp/${MOVIE_DATA._id}`, { method: 'POST' }).catch(e => console.error('Track Error:', e));
+                    } catch (e) { }
+                    return res.json();
+                })
+                .then(data => {
+                    if (data.status === 'Queued') {
+                        closeAllPopups();
+                        const successMsgElem = document.getElementById('popup_success_msg');
+                        if (successMsgElem) successMsgElem.innerText = msg;
+                        const successPopup = document.getElementById('popup_success');
+                        if (successPopup) successPopup.style.display = 'flex';
+                    } else if (data.status === 'Limit') {
+                        closeAllPopups();
+                        const warningMsgElem = document.getElementById('warning_msg');
+                        if (warningMsgElem) warningMsgElem.innerText = "à¶”à¶¶à¶§ à¶´à·à¶º 2à¶šà·Š à¶‡à¶­à·”à·…à¶­ à¶½à¶¶à·à¶œà¶­ à·„à·à¶šà·Šà¶šà·š à¶ à·’à¶­à·Šâ€à¶»à¶´à¶§ 3à¶šà·Š à¶´à¶¸à¶«à·’. à¶šà¶»à·”à¶«à·à¶šà¶» à¶´à·ƒà·”à·€ à¶±à·à·€à¶­ à¶‹à¶­à·Šà·ƒà·à·„ à¶šà¶»à¶±à·Šà¶±.";
+                        const warningPopup = document.getElementById('popup_warning');
+                        if (warningPopup) warningPopup.style.display = 'flex';
+                    }
+                })
+                .catch(err => {
+                    console.error(err);
+                    closeAllPopups();
+                    const botErrorPopup = document.getElementById('popup_bot_error');
+                    if (botErrorPopup) botErrorPopup.style.display = 'flex';
+                });
+        }
+
+        function closeVideo() {
+
+            document.getElementById('video_display_area').style.display = 'none';
+            if (typeof player !== 'undefined' && player) {
+                player.pause();
+                player.dispose();
+                player = null;
+            }
+            const playerWrapper = document.querySelector('.player-wrapper');
+            if (playerWrapper) {
+                playerWrapper.innerHTML = `<video id="player" class="video-js vjs-big-play-centered" controls preload="auto" playsinline></video>`;
+
+
+            }
+        }
+
+        function preWarmSubtitles() {
+            if (!MOVIE_DATA) return;
+            let engCap = null;
+            let taCap = null;
+            let isSourceEn = false;
+            let isSourceTa = false;
+
+            if (MOVIE_DATA.captions && MOVIE_DATA.captions.length > 0) {
+                engCap = MOVIE_DATA.captions.find(c => {
+                    const l = c.lan || c.lang || "";
+                    return l.toLowerCase().includes('en');
+                });
+                taCap = MOVIE_DATA.captions.find(c => {
+                    const l = c.lan || c.lang || "";
+                    return l.toLowerCase().includes('ta') || l.toLowerCase().includes('tamil');
+                });
+                if (engCap) isSourceEn = true;
+                if (taCap) isSourceTa = true;
+                if (!engCap) engCap = MOVIE_DATA.captions[0];
+            }
+
+            let enSub = engCap ? engCap.url : (MOVIE_DATA.subtitleUrl || "");
+            let taSub = taCap ? taCap.url : "";
+
+            if (enSub) {
+                let enLangParam = isSourceEn ? 'en_native' : 'en';
+                fetch(`https://stream.moviestream.lat/api/subtitle/proxy?url=${encodeURIComponent(enSub)}&lang=${enLangParam}`).catch(e => { });
+                fetch(`https://stream.moviestream.lat/api/subtitle/proxy?url=${encodeURIComponent(enSub)}&lang=si&from=en`).catch(e => { });
+            }
+            if (taSub) {
+                fetch(`https://stream.moviestream.lat/api/subtitle/proxy?url=${encodeURIComponent(taSub)}&lang=ta_native`).catch(e => { });
+            }
+        }
+
+        // NEW LOGIC FOR DIRECT DOWNLOAD
+        function directDownloadMovie() {
+            closeAllPopups();
+
+            try {
+                fetch(`${API_BASE_URL}/track/download/${MOVIE_DATA._id}`, { method: 'POST' }).catch(e => console.error('Track Error:', e));
+            } catch (e) { }
+
+            const urlParams = new URLSearchParams(window.location.search);
+            if (urlParams.get('fromPanel') === 'true') {
+                if (typeof Swal !== 'undefined') {
+                    Swal.fire({
+                        title: 'WhatsApp Only',
+                        text: 'This movie is currently only available for download via WhatsApp. Direct downloading is disabled.',
+                        icon: 'warning',
+                        confirmButtonText: 'Got it',
+                        background: '#1a1a1a',
+                        color: '#fff',
+                        confirmButtonColor: '#ff003c'
+                    });
+                } else {
+                    document.getElementById('warning_msg').innerText = "WhatsApp Only! This movie is only available via WhatsApp. Direct downloading is disabled."; document.getElementById('popup_warning').style.display = 'flex';
+                }
+                return;
+            }
+
+            if (!MOVIE_DATA || !MOVIE_DATA.downloadLink) {
+                document.getElementById('warning_msg').innerText = "Download link is currently unavailable."; document.getElementById('popup_warning').style.display = 'flex';
+                return;
+            }
+
+            // Populate Subtitle Downloads
+            const subBtnsContainer = document.getElementById('popup_subtitle_downloads');
+            if (subBtnsContainer) subBtnsContainer.innerHTML = ''; // clear previous
+
+            let engCap = null;
+            let taCap = null;
+            let isSourceEn = false;
+            let isSourceTa = false;
+
+            if (MOVIE_DATA.captions && MOVIE_DATA.captions.length > 0) {
+                engCap = MOVIE_DATA.captions.find(c => {
+                    const l = c.lan || c.lang || "";
+                    return l.toLowerCase().includes('en');
+                });
+                taCap = MOVIE_DATA.captions.find(c => {
+                    const l = c.lan || c.lang || "";
+                    return l.toLowerCase().includes('ta') || l.toLowerCase().includes('tamil');
+                });
+                if (engCap) isSourceEn = true;
+                if (taCap) isSourceTa = true;
+                if (!engCap) engCap = MOVIE_DATA.captions[0];
+            }
+
+            let enSub = engCap ? engCap.url : (MOVIE_DATA.subtitleUrl || "");
+            let taSub = taCap ? taCap.url : "";
+
+            if (enSub || taSub) {
+                if (enSub) {
+                    let enLangParam = isSourceEn ? 'en_native' : 'en';
+                    let enProxyUrl = `https://stream.moviestream.lat/api/subtitle/proxy?url=${encodeURIComponent(enSub)}&lang=${enLangParam}`;
+                    let siProxyUrl = `https://stream.moviestream.lat/api/subtitle/proxy?url=${encodeURIComponent(enSub)}&lang=si&from=en`;
+
+                    subBtnsContainer.innerHTML += `<button onclick="downloadSubtitleFile('${enProxyUrl}', '${MOVIE_DATA.title}_English.srt', this)" class="bg-[#1a1a1a] text-gray-300 border border-gray-600 px-3 py-1.5 rounded text-[10px] uppercase font-bold hover:bg-white hover:text-black transition">English</button>`;
+                    subBtnsContainer.innerHTML += `<button onclick="downloadSubtitleFile('${siProxyUrl}', '${MOVIE_DATA.title}_Sinhala.srt', this)" class="bg-[#1a1a1a] text-[#00d2ff] border border-[#00d2ff]/50 px-3 py-1.5 rounded text-[10px] uppercase font-bold hover:bg-[#00d2ff] hover:text-black transition">Sinhala</button>`;
+                }
+                if (taSub) {
+                    let taProxyUrl = `https://stream.moviestream.lat/api/subtitle/proxy?url=${encodeURIComponent(taSub)}&lang=ta_native`;
+                    subBtnsContainer.innerHTML += `<button onclick="downloadSubtitleFile('${taProxyUrl}', '${MOVIE_DATA.title}_Tamil.srt', this)" class="bg-[#1a1a1a] text-gray-300 border border-gray-600 px-3 py-1.5 rounded text-[10px] uppercase font-bold hover:bg-white hover:text-black transition">Tamil</button>`;
+                } else if (enSub) {
+                    let taLangParam = isSourceTa ? 'ta_native' : 'ta';
+                    let taProxyUrl = `https://stream.moviestream.lat/api/subtitle/proxy?url=${encodeURIComponent(enSub)}&lang=${taLangParam}&from=en`;
+                    subBtnsContainer.innerHTML += `<button onclick="downloadSubtitleFile('${taProxyUrl}', '${MOVIE_DATA.title}_Tamil.srt', this)" class="bg-[#1a1a1a] text-gray-300 border border-gray-600 px-3 py-1.5 rounded text-[10px] uppercase font-bold hover:bg-white hover:text-black transition">Tamil</button>`;
+                }
+            } else {
+                subBtnsContainer.innerHTML = '<span class="text-gray-500 text-[10px] font-bold uppercase">No Subtitles Found</span>';
+            }
+
+            document.getElementById('popup_quality_select').style.display = 'flex';
+        }
+
+        function triggerDownload(quality) {
+            closeAllPopups();
+
+            let linkToDownload = MOVIE_DATA.downloadLink;
+            if (MOVIE_DATA.streams && MOVIE_DATA.streams.length > 0) {
+                const resMatch = quality.replace('p', '');
+                const foundStream = MOVIE_DATA.streams.find(s => s.resolutions === resMatch);
+                if (foundStream && foundStream.url) {
+                    linkToDownload = `https://stream.moviestream.lat/stream?url=${encodeURIComponent(foundStream.url)}`;
+                }
+            }
+
+            if (linkToDownload) {
+                if (linkToDownload.includes('.m3u8')) {
+                    document.getElementById('warning_msg').innerText = "Direct MP4 Download is unavailable for this video format. Please use 'Play Online' or request via WhatsApp.";
+                    document.getElementById('popup_warning').style.display = 'flex';
+                    return;
+                }
+                const link = document.createElement('a');
+                link.href = linkToDownload;
+                link.setAttribute('download', `${MOVIE_DATA.title}_${quality}.mp4`);
+                link.setAttribute('target', '_blank');
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+            }
+        }
+
+        // ðŸŸ¢ UPDATED LOGIC FOR ONLINE STREAM (Kept all original fallback & VideoJS code)
+        async function playNowDirectly() {
+            closeAllPopups();
+            document.getElementById('video_display_area').style.display = 'block';
+
+            const dLink = MOVIE_DATA.downloadLink;
+            const playerWrapper = document.querySelector('.player-wrapper');
+
+            // If video is empty
+            if (!dLink) {
+                playerWrapper.innerHTML = `
+                    <div class="relative w-full h-full bg-black flex items-center justify-center">
+                        <p class="text-white font-bold tracking-widest uppercase">Video stream not available at the moment</p>
+                    </div>`;
+                document.getElementById('video_display_area').scrollIntoView({ behavior: 'smooth' });
+                return;
+            }
+
+            // ðŸŸ¢ Play direct proxy stream via VideoJS
+            playerWrapper.innerHTML = `<video id="player" class="video-js vjs-big-play-centered" controls preload="auto" playsinline></video>`;
+
+
+            player = videojs('player', {
+                fluid: true,
+                playbackRates: [0.5, 1, 1.25, 1.5, 2],
+                controlBar: { skipButtons: { forward: 10, backward: 10 } }
+            });
+
+            let streamUrl = dLink;
+            if (dLink.includes('t.me/')) {
+                const parts = dLink.split('/');
+                const msgId = parts[parts.length - 1];
+                let chatId = '';
+                if (dLink.includes('/c/')) {
+                    chatId = '-100' + parts[parts.length - 2];
+                }
+                streamUrl = `https://api.moviestream.lat/stream/${msgId}${chatId ? '?chat=' + chatId : ''}`;
+            }
+
+            player.src({ type: streamUrl.includes('.m3u8') ? 'application/x-mpegURL' : 'video/mp4', src: streamUrl });
+            if (MOVIE_DATA.imageUrl) player.poster(MOVIE_DATA.imageUrl);
+
+            // Add buffering loader overlay
+            player.on('waiting', function () {
+                let loader = document.getElementById('vjs_network_buffer');
+                if (!loader) {
+                    loader = document.createElement('div');
+                    loader.id = 'vjs_network_buffer';
+                    loader.innerHTML = '<i class="fa-solid fa-spinner fa-spin text-2xl mb-2 text-[#00d2ff]"></i><p class="text-[10px] font-bold uppercase tracking-widest text-white text-center">Network issue buffering</p>';
+                    loader.style.cssText = 'position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);z-index:999;background:rgba(0,0,0,0.7);padding:15px;border-radius:10px;display:flex;flex-direction:column;align-items:center;pointer-events:none;';
+                    playerWrapper.appendChild(loader);
+                }
+                loader.style.display = 'flex';
+            });
+            player.on('pause', function () { });
+            player.on('playing', function () {
+
+                const loader = document.getElementById('vjs_network_buffer');
+                if (loader) loader.style.display = 'none';
+            });
+
+            // Add Subtitle Tracks
+            let engCap = null;
+            let taCap = null;
+            let isSourceEn = false;
+            let isSourceTa = false;
+
+            if (MOVIE_DATA.captions && MOVIE_DATA.captions.length > 0) {
+                engCap = MOVIE_DATA.captions.find(c => {
+                    const l = c.lan || c.lang || "";
+                    return l.toLowerCase().includes('en');
+                });
+                taCap = MOVIE_DATA.captions.find(c => {
+                    const l = c.lan || c.lang || "";
+                    return l.toLowerCase().includes('ta') || l.toLowerCase().includes('tamil');
+                });
+
+                if (engCap) isSourceEn = true;
+                if (taCap) isSourceTa = true;
+
+                if (!engCap) engCap = MOVIE_DATA.captions[0];
+            }
+
+            let enSub = engCap ? engCap.url : (MOVIE_DATA.subtitleUrl || "");
+            let taSub = taCap ? taCap.url : "";
+
+            if (enSub || taSub) {
+                if (enSub) {
+                    let enLangParam = isSourceEn ? 'en_native' : 'en';
+                    let enProxyUrl = `https://stream.moviestream.lat/api/subtitle/proxy?url=${encodeURIComponent(enSub)}&lang=${enLangParam}`;
+                    let siProxyUrl = `https://stream.moviestream.lat/api/subtitle/proxy?url=${encodeURIComponent(enSub)}&lang=si&from=en`;
+
+                    player.addRemoteTextTrack({ kind: 'captions', src: enProxyUrl, srclang: 'en', label: 'English' }, false);
+                    player.addRemoteTextTrack({ kind: 'captions', src: siProxyUrl, srclang: 'si', label: 'Sinhala' }, false);
+                }
+
+                if (taSub) {
+                    let taProxyUrl = `https://stream.moviestream.lat/api/subtitle/proxy?url=${encodeURIComponent(taSub)}&lang=ta_native`;
+                    player.addRemoteTextTrack({ kind: 'captions', src: taProxyUrl, srclang: 'ta', label: 'Tamil' }, false);
+                } else if (enSub) {
+                    let taLangParam = isSourceTa ? 'ta_native' : 'ta';
+                    let taProxyUrl = `https://stream.moviestream.lat/api/subtitle/proxy?url=${encodeURIComponent(enSub)}&lang=${taLangParam}&from=en`;
+                    player.addRemoteTextTrack({ kind: 'captions', src: taProxyUrl, srclang: 'ta', label: 'Tamil' }, false);
+                }
+            }
+
+            player.play().catch(e => console.log("Autoplay blocked", e));
+            document.getElementById('video_display_area').scrollIntoView({ behavior: 'smooth' });
+        }
+    </script>
+    <script src="electric-border.js"></script>
+
+
+    <script src="border-glow.js"></script>
+    <script>setTimeout(() => { if (document.getElementById("footer_border_glow")) new BorderGlow(document.getElementById("footer_border_glow"), { animated: true }); }, 1000);</script>
+
+
+
+
+</body>
+
+</html>
