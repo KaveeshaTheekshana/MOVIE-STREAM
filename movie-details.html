@@ -1002,7 +1002,7 @@
                         detailPath: foundApiMovie.detailPath || detailPathParam || foundApiMovie.subjectId || foundApiMovie.id || movieId,
                         title: foundApiMovie.title,
                         category: foundApiMovie.genre ? foundApiMovie.genre.split(',')[0] : "Movie",
-                        quality: "4K Ultra",
+                        quality: "1080p / 720p / 480p",
                         fileSize: "Unknown",
                         description: foundApiMovie.description || (window.allMoviesData ? window.allMoviesData.find(m => m._id === movieId)?.description : null) || "මෙම සිනමා නිර්මාණය දැන් ඉතා උසස් ගුණාත්මක භාවයෙන් යුතුව ලබා ගත හැක.",
                         imageUrl: coverUrl,
@@ -1714,7 +1714,13 @@
             closeAllPopups();
             document.getElementById('video_display_area').style.display = 'block';
 
-            const dLink = MOVIE_DATA.downloadLink;
+            let dLink = MOVIE_DATA.downloadLink;
+            if (MOVIE_DATA.streams && MOVIE_DATA.streams.length > 0) {
+                const foundStream = MOVIE_DATA.streams.find(s => s.resolutions === '720');
+                if (foundStream && foundStream.url) {
+                    dLink = `https://stream.moviestream.lat/stream?url=${encodeURIComponent(foundStream.url)}`;
+                }
+            }
             const playerWrapper = document.querySelector('.player-wrapper');
 
             // If video is empty
@@ -1735,6 +1741,18 @@
                 fluid: true,
                 playbackRates: [0.5, 1, 1.25, 1.5, 2],
                 controlBar: { skipButtons: { forward: 10, backward: 10 } }
+            });
+
+            player.on('fullscreenchange', function() {
+                if (player.isFullscreen()) {
+                    if (screen.orientation && screen.orientation.lock) {
+                        screen.orientation.lock('landscape').catch(e => console.log('Orientation lock failed', e));
+                    }
+                } else {
+                    if (screen.orientation && screen.orientation.unlock) {
+                        screen.orientation.unlock();
+                    }
+                }
             });
 
             let streamUrl = dLink;
@@ -1819,11 +1837,7 @@
             document.getElementById('video_display_area').scrollIntoView({ behavior: 'smooth' });
         }
     </script>
-    <script src="electric-border.js"></script>
 
-
-    <script src="border-glow.js"></script>
-    <script>setTimeout(() => { if (document.getElementById("footer_border_glow")) new BorderGlow(document.getElementById("footer_border_glow"), { animated: true }); }, 1000);</script>
 
 
 
