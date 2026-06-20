@@ -15,10 +15,9 @@
         href="https://fonts.googleapis.com/css2?family=Noto+Sans+Sinhala:wght@400;700;900&family=Orbitron:wght@400;900&family=Inter:wght@300;600;900&display=swap"
         rel="stylesheet">
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-   
+
 
     <style>
         :root {
@@ -456,6 +455,21 @@
             scrollbar-width: none;
         }
 
+        .custom-scrollbar::-webkit-scrollbar {
+            height: 6px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: rgba(0, 210, 255, 0.4);
+            border-radius: 10px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+            background: rgba(0, 210, 255, 0.6);
+        }
+
         .search-container {
             background: rgba(255, 255, 255, 0.05);
             backdrop-filter: blur(10px);
@@ -719,7 +733,8 @@
     <link
         href="https://fonts.googleapis.com/css2?family=Noto+Sans+Sinhala:wght@400;700;900&family=Orbitron:wght@400;900&family=Inter:wght@300;600;900&display=swap"
         rel="stylesheet">
-     <script async defer
+
+    <script async defer
         src="https://pl29238324.effectivecpmnetwork.com/fe/a0/39/fea039617f028f9cf163140e6e6eb7eb.js"></script>
 
 </head>
@@ -1004,6 +1019,8 @@
                 0 0 50px 2px var(--glow-color-10);
         }
 
+
+
         .border-glow-inner {
             overflow: hidden;
             position: relative;
@@ -1078,14 +1095,16 @@
 
 
 
-        <div class="relative group flex items-center w-full md:w-auto search-container mt-2 md:mt-0">
-            <div
-                class="absolute inset-0 bg-[#00d2ff] rounded-full blur-md opacity-0 group-focus-within:opacity-40 transition-opacity duration-500 pointer-events-none">
+        <div class="flex items-center gap-2 w-full md:w-auto mt-2 md:mt-0">
+
+            <div class="relative group flex items-center w-full search-container">
+                <div
+                    class="absolute inset-0 bg-[#00d2ff] rounded-full blur-md opacity-0 group-focus-within:opacity-40 transition-opacity duration-500 pointer-events-none">
             </div>
             <i
                 class="fa fa-search absolute left-4 text-[#00d2ff] text-xs pointer-events-none z-20 group-focus-within:animate-pulse group-focus-within:text-white transition-colors"></i>
             <input type="text" id="main_search"
-                onfocus="if(this.value.length >= 2) document.getElementById('search_suggestions').classList.remove('hidden')"
+                onfocus="handleSearchFocus(this)"
                 oninput="liveSearch(this.value)" placeholder="Search Movies..."
                 class="w-full bg-black/50 backdrop-blur-md border border-white/10 hover:border-white/20 focus:border-[#00d2ff] rounded-full pl-10 pr-10 py-2.5 md:py-3 text-[11px] md:text-xs outline-none transition-all duration-500 focus:w-full md:focus:w-[140%] shadow-[0_0_15px_rgba(0,0,0,0.5)] focus:shadow-[0_0_30px_rgba(0,210,255,0.5)] text-white relative z-10">
             <i class="fa fa-times absolute right-3 text-gray-400 text-xs cursor-pointer hover:text-red-500 hidden z-20"
@@ -1094,16 +1113,13 @@
             <div id="search_suggestions"
                 class="absolute top-[110%] md:top-[120%] left-0 w-full md:w-[280px] md:right-0 md:left-auto bg-[#0a0a0a]/95 border border-[#00d2ff]/30 rounded-xl shadow-[0_20px_50px_rgba(0,0,0,0.9)] hidden flex-col max-h-[300px] md:max-h-[350px] overflow-y-auto z-[6000] backdrop-blur-xl">
             </div>
+            </div>
         </div>
     </nav>
 
 
     <header id="hero"
         class="relative overflow-hidden pt-[180px] md:pt-[120px] pb-10 md:pb-0 bg-[#050505] min-h-[90vh] flex items-center">
-        <video autoplay loop muted playsinline id="hero_bg_video"
-            class="absolute top-0 left-0 w-full h-full object-cover z-0 pointer-events-none opacity-40 mix-blend-screen">
-            <source src="Astronaut_breathing_in_dark_ocean_202606162231.mp4" type="video/mp4">
-        </video>
         <div class="absolute inset-0 bg-gradient-to-b from-black/80 via-black/40 to-[#050505] z-0 pointer-events-none">
         </div>
         <div
@@ -1158,19 +1174,16 @@
 
     <main class="relative z-30 px-4 md:px-16 pb-10 min-h-screen max-w-[1800px] mx-auto flex flex-col gap-8 pt-8">
 
-        <div class="w-full mb-6 order-1 relative overflow-hidden group" id="filter_sidebar"
-            onmouseenter="window.isHoveringCategories = true" onmouseleave="window.isHoveringCategories = false"
-            ontouchstart="window.isHoveringCategories = true" ontouchend="window.isHoveringCategories = false">
+        <div class="w-full mb-6 order-1 relative group" id="filter_sidebar">
             <div
                 class="pointer-events-none absolute inset-y-0 left-0 w-8 md:w-16 bg-gradient-to-r from-[#050505] to-transparent z-10 hidden md:block">
             </div>
             <div
                 class="pointer-events-none absolute inset-y-0 right-0 w-8 md:w-16 bg-gradient-to-l from-[#050505] to-transparent z-10 hidden md:block">
             </div>
-            <div class="bg-transparent w-full pt-2 pb-4">
+            <div class="bg-transparent w-full pt-2 pb-4 overflow-x-auto custom-scrollbar">
                 <div id="filter_categories_track" class="flex flex-row w-max">
                     <div id="filter_categories" class="flex flex-row gap-3 items-center px-2"></div>
-
                 </div>
             </div>
         </div>
@@ -1234,7 +1247,12 @@
                 <p id="filtered_count" class="text-gray-400 text-[10px] font-bold uppercase tracking-widest mb-8"></p>
                 <div id="filtered_grid" class="grid-view-container"></div>
                 <!-- Pagination -->
-                <div id="pagination_container" class="mt-12 mb-8 flex justify-center items-center gap-2"></div>
+                <div id="pagination_container" class="mt-12 mb-8 flex justify-center items-center gap-4">
+                    <div class="text-center mt-10 flex justify-center gap-4">
+                        <button id="prev_page_btn" onclick="loadPrevFiltered()" class="hidden px-8 py-3 bg-[#111] border border-gray-800 text-white rounded hover:bg-[#E62429] transition duration-300 font-bold tracking-wider">PREV PAGE</button>
+                        <button id="load_more_btn" onclick="loadMoreFiltered()" class="px-8 py-3 bg-[#E62429] text-white rounded shadow-[0_0_15px_rgba(230,36,41,0.5)] hover:bg-red-700 transition duration-300 font-bold tracking-wider">NEXT PAGE</button>
+                    </div>
+                </div>
             </div>
 
         </div>
@@ -1242,7 +1260,7 @@
 
 
 
-    <div id="footer_border_glow" style="margin: 20px;">
+    <div>
         <footer class="relative pt-24 pb-12 px-4 md:px-16 border-t border-white/5 z-30 overflow-hidden bg-black">
             <div
                 class="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-[#00d2ff]/10 via-black to-black pointer-events-none">
@@ -1314,7 +1332,8 @@
     <script>
         const DB_URL = "https://panel.moviestream.lat/api/movies";
         const SCRAPER_CATEGORIES = [
-            "Popular Movie", "Popular Series", "K-Drama", "C-Drama",
+            "Movies", "Popular Movie", "Popular Series", "TV Series", "K-Drama", "C-Drama",
+            "Bollywood", "Indian", "Turkish Drama",
             "Anime English Dubbed", "BoxOffice TOP200", "Action Movies",
             "Horror Movies", "Romance", "Comedy", "Adventure", "Fantasy",
             "Animation", "Superhero Series", "Teen Fantasy", "Action Thriller",
@@ -1323,6 +1342,7 @@
             "Marvel", "DC Comics", "Sinhala Movies", "Pixar", "Disney"
         ];
         let MASTER_DATA = [];
+        const loadingCats = new Set();
         let selectedCategories = [];
         let currentScraperPage = 1;
         let currentScraperCategory = "Popular Movie";
@@ -1351,17 +1371,18 @@
                         if (heroTitle && pageNum === 1 && category === "Popular Movie") heroTitle.innerText = "LOADING SYSTEM...";
 
                         let fetchUrl = "";
-                        const specialCats = {
-                            "Marvel": "https://h5-api.aoneroom.com/wefeed-h5api-bff/ranking-list/content?id=5938715630600946768&page=" + pageNum + "&perPage=24",
-                            "DC Comics": "https://h5-api.aoneroom.com/wefeed-h5api-bff/ranking-list/content?id=8981852519202701864&page=" + pageNum + "&perPage=24",
-                            "Pixar": "https://h5-api.aoneroom.com/wefeed-h5api-bff/ranking-list/content?id=8300357620121175440&page=" + pageNum + "&perPage=24",
-                            "Disney": "https://h5-api.aoneroom.com/wefeed-h5api-bff/ranking-list/content?id=4893929859782771488&page=" + pageNum + "&perPage=24"
-                        };
-
-                        if (specialCats[category]) {
-                            fetchUrl = `https://panel.moviestream.lat/api/proxy/aoneroom?url=${encodeURIComponent(specialCats[category])}`;
+                        if (category === "Sinhala Movies") {
+                            fetchUrl = `https://stream.moviestream.lat/api/genre/SinhalaMovies?page=${pageNum}`;
+                        } else if (category === "Sinhala Dubbing") {
+                            fetchUrl = `https://stream.moviestream.lat/api/genre/SinhalaDubbing?page=${pageNum}`;
+                        } else if (category === "TV Series") {
+                            fetchUrl = `https://stream.moviestream.lat/api/tvseries?page=${pageNum}`;
+                        } else if (category === "Movies") {
+                            fetchUrl = `https://stream.moviestream.lat/api/movies-general?page=${pageNum}`;
                         } else {
-                            const endpoint = `/api/genre/${category.replace(/\s+/g, '')}`;
+                            const endpoint = category === "Popular Movie" || category === "Trending TV" || category === "Trending Movie" || category === "New Movie" 
+                                ? `/api/trending` 
+                                : `/api/genre/${category.replace(/\s+/g, '')}`;
                             fetchUrl = `https://stream.moviestream.lat${endpoint}?page=${pageNum}`;
                         }
 
@@ -1379,9 +1400,12 @@
                             allScrapedMovies = data.data.list;
                         } else if (Array.isArray(data.data)) {
                             allScrapedMovies = data.data;
+                        } else if (Array.isArray(data)) {
+                            allScrapedMovies = data;
                         }
 
                         if (allScrapedMovies.length > 0) {
+                            // ALWAYS remove previous items for this category so pagination replaces instead of appends
                             MASTER_DATA = MASTER_DATA.filter(m => m.category !== category || m.fromPanel === true);
 
                             const mappedMovies = allScrapedMovies.map((m, idx) => {
@@ -1398,12 +1422,20 @@
 
                                 return {
                                     _id: m.id || m.subjectId || m._id || ('scrap_' + category.replace(/\s+/g, '') + '_' + pageNum + '_' + idx),
+                                    detailPath: m.detailPath || m.id || m.subjectId || "",
                                     title: m.title || 'Unknown Title',
+                                    description: m.description || m.brief || m.plot || m.desc || "",
                                     imageUrl: proxiedImage,
-                                    quality: "HD",
+                                    quality: "1080p / 720p / 480p",
                                     year: m.year || m.releaseYear || "",
                                     category: category,
-                                    showMain: true
+                                    downloadLink: "",
+                                    season: "",
+                                    episode: "",
+                                    isTrending: category === "Popular Movie" ? true : false,
+                                    showMain: true,
+                                    fromPanel: false,
+                                    trailerUrl: m.trailerUrl || m.trailer || ""
                                 };
                             });
 
@@ -1443,7 +1475,7 @@
                                 document.getElementById('dynamic_sections').scrollIntoView({ behavior: 'smooth' });
                             }
                         }
-                        resolve();
+                        resolve(allScrapedMovies.length > 0);
                     } catch (e) {
                         console.error("Failed to load scraper page", e);
                         reject(e);
@@ -1523,7 +1555,16 @@
                 try {
                     const dbRes = await fetch(`${DB_URL}?v=${new Date().getTime()}`, { signal: AbortSignal.timeout(10000) });
                     const newData = await dbRes.json();
-                    newData.forEach(m => m.fromPanel = true);
+                    newData.forEach(m => {
+                        m.fromPanel = true;
+                        if (m.imageUrl) {
+                            let url = m.imageUrl;
+                            if (url.startsWith('//')) url = 'https:' + url;
+                            if (!url.includes('wsrv.nl') && !url.includes('placeholder')) {
+                                m.imageUrl = `https://wsrv.nl/?url=${encodeURIComponent(url)}&w=250&q=70&output=webp`;
+                            }
+                        }
+                    });
 
                     try {
                         const topRes = await fetch(`https://stream.moviestream.lat/api/top-movies`);
@@ -1560,64 +1601,7 @@
 
                 initFilters();
 
-                // React Bits - LogoLoop & BorderGlow Logic
-                const initLogosAndGlow = () => {
-                    const track = document.getElementById('image_logoloop_track');
-                    const seq1 = document.getElementById('image_logoloop_1');
-                    const card = document.getElementById('partner_logos');
-                    if (!track || !seq1 || !card) return;
 
-                    // LogoLoop Animation
-                    let offset = 0;
-                    let lastTime = null;
-                    const animateLogoLoop = (timestamp) => {
-                        if (!lastTime) lastTime = timestamp;
-                        const dt = Math.max(0, timestamp - lastTime) / 1000;
-                        lastTime = timestamp;
-
-                        const seqWidth = seq1.offsetWidth;
-                        if (seqWidth > 0) {
-                            offset += 50 * dt; // speed
-                            offset = ((offset % seqWidth) + seqWidth) % seqWidth;
-                            track.style.transform = `translate3d(${-offset}px, 0, 0)`;
-                        }
-                        requestAnimationFrame(animateLogoLoop);
-                    };
-                    requestAnimationFrame(animateLogoLoop);
-
-                    // BorderGlow Interaction
-                    const getCenter = (el) => {
-                        const rect = el.getBoundingClientRect();
-                        return [rect.width / 2, rect.height / 2];
-                    };
-                    card.addEventListener('pointermove', (e) => {
-                        const rect = card.getBoundingClientRect();
-                        const x = e.clientX - rect.left;
-                        const y = e.clientY - rect.top;
-
-                        const [cx, cy] = getCenter(card);
-                        const dx = x - cx;
-                        const dy = y - cy;
-
-                        let kx = Infinity, ky = Infinity;
-                        if (dx !== 0) kx = cx / Math.abs(dx);
-                        if (dy !== 0) ky = cy / Math.abs(dy);
-                        const edge = Math.min(Math.max(1 / Math.min(kx, ky), 0), 1);
-
-                        let degrees = 0;
-                        if (!(dx === 0 && dy === 0)) {
-                            degrees = Math.atan2(dy, dx) * (180 / Math.PI) + 90;
-                            if (degrees < 0) degrees += 360;
-                        }
-
-                        card.style.setProperty('--edge-proximity', (edge * 100).toFixed(3));
-                        card.style.setProperty('--cursor-angle', `${degrees.toFixed(3)}deg`);
-                    });
-                    card.addEventListener('mouseleave', () => {
-                        card.style.setProperty('--edge-proximity', 0);
-                    });
-                };
-                setTimeout(initLogosAndGlow, 500);
 
 
                 const urlParams = new URLSearchParams(window.location.search);
@@ -1626,6 +1610,8 @@
                 if (viewCat) {
                     const box = document.querySelector(`.cat-checkbox[value="${viewCat}"]`);
                     if (box) box.checked = true;
+                    // Clear cache for this category to force a fresh fetch
+                    MASTER_DATA = MASTER_DATA.filter(m => m.category !== viewCat || m.fromPanel === true);
                     applyFilters();
                 } else if (!cachedMaster) {
                     const trending = MASTER_DATA.filter(m => m.isTrending === true || m.isTrending === "true");
@@ -1654,11 +1640,11 @@
         window.isHoveringCategories = false;
 
         function handleCategoryToggle(checkbox, catId) {
-            const isChecked = checkbox.checked;
-            document.querySelectorAll(`.cat-checkbox[value="${catId}"]`).forEach(cb => {
-                cb.checked = isChecked;
-            });
-            applyFilters(true);
+            if (checkbox.checked) {
+                window.location.href = `/?view_cat=${encodeURIComponent(catId)}`;
+            } else {
+                window.location.href = `/`;
+            }
         }
 
 
@@ -1670,11 +1656,16 @@
                 { id: "Pixar", name: "Pixar", fontClass: "text-[#00d2ff] font-black uppercase tracking-widest text-[10px]" },
                 { id: "Disney", name: "Disney", fontClass: "text-[#00d2ff] font-black uppercase tracking-widest text-[10px]" },
                 { id: "Sinhala Dubbing", name: "Sinhala Dubbing", fontClass: "text-[#e50914] font-black uppercase tracking-widest text-[10px]" },
+                { id: "Movies", name: "Movies", fontClass: "" },
                 { id: "Popular Movie", name: "Popular Movie", fontClass: "" },
                 { id: "Popular Series", name: "Popular Series", fontClass: "" },
+                { id: "TV Series", name: "TV Series", fontClass: "" },
                 { id: "BoxOffice TOP200", name: "BoxOffice TOP200", fontClass: "" },
-                { id: "K-Drama", name: "K-Drama", fontClass: "" },
-                { id: "C-Drama", name: "C-Drama", fontClass: "" },
+                { id: "Bollywood", name: "Bollywood", fontClass: "" },
+                { id: "Indian", name: "Indian", fontClass: "" },
+                { id: "K-Drama", name: "Korean Drama", fontClass: "" },
+                { id: "C-Drama", name: "Chinese Drama", fontClass: "" },
+                { id: "Turkish Drama", name: "Turkish Drama", fontClass: "" },
                 { id: "Anime English Dubbed", name: "Anime [English Dubbed]", fontClass: "" },
                 { id: "Action Movies", name: "Action Movies", fontClass: "" },
                 { id: "Horror Movies", name: "Horror Movies", fontClass: "" },
@@ -1711,32 +1702,7 @@
             if (catContainer1) catContainer1.innerHTML = html;
             if (catContainer2) catContainer2.innerHTML = html;
 
-            if (!window.logoLoopAnim) {
-                window.logoLoopAnim = true;
-                let lastTime = null;
-                let currentVel = 30;
 
-                const animateLogoLoop = (timestamp) => {
-                    if (!lastTime) lastTime = timestamp;
-                    const dt = Math.max(0, timestamp - lastTime) / 1000;
-                    lastTime = timestamp;
-
-                    const targetVel = window.isHoveringCategories ? 0 : 30;
-                    currentVel += (targetVel - currentVel) * (1 - Math.exp(-dt / 0.25));
-
-                    const track = document.getElementById('filter_categories_track');
-                    const seq1 = document.getElementById('filter_categories');
-
-                    if (track && seq1 && seq1.offsetWidth > 0) {
-                        const seqWidth = seq1.offsetWidth;
-                        window.logoLoopOffset += currentVel * dt;
-                        window.logoLoopOffset = ((window.logoLoopOffset % seqWidth) + seqWidth) % seqWidth;
-                        track.style.transform = `translate3d(${-window.logoLoopOffset}px, 0, 0)`;
-                    }
-                    requestAnimationFrame(animateLogoLoop);
-                };
-                requestAnimationFrame(animateLogoLoop);
-            }
         }
 
         async function applyFilters(fromCheckbox = false) {
@@ -1744,6 +1710,14 @@
             if (fromCheckbox && loader) {
                 loader.style.display = 'flex';
                 loader.style.opacity = '1';
+            }
+
+            // Switch visibility immediately so that scrolling and loaders work correctly
+            document.getElementById('filtered_results_area').classList.remove('hidden');
+            document.getElementById('dynamic_sections').classList.add('hidden');
+            
+            if (fromCheckbox) {
+                document.getElementById('filtered_results_area').scrollIntoView({ behavior: 'smooth' });
             }
 
             setTimeout(async () => {
@@ -1764,7 +1738,7 @@
                     window.history.pushState({}, '', url);
                 }
 
-                if (selectedCategories.length > 0 && selectedCategories[0] !== "Popular Movie") {
+                if (selectedCategories.length > 0) {
                     const hasScraped = MASTER_DATA.some(m => m.category === selectedCategories[0] && !m.fromPanel);
                     if (!hasScraped) {
                         // We need to fetch it!
@@ -1774,10 +1748,26 @@
 
                 let filtered = MASTER_DATA;
                 if (selectedCategories.length > 0) {
-                    filtered = MASTER_DATA.filter(m => selectedCategories.includes(m.category) || (m.genres && m.genres.some(g => selectedCategories.includes(g))));
-                    document.getElementById('filtered_results_area').classList.remove('hidden');
-                    document.getElementById('dynamic_sections').classList.add('hidden');
+                    filtered = MASTER_DATA.filter(m => {
+                        let matches = selectedCategories.includes(m.category) || (m.genres && m.genres.some(g => selectedCategories.includes(g)));
+                        if (!matches && selectedCategories.includes("Sinhala Dubbing")) {
+                            if (["Sinhala Dubbed", "Sinhala Movies", "Sinhala"].includes(m.category)) matches = true;
+                        }
+                        if (!matches && selectedCategories.includes("Sinhala Movies")) {
+                            if (["Sinhala Dubbed"].includes(m.category)) matches = true;
+                        }
+                        return matches;
+                    });
                     renderFilteredGrid(filtered);
+
+                    const prevBtn = document.getElementById('prev_page_btn');
+                    if (prevBtn) {
+                        if (currentFilteredPage > 1) {
+                            prevBtn.classList.remove('hidden');
+                        } else {
+                            prevBtn.classList.add('hidden');
+                        }
+                    }
                 } else {
                     document.getElementById('filtered_results_area').classList.add('hidden');
                     document.getElementById('dynamic_sections').classList.remove('hidden');
@@ -1794,43 +1784,85 @@
             }, 50);
         }
 
+        let currentFilteredPage = 1;
+
         function selectCategory(catId) {
-            document.querySelectorAll('.cat-checkbox').forEach(cb => {
-                cb.checked = (cb.value === catId);
-            });
-            applyFilters(true);
-            document.getElementById('filtered_results_area').scrollIntoView({ behavior: 'smooth' });
+            window.location.href = `/?view_cat=${encodeURIComponent(catId)}`;
         }
 
-        function updateHero(m) {
+        async function loadPrevFiltered() {
+            if (selectedCategories.length > 0 && currentFilteredPage > 1) {
+                currentFilteredPage--;
+                const btn = document.getElementById('prev_page_btn');
+                if (btn) btn.innerText = "Loading...";
+                await loadScraperPage(currentFilteredPage, selectedCategories[0], true);
+                applyFilters(false);
+                if (btn) btn.innerText = "PREV PAGE";
+                document.getElementById('filtered_results_area').scrollIntoView({ behavior: 'smooth' });
+            }
+        }
+
+        async function loadMoreFiltered() {
+            if (selectedCategories.length > 0) {
+                currentFilteredPage++;
+                const btn = document.getElementById('load_more_btn');
+                if (btn) btn.innerText = "Loading...";
+                const hasMore = await loadScraperPage(currentFilteredPage, selectedCategories[0], true);
+                if (!hasMore) {
+                    currentFilteredPage--;
+                    if (btn) btn.innerText = "NO MORE MOVIES";
+                    setTimeout(() => { if (btn) btn.innerText = "LOAD MORE"; }, 3000);
+                } else {
+                    applyFilters(false);
+                    if (btn) btn.innerText = "NEXT PAGE";
+                    document.getElementById('filtered_results_area').scrollIntoView({ behavior: 'smooth' });
+                }
+            }
+        }
+
+        async function updateHero(m) {
             if (!m) return;
             document.getElementById('hero_title').innerText = m.title || "UNKNOWN TITLE";
             document.getElementById('hero_poster').src = m.imageUrl;
+            
+            const heroSection = document.getElementById('hero');
+            if (heroSection) {
+                heroSection.style.backgroundImage = `url('${m.imageUrl}')`;
+                heroSection.style.backgroundSize = 'cover';
+                heroSection.style.backgroundPosition = 'center top';
+                heroSection.style.backgroundRepeat = 'no-repeat';
+                heroSection.style.transition = 'background-image 0.5s ease-in-out';
+            }
+
             document.getElementById('hero_desc').innerText = m.description || "Immerse yourself in this stunning 4K masterpiece. Experience unparalleled visual quality and seamless cloud streaming exclusively on MovieStream Ultra.";
             document.getElementById('hero_quality').innerText = m.quality || "HD";
             document.getElementById('hero_btn').onclick = () => handleMovieClick(m._id, m.detailPath || "", m.fromPanel === true);
+
+            // Fetch actual description if it's a scraped movie!
+            if (!m.fromPanel && m.detailPath && !m.descriptionFetched) {
+                try {
+                    const res = await fetch(`https://stream.moviestream.lat/api/detail2/${encodeURIComponent(m.detailPath)}`);
+                    const details = await res.json();
+                    if (details && details.data && details.data.subject) {
+                        const desc = details.data.subject.description || details.data.subject.plot || details.data.subject.brief;
+                        if (desc) {
+                            m.description = desc;
+                            m.descriptionFetched = true;
+                            document.getElementById('hero_desc').innerText = desc;
+                            // Update cache
+                            try { localStorage.setItem('master_data_cache', JSON.stringify(MASTER_DATA)); } catch(e){}
+                        }
+                    }
+                } catch (e) { console.log("Failed to fetch hero description"); }
+            }
         }
 
         function handleMovieClick(id, path, isPanel) {
-            const loader = document.getElementById('global_netflix_loader');
-            if (loader) {
-                loader.style.display = 'flex';
-                loader.style.opacity = '1';
-            }
-            let url = 'movie-details.html?id=' + id + '&path=' + path;
+            let url = 'movie-details.html?id=' + encodeURIComponent(id) + '&path=' + encodeURIComponent(path);
             if (isPanel) {
                 url += '&fromPanel=true';
             }
-            setTimeout(() => {
-                window.open(url, '_blank');
-                // Hide loader in this tab after a brief moment, since the user stays here
-                setTimeout(() => {
-                    if (loader) {
-                        loader.style.opacity = '0';
-                        setTimeout(() => loader.style.display = 'none', 500);
-                    }
-                }, 800);
-            }, 50);
+            window.open(url, '_blank');
         }
         function renderContent(data) {
             const container = document.getElementById('dynamic_sections');
@@ -1843,9 +1875,12 @@
                 { id: "Disney", name: "Disney", fontClass: "text-[#00d2ff] font-black uppercase tracking-widest text-[10px]" },
                 { id: "Sinhala Dubbing", name: "Sinhala Dubbing", fontClass: "text-[#e50914] font-black uppercase tracking-widest text-[10px]" },
                 { id: "Popular Movie", name: "Popular Movie", fontClass: "text-[#00d2ff]" },
-                { id: "Popular Series", name: "Popular Series", fontClass: "text-[#FFD700]" },
-                { id: "K-Drama", name: "K-Drama", fontClass: "" },
-                { id: "C-Drama", name: "C-Drama", fontClass: "" },
+                { id: "TV Series", name: "TV Series", fontClass: "" },
+                { id: "Bollywood", name: "Bollywood", fontClass: "" },
+                { id: "Indian", name: "Indian", fontClass: "" },
+                { id: "K-Drama", name: "Korean Drama", fontClass: "" },
+                { id: "C-Drama", name: "Chinese Drama", fontClass: "" },
+                { id: "Turkish Drama", name: "Turkish Drama", fontClass: "" },
                 { id: "Anime English Dubbed", name: "Anime [English Dubbed]", fontClass: "" },
                 { id: "BoxOffice TOP200", name: "BoxOffice TOP200", fontClass: "text-[#FFD700]" },
                 { id: "Action Movies", name: "Action Movies", fontClass: "" },
@@ -1882,7 +1917,7 @@
                             <h2 class="text-base md:text-xl font-black uppercase text-white ${cat.fontClass}">${cat.name}</h2>
                             <a href="javascript:void(0)" onclick="selectCategory('${cat.id}')" class="text-[10px] font-black uppercase text-[#00d2ff] hover:text-white transition">See All <i class="fa fa-chevron-right ml-1"></i></a>
                         </div>
-                        <div class="movie-row-cards flex gap-4 md:gap-6 overflow-x-auto hide-scrollbar pb-6">
+                        <div class="movie-row-cards flex gap-4 md:gap-6 overflow-x-auto custom-scrollbar pb-6">
                 `;
 
                 // Always render skeletons initially to prevent DOM crash on load.
@@ -1961,14 +1996,17 @@
                         const catId = rowEl.getAttribute('data-cat-id');
                         const hasScraped = MASTER_DATA.some(m => m.category === catId && m.fromPanel !== true);
 
-                        if (!hasScraped) {
+                        if (!hasScraped && !loadingCats.has(catId)) {
+                            loadingCats.add(catId);
                             loadScraperPage(1, catId, true).then(() => {
                                 updateCategoryRow(catId);
                             }).catch(err => {
                                 console.error(`Lazy load failed for row ${catId}:`, err);
                                 updateCategoryRow(catId);
+                            }).finally(() => {
+                                loadingCats.delete(catId);
                             });
-                        } else {
+                        } else if (hasScraped) {
                             updateCategoryRow(catId);
                         }
                         obs.unobserve(rowEl);
@@ -2030,10 +2068,48 @@
         }
 
         let searchTimeout;
+        
+        async function handleSearchFocus(input) {
+            const suggestions = document.getElementById('search_suggestions');
+            if (input.value.length >= 2) {
+                suggestions.classList.remove('hidden');
+                suggestions.classList.add('flex');
+            } else {
+                // Fetch trending searches
+                suggestions.classList.remove('hidden');
+                suggestions.classList.add('flex');
+                suggestions.innerHTML = `<div class="p-5 text-center text-[10px] text-[#00d2ff] font-bold uppercase tracking-widest"><i class="fa fa-spinner fa-spin mr-2"></i> Loading Trending...</div>`;
+                
+                try {
+                    const res = await fetch('https://stream.moviestream.lat/api/trending-searches');
+                    const json = await res.json();
+                    if (json && json.data && json.data.length > 0) {
+                        let html = `<div class="p-3 text-[10px] text-gray-500 font-bold uppercase tracking-widest border-b border-white/10">Trending Searches</div>`;
+                        json.data.forEach(item => {
+                            const titleStr = item.title.replace(/'/g, "\\'");
+                            html += `<div class="p-3 border-b border-white/5 text-xs text-gray-300 hover:text-white hover:bg-white/5 cursor-pointer flex items-center transition" onclick="document.getElementById('main_search').value='${titleStr}'; liveSearch('${titleStr}');">
+                                <i class="fa fa-fire text-[#E50914] mr-3"></i> ${item.title}
+                            </div>`;
+                        });
+                        suggestions.innerHTML = html;
+                    } else {
+                        suggestions.innerHTML = `<div class="p-3 text-xs text-gray-500">Type to search...</div>`;
+                    }
+                } catch (e) {
+                    suggestions.innerHTML = `<div class="p-3 text-xs text-gray-500">Type to search...</div>`;
+                }
+            }
+        }
+
         async function liveSearch(q) {
             const suggestions = document.getElementById('search_suggestions');
             document.getElementById('clear_search').style.display = q.length > 0 ? 'block' : 'none';
             clearTimeout(searchTimeout);
+
+            if (q.length === 0) {
+                handleSearchFocus(document.getElementById('main_search'));
+                return;
+            }
 
             if (q.length < 2) {
                 suggestions.classList.add('hidden');
@@ -2086,10 +2162,15 @@
 
             searchTimeout = setTimeout(async () => {
                 try {
-                    // Search Scraper API
-                    const res = await fetch(`https://stream.moviestream.lat/api/search?keyword=${encodeURIComponent(q)}`);
-                    const json = await res.json();
-                    let apiItems = json.data?.subjectList || json.data?.items || json.data?.everyoneSearch || [];
+                    // Search Local MongoDB API
+                    let apiItems = [];
+                    try {
+                        const res = await fetch(`/api/global-search?q=${encodeURIComponent(q)}`);
+                        if (res.ok) {
+                            const json = await res.json();
+                            apiItems = json.items || [];
+                        }
+                    } catch (err) {}
 
                     // Also Search Panel API for safety
                     let panelItems = [];
@@ -2125,67 +2206,7 @@
             applyFilters();
         }
 
-        // Drag to scroll logic for categories
-        document.addEventListener('DOMContentLoaded', () => {
-            const track = document.getElementById('filter_categories_track');
-            const slider = document.getElementById('filter_sidebar');
-            if (!track || !slider) return;
-
-            let isDown = false;
-            let startX;
-            let startOffset;
-            let resumeTimeout;
-
-            const startDrag = (clientX) => {
-                isDown = true;
-                window.isHoveringCategories = true;
-                clearTimeout(resumeTimeout);
-                startX = clientX;
-                startOffset = window.logoLoopOffset || 0;
-            };
-
-            const moveDrag = (clientX) => {
-                if (!isDown) return;
-                const dx = clientX - startX;
-                const seq1 = document.getElementById('filter_categories');
-                if (seq1 && seq1.offsetWidth > 0) {
-                    const seqWidth = seq1.offsetWidth;
-                    let newOffset = startOffset - dx;
-                    window.logoLoopOffset = ((newOffset % seqWidth) + seqWidth) % seqWidth;
-                    track.style.transform = `translate3d(${-window.logoLoopOffset}px, 0, 0)`;
-                }
-            };
-
-            const endDrag = () => {
-                if (!isDown) return;
-                isDown = false;
-                resumeTimeout = setTimeout(() => {
-                    window.isHoveringCategories = false;
-                }, 1500);
-            };
-
-            slider.addEventListener('mousedown', (e) => {
-                startDrag(e.clientX);
-                slider.style.cursor = 'grabbing';
-            });
-            window.addEventListener('mousemove', (e) => {
-                moveDrag(e.clientX);
-            });
-            window.addEventListener('mouseup', () => {
-                endDrag();
-                slider.style.cursor = 'grab';
-            });
-
-            slider.addEventListener('touchstart', (e) => {
-                startDrag(e.touches[0].clientX);
-            }, { passive: true });
-            slider.addEventListener('touchmove', (e) => {
-                moveDrag(e.touches[0].clientX);
-            }, { passive: true });
-            slider.addEventListener('touchend', () => {
-                endDrag();
-            });
-        });
+        // Drag to scroll removed in favor of native scrollbar
 
         function clearSearch() {
             document.getElementById('main_search').value = '';
@@ -2194,14 +2215,9 @@
         }
     </script>
 
-    <script>
-    </script>
 
-    <script src="electric-border.js"></script>
-    <script>setTimeout(() => { if (document.getElementById("footer_electric")) new ElectricBorder(document.getElementById("footer_electric"), { color: "#ff003c", speed: 1.5, chaos: 0.1, borderRadius: 16 }); }, 1000);</script>
 
-    <script src="border-glow.js"></script>
-    <script>setTimeout(() => { if (document.getElementById("footer_border_glow")) new BorderGlow(document.getElementById("footer_border_glow"), { animated: true }); }, 1000);</script>
+
 
     <script>
         atOptions = {
