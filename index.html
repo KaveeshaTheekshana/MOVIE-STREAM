@@ -1841,7 +1841,7 @@
             // Fetch actual description if it's a scraped movie!
             if (!m.fromPanel && m.detailPath && !m.descriptionFetched) {
                 try {
-                    const res = await fetch(`https://stream.moviestream.lat/api/detail2/${encodeURIComponent(m.detailPath)}`);
+                    const res = await fetch(`https://stream.moviestream.lat/api/detail2?path=${encodeURIComponent(m.detailPath)}`);
                     const details = await res.json();
                     if (details && details.data && details.data.subject) {
                         const desc = details.data.subject.description || details.data.subject.plot || details.data.subject.brief;
