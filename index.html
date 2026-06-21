@@ -937,6 +937,13 @@
             transform-origin: center center;
             /* filter removed */
         }
+        
+        .logoloop__item img.zoomed {
+            transform: scale(1.6) !important;
+            filter: drop-shadow(0 0 15px rgba(0,210,255,0.8)) !important;
+            z-index: 50;
+            position: relative;
+        }
 
         .logoloop--fade::before,
         .logoloop--fade::after {
@@ -1654,7 +1661,51 @@
 
         document.addEventListener("DOMContentLoaded", initMainLogic);
 
-        window.logoLoopOffset = 0;
+        function startLogoloop() {
+            const track = document.getElementById('image_logoloop_track');
+            let list1 = document.getElementById('image_logoloop_1');
+            if (!track || !list1) return;
+            
+            while (track.scrollWidth < window.innerWidth * 2) {
+                const clone = list1.cloneNode(true);
+                clone.removeAttribute('id');
+                clone.setAttribute('aria-hidden', 'true');
+                track.appendChild(clone);
+            }
+
+            let currentX = 0;
+            const speed = window.innerWidth < 768 ? 0.8 : 1.2;
+            const items = Array.from(document.querySelectorAll('.logoloop__item'));
+            
+            function animate() {
+                currentX -= speed;
+                const listWidth = list1.offsetWidth;
+                if (Math.abs(currentX) >= listWidth && listWidth > 0) {
+                    currentX += listWidth; 
+                }
+                track.style.transform = `translate3d(${currentX}px, 0, 0)`;
+
+                const center = window.innerWidth / 2;
+                // Make threshold relative to screen width for better mobile experience
+                const threshold = window.innerWidth < 768 ? 60 : 90;
+
+                for (let i = 0; i < items.length; i++) {
+                    const rect = items[i].getBoundingClientRect();
+                    const itemCenter = rect.left + (rect.width / 2);
+                    const img = items[i].querySelector('img');
+                    
+                    if (Math.abs(center - itemCenter) < threshold) {
+                        if (img && !img.classList.contains('zoomed')) img.classList.add('zoomed');
+                    } else {
+                        if (img && img.classList.contains('zoomed')) img.classList.remove('zoomed');
+                    }
+                }
+                requestAnimationFrame(animate);
+            }
+            requestAnimationFrame(animate);
+        }
+        document.addEventListener("DOMContentLoaded", startLogoloop);
+
         window.isHoveringCategories = false;
 
         function handleCategoryToggle(checkbox, catId) {
@@ -2091,29 +2142,9 @@
                 suggestions.classList.remove('hidden');
                 suggestions.classList.add('flex');
             } else {
-                // Fetch trending searches
                 suggestions.classList.remove('hidden');
                 suggestions.classList.add('flex');
-                suggestions.innerHTML = `<div class="p-5 text-center text-[10px] text-[#00d2ff] font-bold uppercase tracking-widest"><i class="fa fa-spinner fa-spin mr-2"></i> Loading Trending...</div>`;
-                
-                try {
-                    const res = await fetch('https://stream.moviestream.lat/api/trending-searches');
-                    const json = await res.json();
-                    if (json && json.data && json.data.length > 0) {
-                        let html = `<div class="p-3 text-[10px] text-gray-500 font-bold uppercase tracking-widest border-b border-white/10">Trending Searches</div>`;
-                        json.data.forEach(item => {
-                            const titleStr = item.title.replace(/'/g, "\\'");
-                            html += `<div class="p-3 border-b border-white/5 text-xs text-gray-300 hover:text-white hover:bg-white/5 cursor-pointer flex items-center transition" onclick="document.getElementById('main_search').value='${titleStr}'; liveSearch('${titleStr}');">
-                                <i class="fa fa-fire text-[#E50914] mr-3"></i> ${item.title}
-                            </div>`;
-                        });
-                        suggestions.innerHTML = html;
-                    } else {
-                        suggestions.innerHTML = `<div class="p-3 text-xs text-gray-500">Type to search...</div>`;
-                    }
-                } catch (e) {
-                    suggestions.innerHTML = `<div class="p-3 text-xs text-gray-500">Type to search...</div>`;
-                }
+                suggestions.innerHTML = `<div class="p-5 text-center text-[10px] text-gray-500 font-bold uppercase tracking-widest">Type at least 2 characters to search...</div>`;
             }
         }
 
@@ -2178,24 +2209,27 @@
 
             searchTimeout = setTimeout(async () => {
                 try {
-                    // Search Local MongoDB API
-                    let apiItems = [];
-                    try {
-                        const res = await fetch(`/api/global-search?q=${encodeURIComponent(q)}`);
-                        if (res.ok) {
-                            const json = await res.json();
-                            apiItems = json.items || [];
-                        }
-                    } catch (err) {}
+                    // Fetch from SQLite API and Panel API concurrently for maximum speed
+                    const [globalRes, panelRes] = await Promise.allSettled([
+                        fetch(`/api/global-search?q=${encodeURIComponent(q)}`),
+                        fetch(`https://panel.moviestream.lat/api/movies/search?q=${encodeURIComponent(q)}`)
+                    ]);
 
-                    // Also Search Panel API for safety
+                    let apiItems = [];
                     let panelItems = [];
-                    try {
-                        const panelRes = await fetch(`https://panel.moviestream.lat/api/movies/search?q=${encodeURIComponent(q)}`);
-                        if (panelRes.ok) {
-                            panelItems = await panelRes.json();
-                        }
-                    } catch (e) { }
+
+                    if (globalRes.status === 'fulfilled' && globalRes.value.ok) {
+                        try {
+                            const json = await globalRes.value.json();
+                            apiItems = json.items || [];
+                        } catch(e) {}
+                    }
+
+                    if (panelRes.status === 'fulfilled' && panelRes.value.ok) {
+                        try {
+                            panelItems = await panelRes.value.json();
+                        } catch(e) {}
+                    }
 
                     if (apiItems.length > 0 || panelItems.length > 0) {
                         const merged = [...filteredLocal];
@@ -2214,7 +2248,7 @@
                     console.error("Live search error:", e);
                     if (filteredLocal.length === 0) renderSuggestions([]);
                 }
-            }, 600);
+            }, 300); // Reduced delay from 600ms to 300ms for snappier feeling
         }
 
         function clearFilters() {
