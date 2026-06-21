@@ -2163,24 +2163,6 @@
                 return;
             }
 
-            // Search local MASTER_DATA (Panel movies + currently loaded scraper movies)
-            let filteredLocal = [];
-            let uniqueTitles = new Set();
-
-            // Check global database if available
-            let sourceData = (window.allMoviesData && window.allMoviesData.length > 0) ? window.allMoviesData : MASTER_DATA;
-
-            sourceData.forEach(m => {
-                if (!m.title) return;
-                if (m.title.toLowerCase().includes(q.toLowerCase())) {
-                    const t = m.title.toLowerCase().trim();
-                    if (!uniqueTitles.has(t)) {
-                        uniqueTitles.add(t);
-                        filteredLocal.push(m);
-                    }
-                }
-            });
-
             const renderSuggestions = (items) => {
                 suggestions.classList.remove('hidden');
                 suggestions.classList.add('flex');
@@ -2199,56 +2181,41 @@
                 }
             };
 
-            if (filteredLocal.length > 0) {
-                renderSuggestions(filteredLocal);
-            } else {
-                suggestions.classList.remove('hidden');
-                suggestions.classList.add('flex');
-                suggestions.innerHTML = `<div class="p-5 text-center text-[10px] text-[#00d2ff] font-bold uppercase tracking-widest"><i class="fa fa-spinner fa-spin mr-2"></i> Searching Online...</div>`;
-            }
+            suggestions.classList.remove('hidden');
+            suggestions.classList.add('flex');
+            suggestions.innerHTML = `<div class="p-5 text-center text-[10px] text-[#00d2ff] font-bold uppercase tracking-widest"><i class="fa fa-spinner fa-spin mr-2"></i> Searching Online...</div>`;
 
             searchTimeout = setTimeout(async () => {
                 try {
-                    // Fetch from SQLite API and Panel API concurrently for maximum speed
-                    const [globalRes, panelRes] = await Promise.allSettled([
-                        fetch(`/api/global-search?q=${encodeURIComponent(q)}`),
-                        fetch(`https://panel.moviestream.lat/api/movies/search?q=${encodeURIComponent(q)}`)
-                    ]);
+                    const asithaRes = await fetch(`https://stream.moviestream.lat/api/mb-search?q=${encodeURIComponent(q)}`);
+                    let asithaItems = [];
 
-                    let apiItems = [];
-                    let panelItems = [];
-
-                    if (globalRes.status === 'fulfilled' && globalRes.value.ok) {
+                    if (asithaRes.ok) {
                         try {
-                            const json = await globalRes.value.json();
-                            apiItems = json.items || [];
-                        } catch(e) {}
-                    }
-
-                    if (panelRes.status === 'fulfilled' && panelRes.value.ok) {
-                        try {
-                            panelItems = await panelRes.value.json();
-                        } catch(e) {}
-                    }
-
-                    if (apiItems.length > 0 || panelItems.length > 0) {
-                        const merged = [...filteredLocal];
-                        [...apiItems, ...panelItems].forEach(apiM => {
-                            const t = (apiM.title || apiM.name || "").toLowerCase().trim();
-                            if (!uniqueTitles.has(t) && t !== "") {
-                                uniqueTitles.add(t);
-                                merged.push(apiM);
+                            const json = await asithaRes.json();
+                            if (json.status && json.data && Array.isArray(json.data)) {
+                                asithaItems = json.data.map(i => {
+                                    // The ID is in the link format 'moviepro:type:id'
+                                    const idMatch = i.link ? i.link.split(':').pop() : '';
+                                    return {
+                                        _id: idMatch,
+                                        title: i.title,
+                                        year: i.year,
+                                        imageUrl: i.imageSrc,
+                                        detailPath: i.detailPath || "",
+                                        quality: i.quality || 'HD'
+                                    };
+                                });
                             }
-                        });
-                        renderSuggestions(merged);
-                    } else if (filteredLocal.length === 0) {
-                        renderSuggestions([]);
+                        } catch(e) {}
                     }
+
+                    renderSuggestions(asithaItems);
                 } catch (e) {
                     console.error("Live search error:", e);
-                    if (filteredLocal.length === 0) renderSuggestions([]);
+                    renderSuggestions([]);
                 }
-            }, 300); // Reduced delay from 600ms to 300ms for snappier feeling
+            }, 300);
         }
 
         function clearFilters() {
