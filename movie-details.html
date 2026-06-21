@@ -110,6 +110,21 @@
             overflow: hidden;
             box-shadow: 0 0 50px rgba(229, 9, 20, 0.3);
             background: #000;
+            position: relative;
+        }
+
+        .video-js {
+            width: 100% !important;
+            height: 100% !important;
+            position: absolute !important;
+            top: 0;
+            left: 0;
+        }
+
+        .video-js .vjs-control-bar .vjs-fullscreen-control {
+            display: flex !important;
+            visibility: visible !important;
+            opacity: 1 !important;
         }
 
         .video-js .vjs-control-bar {
