@@ -734,9 +734,30 @@
         href="https://fonts.googleapis.com/css2?family=Noto+Sans+Sinhala:wght@400;700;900&family=Orbitron:wght@400;900&family=Inter:wght@300;600;900&display=swap"
         rel="stylesheet">
 
-    <script async defer
-        src="https://pl29238324.effectivecpmnetwork.com/fe/a0/39/fea039617f028f9cf163140e6e6eb7eb.js"></script>
+    <!-- Ad Script Manager -->
+    <script>
+        function initPopunder() {
+            if (!sessionStorage.getItem('popunder_shown')) {
+                let s1 = document.createElement('script');
+                s1.src = "https://pl29238324.effectivecpmnetwork.com/fe/a0/39/fea039617f028f9cf163140e6e6eb7eb.js";
+                document.head.appendChild(s1);
 
+                let s2 = document.createElement('script');
+                s2.src = "https://pl29238420.effectivecpmnetwork.com/14/12/3a/14123a31ddf83a815e2f9c12daa42188.js";
+                document.head.appendChild(s2);
+
+                document.body.addEventListener('click', function() {
+                    sessionStorage.setItem('popunder_shown', 'true');
+                }, { once: true });
+            }
+        }
+        document.addEventListener("DOMContentLoaded", initPopunder);
+        window.addEventListener("pageshow", function(event) {
+            if (event.persisted && sessionStorage.getItem('popunder_shown')) {
+                window.location.reload();
+            }
+        });
+    </script>
 </head>
 
 <body>
@@ -1326,9 +1347,6 @@
             </div>
         </footer>
     </div>
-    <script async defer
-        src="https://pl29238420.effectivecpmnetwork.com/14/12/3a/14123a31ddf83a815e2f9c12daa42188.js"></script>
-
     <script>
         const DB_URL = "https://panel.moviestream.lat/api/movies";
         const SCRAPER_CATEGORIES = [
@@ -1339,7 +1357,7 @@
             "Animation", "Superhero Series", "Teen Fantasy", "Action Thriller",
             "Epic Fantasy", "Hot Short TV", "Must-watch Black Shows", "Bet+",
             "Sitcom", "Adult Animation", "Teen Romance", "Gangster", "BL Story",
-            "Marvel", "DC Comics", "Sinhala Movies", "Pixar", "Disney"
+            "Marvel", "Sinhala Movies", "Pixar", "Disney"
         ];
         let MASTER_DATA = [];
         const loadingCats = new Set();
@@ -1652,7 +1670,6 @@
         function initFilters() {
             const categories = [
                 { id: "Marvel", name: "Marvel", fontClass: "text-[#E62429] font-black uppercase tracking-widest text-[10px]" },
-                { id: "DC Comics", name: "DC Comics", fontClass: "text-[#0476F2] font-black uppercase tracking-widest text-[10px]" },
                 { id: "Pixar", name: "Pixar", fontClass: "text-[#00d2ff] font-black uppercase tracking-widest text-[10px]" },
                 { id: "Disney", name: "Disney", fontClass: "text-[#00d2ff] font-black uppercase tracking-widest text-[10px]" },
                 { id: "Sinhala Dubbing", name: "Sinhala Dubbing", fontClass: "text-[#e50914] font-black uppercase tracking-widest text-[10px]" },
@@ -1870,7 +1887,6 @@
 
             const cats = [
                 { id: "Marvel", name: "Marvel", fontClass: "text-[#E62429] font-black uppercase tracking-widest text-[10px]" },
-                { id: "DC Comics", name: "DC Comics", fontClass: "text-[#0476F2] font-black uppercase tracking-widest text-[10px]" },
                 { id: "Pixar", name: "Pixar", fontClass: "text-[#00d2ff] font-black uppercase tracking-widest text-[10px]" },
                 { id: "Disney", name: "Disney", fontClass: "text-[#00d2ff] font-black uppercase tracking-widest text-[10px]" },
                 { id: "Sinhala Dubbing", name: "Sinhala Dubbing", fontClass: "text-[#e50914] font-black uppercase tracking-widest text-[10px]" },
