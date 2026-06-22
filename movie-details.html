@@ -704,7 +704,7 @@
 
 
 
-                    <video id="player" class="video-js vjs-big-play-centered" controls preload="auto"
+                    <video id="player" class="video-js vjs-big-play-centered" controls preload="auto" crossorigin="anonymous"
                         playsinline></video>
                 </div>
 
@@ -874,7 +874,7 @@
             </div>
 
             <div class="flex flex-col gap-3 w-full my-6 relative z-10 px-2">
-                <button onclick="triggerDownload('480p')"
+                <button id="btn_dl_480p" onclick="triggerDownload('480p')"
                     class="w-full bg-white/5 border border-white/10 text-gray-300 py-3.5 rounded-2xl font-bold uppercase text-[11px] transition-all hover:bg-white/10 hover:border-white/30 hover:-translate-y-1 flex items-center justify-between px-5 group">
                     <span class="flex items-center gap-3"><i
                             class="fa-solid fa-mobile-screen-button text-gray-500 group-hover:text-white transition-colors"></i>
@@ -882,14 +882,14 @@
                     <i class="fa-solid fa-download text-gray-600 group-hover:text-[#00d2ff] transition-colors"></i>
                 </button>
 
-                <button onclick="triggerDownload('720p')"
+                <button id="btn_dl_720p" onclick="triggerDownload('720p')"
                     class="w-full bg-gradient-to-r from-[#00d2ff]/10 to-transparent border border-[#00d2ff]/30 text-white py-3.5 rounded-2xl font-bold uppercase text-[11px] transition-all hover:border-[#00d2ff]/70 hover:-translate-y-1 flex items-center justify-between px-5 shadow-[0_5px_15px_rgba(0,210,255,0.05)] group">
                     <span class="flex items-center gap-3"><i class="fa-solid fa-tv text-[#00d2ff]"></i> 720p
                         Standard HD</span>
                     <i class="fa-solid fa-download text-[#00d2ff]/50 group-hover:text-[#00d2ff] transition-colors"></i>
                 </button>
 
-                <button onclick="triggerDownload('1080p')"
+                <button id="btn_dl_1080p" onclick="triggerDownload('1080p')"
                     class="w-full bg-gradient-to-r from-[#00d2ff] to-[#00a3cc] border border-[#00d2ff] text-black py-4 rounded-2xl font-black uppercase text-[11px] transition-all hover:shadow-[0_10px_25px_rgba(0,210,255,0.4)] hover:-translate-y-1 flex items-center justify-between px-5">
                     <span class="flex items-center gap-3"><i class="fa-solid fa-desktop text-black/70"></i> 1080p
                         Full HD</span>
@@ -898,7 +898,7 @@
                 </button>
             </div>
 
-            <div class="pt-5 border-t border-white/5 relative z-10 text-center">
+            <div id="optional_subtitles_section" class="pt-5 border-t border-white/5 relative z-10 text-center">
                 <h3 class="text-gray-500 font-bold text-[9px] mb-3 uppercase tracking-[0.2em]"><i
                         class="fa-solid fa-closed-captioning text-gray-600 mr-1"></i> Optional Subtitles</h3>
                 <div id="popup_subtitle_downloads" class="flex flex-wrap justify-center gap-2 w-full pb-2">
@@ -1539,17 +1539,6 @@
 
             closeAllPopups();
             document.getElementById('popup_step1').style.display = 'flex';
-            for (let i = 0; i < tracks.length; i++) {
-                if (tracks[i].kind === 'captions' || tracks[i].kind === 'subtitles') {
-                    if (lang === 'off') {
-                        tracks[i].mode = 'hidden';
-                    } else if (tracks[i].language === lang) {
-                        tracks[i].mode = 'showing';
-                    } else {
-                        tracks[i].mode = 'hidden';
-                    }
-                }
-            }
         }
 
         function resetToButtons() {
@@ -1758,7 +1747,7 @@
             }
             const playerWrapper = document.querySelector('.player-wrapper');
             if (playerWrapper) {
-                playerWrapper.innerHTML = `<video id="player" class="video-js vjs-big-play-centered" controls preload="auto" playsinline></video>`;
+                playerWrapper.innerHTML = `<video id="player" class="video-js vjs-big-play-centered" controls preload="auto" crossorigin="anonymous" playsinline></video>`;
 
 
             }
@@ -1869,6 +1858,7 @@
             let taSub = taCap ? taCap.url : "";
 
             if (enSub || taSub) {
+                document.getElementById('optional_subtitles_section').style.display = 'block';
                 if (enSub) {
                     let enLangParam = isSourceEn ? 'en_native' : 'en';
                     let enProxyUrl = `https://stream.moviestream.lat/api/subtitle/proxy?url=${encodeURIComponent(enSub)}&lang=${enLangParam}`;
@@ -1886,8 +1876,27 @@
                     subBtnsContainer.innerHTML += `<button onclick="downloadSubtitleFile('${taProxyUrl}', '${MOVIE_DATA.title}_Tamil.srt', this, 'ta')" class="bg-[#1a1a1a] text-gray-300 border border-gray-600 px-3 py-1.5 rounded text-[10px] uppercase font-bold hover:bg-white hover:text-black transition">Tamil</button>`;
                 }
             } else {
-                subBtnsContainer.innerHTML = '<span class="text-gray-500 text-[10px] font-bold uppercase">No Subtitles Found</span>';
+                document.getElementById('optional_subtitles_section').style.display = 'none';
+                subBtnsContainer.innerHTML = '';
             }
+
+            let has480 = false;
+            let has720 = false;
+            let has1080 = false;
+
+            if (MOVIE_DATA.streams && MOVIE_DATA.streams.length > 0) {
+                has480 = !!MOVIE_DATA.streams.find(s => s.resolutions == '480' || (s.quality && String(s.quality).includes('480')));
+                has720 = !!MOVIE_DATA.streams.find(s => s.resolutions == '720' || (s.quality && String(s.quality).includes('720')));
+                has1080 = !!MOVIE_DATA.streams.find(s => s.resolutions == '1080' || (s.quality && String(s.quality).includes('1080')));
+            }
+
+            if (!has480 && !has720 && !has1080 && MOVIE_DATA.downloadLink) {
+                has720 = true; // fallback
+            }
+
+            document.getElementById('btn_dl_480p').style.display = has480 ? 'flex' : 'none';
+            document.getElementById('btn_dl_720p').style.display = has720 ? 'flex' : 'none';
+            document.getElementById('btn_dl_1080p').style.display = has1080 ? 'flex' : 'none';
 
             document.getElementById('popup_quality_select').style.display = 'flex';
         }
@@ -1974,7 +1983,7 @@
             }
 
             // Play direct proxy stream via VideoJS
-            playerWrapper.innerHTML = `<video id="player" class="video-js vjs-big-play-centered" controls preload="auto" playsinline></video>`;
+            playerWrapper.innerHTML = `<video id="player" class="video-js vjs-big-play-centered" controls preload="auto" crossorigin="anonymous" playsinline></video>`;
 
             player = videojs('player', {
                 fluid: true,
