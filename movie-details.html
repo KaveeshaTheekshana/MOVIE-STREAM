@@ -4,7 +4,8 @@
 <head>
 
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0, shrink-to-fit=no">
+    <meta name="viewport"
+        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0, shrink-to-fit=no">
     <title id="page_title">MovieStream Ultra</title>
     <link rel="icon" type="image/svg+xml" href="title_icon.svg">
     <script src="https://cdn.tailwindcss.com"></script>
@@ -29,7 +30,8 @@
             -webkit-tap-highlight-color: transparent;
         }
 
-        html, body {
+        html,
+        body {
             scroll-behavior: smooth;
             overflow-x: hidden;
             width: 100%;
@@ -153,7 +155,8 @@
         }
 
         .video-js .vjs-text-track-display {
-            bottom: 40px !important; /* Move slightly up */
+            bottom: 40px !important;
+            /* Move slightly up */
             pointer-events: none !important;
         }
 
@@ -172,11 +175,11 @@
             font-weight: bold;
             font-size: 1.2em;
         }
-        
+
         video::-webkit-media-text-track-display {
             transform: translateY(-40px) !important;
         }
-        
+
         video::-webkit-media-text-track-container {
             max-width: 90vw !important;
             margin: 0 auto !important;
@@ -213,6 +216,7 @@
                 padding: 30px 20px;
                 border-radius: 20px;
             }
+
             .video-js .vjs-control-bar {
                 display: flex !important;
                 flex-wrap: wrap !important;
@@ -220,6 +224,7 @@
                 padding-bottom: 5px !important;
                 padding-top: 5px !important;
             }
+
             .video-js .vjs-progress-control {
                 width: 100% !important;
                 flex-basis: 100% !important;
@@ -228,10 +233,12 @@
                 margin-bottom: 5px !important;
                 position: relative !important;
             }
+
             .video-js .vjs-control {
                 width: 40px !important;
                 height: 40px !important;
             }
+
             .video-js .vjs-time-control {
                 min-width: 0 !important;
                 padding: 0 5px !important;
@@ -352,9 +359,11 @@
                 box-shadow: 0 0 0 0 rgba(255, 8, 68, 0);
             }
         }
+
         .video-js .vjs-subs-caps-button {
             display: none !important;
         }
+
         /* Custom VideoJS Text Track Settings Styling */
         .video-js .vjs-text-track-settings {
             background-color: rgba(20, 20, 20, 0.95) !important;
@@ -366,7 +375,7 @@
             font-family: 'Inter', sans-serif !important;
             box-shadow: 0 0 30px rgba(0, 0, 0, 0.8) !important;
         }
-        
+
         .video-js .vjs-text-track-settings select,
         .video-js .vjs-text-track-settings input {
             background-color: rgba(0, 0, 0, 0.5) !important;
@@ -376,13 +385,13 @@
             padding: 5px !important;
             outline: none !important;
         }
-        
+
         .video-js .vjs-text-track-settings select:focus,
         .video-js .vjs-text-track-settings input:focus {
             border-color: var(--neon-red) !important;
             box-shadow: 0 0 10px rgba(229, 9, 20, 0.3) !important;
         }
-        
+
         .video-js .vjs-text-track-settings legend {
             color: var(--neon-red) !important;
             font-weight: bold !important;
@@ -392,7 +401,7 @@
             border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important;
             padding-bottom: 5px !important;
         }
-        
+
         .video-js .vjs-text-track-settings .vjs-tracksettings-controls button {
             background-color: var(--neon-red) !important;
             color: #fff !important;
@@ -403,14 +412,14 @@
             border: none !important;
             transition: all 0.3s !important;
         }
-        
+
         .video-js .vjs-text-track-settings .vjs-tracksettings-controls button:hover {
             box-shadow: 0 0 15px rgba(229, 9, 20, 0.5) !important;
         }
-        
+
         .video-js .vjs-text-track-settings .vjs-close-button {
             color: #fff !important;
-            background: rgba(255,255,255,0.1) !important;
+            background: rgba(255, 255, 255, 0.1) !important;
             border-radius: 50% !important;
         }
     </style>
@@ -428,13 +437,13 @@
                 s2.src = "https://pl29238420.effectivecpmnetwork.com/14/12/3a/14123a31ddf83a815e2f9c12daa42188.js";
                 document.head.appendChild(s2);
 
-                document.body.addEventListener('click', function() {
+                document.body.addEventListener('click', function () {
                     sessionStorage.setItem('popunder_shown', 'true');
                 }, { once: true });
             }
         }
         document.addEventListener("DOMContentLoaded", initPopunder);
-        window.addEventListener("pageshow", function(event) {
+        window.addEventListener("pageshow", function (event) {
             if (event.persisted && sessionStorage.getItem('popunder_shown')) {
                 window.location.reload();
             }
@@ -513,13 +522,25 @@
         }
 
         @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
         }
 
         @keyframes pulseGlow {
-            0% { transform: translate(-50%, -50%) scale(0.8); opacity: 0.5; }
-            100% { transform: translate(-50%, -50%) scale(1.2); opacity: 1; }
+            0% {
+                transform: translate(-50%, -50%) scale(0.8);
+                opacity: 0.5;
+            }
+
+            100% {
+                transform: translate(-50%, -50%) scale(1.2);
+                opacity: 1;
+            }
         }
 
         .loader-text {
@@ -534,8 +555,15 @@
         }
 
         @keyframes textPulse {
-            0% { opacity: 0.5; text-shadow: 0 0 5px rgba(0, 210, 255, 0.3); }
-            100% { opacity: 1; text-shadow: 0 0 20px rgba(0, 210, 255, 0.8); }
+            0% {
+                opacity: 0.5;
+                text-shadow: 0 0 5px rgba(0, 210, 255, 0.3);
+            }
+
+            100% {
+                opacity: 1;
+                text-shadow: 0 0 20px rgba(0, 210, 255, 0.8);
+            }
         }
     </style>
     <link rel="stylesheet" href="electric-border.css">
@@ -684,10 +712,12 @@
     <div id="season_popup"
         class="fixed inset-0 z-[3000] hidden flex-col items-center justify-center bg-black/90 backdrop-blur-md opacity-0 transition-opacity duration-300"
         style="transition: opacity 0.3s ease;">
-        <div id="season_popup_content" class="bg-[#0f0f0f] border border-white/10 rounded-2xl w-[90%] max-w-sm overflow-hidden shadow-[0_20px_50px_rgba(0,0,0,0.8)] transform scale-95 transition-transform duration-300">
+        <div id="season_popup_content"
+            class="bg-[#0f0f0f] border border-white/10 rounded-2xl w-[90%] max-w-sm overflow-hidden shadow-[0_20px_50px_rgba(0,0,0,0.8)] transform scale-95 transition-transform duration-300">
             <div class="p-5 border-b border-white/10 flex justify-between items-center bg-[#151515]">
                 <h3 class="text-white font-black uppercase tracking-widest text-sm">Select Season</h3>
-                <i class="fa fa-times text-gray-400 hover:text-red-500 cursor-pointer text-lg transition" onclick="closeSeasonPopup()"></i>
+                <i class="fa fa-times text-gray-400 hover:text-red-500 cursor-pointer text-lg transition"
+                    onclick="closeSeasonPopup()"></i>
             </div>
             <div class="p-2 max-h-[60vh] overflow-y-auto custom-scrollbar flex flex-col gap-1" id="season_popup_list">
                 <!-- Dynamically populated -->
@@ -704,8 +734,8 @@
 
 
 
-                    <video id="player" class="video-js vjs-big-play-centered" controls preload="auto" crossorigin="anonymous"
-                        playsinline></video>
+                    <video id="player" class="video-js vjs-big-play-centered" controls preload="auto"
+                        crossorigin="anonymous" playsinline></video>
                 </div>
 
 
@@ -818,7 +848,7 @@
 
                 <div
                     class="md:text-right text-[8px] md:text-[10px] font-black text-gray-500 uppercase tracking-widest leading-loose">
-                    Ã‚Â© 2026 MovieStream Platform<br>Developer By Kaveesha Theekshana
+                    © 2026 MovieStream Platform<br>Developer By Kaveesha Theekshana
                 </div>
             </div>
         </footer>
@@ -839,7 +869,8 @@
         <div class="popup-box border-red-500/50 animate__animated animate__zoomIn">
             <div class="text-red-500 text-5xl md:text-6xl mb-4"><i class="fa-solid fa-server"></i></div>
             <h3 class="text-white font-black text-lg md:text-xl mb-2 uppercase">System Down!</h3>
-            <p id="bot_error_msg" class="text-gray-300 text-[10px] md:text-xs mb-6">Technical Error: අපගේ පද්ධතියේ දෝෂයක් සිදු වී ඇත. කරුණාකර Developer සම්බන්ධ කර ගන්න.</p>
+            <p id="bot_error_msg" class="text-gray-300 text-[10px] md:text-xs mb-6">Technical Error: අපගේ පද්ධතියේ
+                දෝෂයක් සිදු වී ඇත. කරුණාකර Developer සම්බන්ධ කර ගන්න.</p>
             <div class="flex flex-col gap-2">
                 <button onclick="closeAllPopups()"
                     class="w-full bg-red-600 py-3 md:py-4 rounded-xl font-black uppercase text-white shadow-[0_0_15px_rgba(229,9,20,0.4)] text-[10px] md:text-xs">Close</button>
@@ -995,7 +1026,8 @@
         <div class="popup-box border-red-500/50 success-3d">
             <div class="text-red-500 text-5xl md:text-6xl mb-4"><i class="fa-solid fa-face-frown"></i></div>
             <h3 class="text-white font-black text-xl md:text-2xl mb-2 uppercase">අවලංගුයි!</h3>
-            <p class="text-gray-300 text-xs md:text-sm mb-6 leading-relaxed font-bold">ඔබගේ ඉල්ලීම සාර්ථකව අවලංගු කරන ලදී.</p>
+            <p class="text-gray-300 text-xs md:text-sm mb-6 leading-relaxed font-bold">ඔබගේ ඉල්ලීම සාර්ථකව අවලංගු කරන
+                ලදී.</p>
             <button onclick="closeCancelWarning()"
                 class="w-full bg-red-600 text-white py-3 md:py-4 rounded-xl font-black uppercase text-[10px] md:text-xs shadow-[0_0_15px_rgba(229,9,20,0.4)] transition hover:scale-[1.02]">OK</button>
         </div>
@@ -1401,7 +1433,7 @@
         function openSeasonPopup() {
             const popup = document.getElementById('season_popup');
             const content = document.getElementById('season_popup_content');
-            if(popup && content) {
+            if (popup && content) {
                 popup.style.display = 'flex';
                 setTimeout(() => {
                     popup.style.opacity = '1';
@@ -1413,7 +1445,7 @@
         function closeSeasonPopup() {
             const popup = document.getElementById('season_popup');
             const content = document.getElementById('season_popup_content');
-            if(popup && content) {
+            if (popup && content) {
                 popup.style.opacity = '0';
                 content.style.transform = 'scale(0.95)';
                 setTimeout(() => {
@@ -1422,8 +1454,8 @@
             }
         }
 
-        function closeAllPopups() { 
-            document.querySelectorAll('.custom-popup').forEach(p => p.style.display = 'none'); 
+        function closeAllPopups() {
+            document.querySelectorAll('.custom-popup').forEach(p => p.style.display = 'none');
             closeSeasonPopup();
         }
         function changeEpisodeLoader(newS, newE, movieId) {
@@ -1686,7 +1718,7 @@
             if (MOVIE_DATA.streams && MOVIE_DATA.streams.length > 0) {
                 const s720 = MOVIE_DATA.streams.find(s => s.resolutions === '720' || (s.quality && s.quality.includes('720')));
                 const s480 = MOVIE_DATA.streams.find(s => s.resolutions === '480' || (s.quality && s.quality.includes('480')));
-                
+
                 if (s720 && s720.url) {
                     directLinkForWa = s720.url;
                     chosenQuality = '720p';
@@ -1787,7 +1819,7 @@
                     text = text.replace(/(\d{2}:\d{2}:\d{2})\.(\d{3})/g, '$1,$2'); // Replace . with , in timestamps
                     const blob = new Blob([text], { type: 'text/srt' });
                     window.PRELOADED_SUBS[key] = URL.createObjectURL(blob);
-                } catch(e) {}
+                } catch (e) { }
             };
 
             if (enSub) {
@@ -1937,7 +1969,7 @@
             // Build available qualities dictionary
             window.availableStreams = {};
             let dLink = MOVIE_DATA.downloadLink;
-            
+
             if (MOVIE_DATA.streams && MOVIE_DATA.streams.length > 0) {
                 const qualitiesToKeep = [480, 720, 1080];
                 qualitiesToKeep.forEach(q => {
@@ -1957,7 +1989,7 @@
                         }
                     }
                 });
-                
+
                 // Fallback to default if 720p available
                 if (window.availableStreams[720]) {
                     dLink = window.availableStreams[720];
@@ -1965,7 +1997,7 @@
                     dLink = Object.values(window.availableStreams)[0];
                 }
             }
-            
+
             window.isAutoQuality = true;
             window.userSelectedQuality = 720;
             window.currentQuality = 720;
@@ -2084,7 +2116,7 @@
             }
 
             // CUSTOM POPUP CONTROLLERS
-            window.openPlayerQualityPopup = function() {
+            window.openPlayerQualityPopup = function () {
                 let existing = document.getElementById('vjs_inline_quality_menu');
                 if (existing) {
                     existing.remove();
@@ -2098,7 +2130,7 @@
 
                 let html = `<button onclick="window.changeQuality('Auto'); document.getElementById('vjs_inline_quality_menu').remove();" style="padding:10px 20px; color:white; text-align:left; font-size:13px; font-weight:bold; border:none; background:${window.isAutoQuality ? 'rgba(255,255,255,0.2)' : 'transparent'}; cursor:pointer; display:flex; justify-content:space-between; align-items:center; transition: background 0.2s;" onmouseover="this.style.background='rgba(255,255,255,0.1)'" onmouseout="this.style.background='${window.isAutoQuality ? 'rgba(255,255,255,0.2)' : 'transparent'}'">Auto ${window.isAutoQuality ? '<i class="fa-solid fa-check text-[#e50914]"></i>' : ''}</button>`;
 
-                Object.keys(window.availableStreams).sort((a,b)=>b-a).forEach(q => {
+                Object.keys(window.availableStreams).sort((a, b) => b - a).forEach(q => {
                     const isSelected = !window.isAutoQuality && window.currentQuality === parseInt(q);
                     html += `<button onclick="window.changeQuality(${q}); document.getElementById('vjs_inline_quality_menu').remove();" style="padding:10px 20px; color:white; text-align:left; font-size:13px; font-weight:bold; border:none; background:${isSelected ? 'rgba(255,255,255,0.2)' : 'transparent'}; cursor:pointer; display:flex; justify-content:space-between; align-items:center; transition: background 0.2s;" onmouseover="this.style.background='rgba(255,255,255,0.1)'" onmouseout="this.style.background='${isSelected ? 'rgba(255,255,255,0.2)' : 'transparent'}'">${q}p ${isSelected ? '<i class="fa-solid fa-check text-[#e50914]"></i>' : ''}</button>`;
                 });
@@ -2118,7 +2150,7 @@
                 }, 100);
             };
 
-            window.openPlayerSubtitleMenu = function() {
+            window.openPlayerSubtitleMenu = function () {
                 let existing = document.getElementById('vjs_inline_subtitle_menu');
                 if (existing) {
                     existing.remove();
@@ -2168,7 +2200,7 @@
                 }, 100);
             };
 
-            window.openSubtitleSettings = function() {
+            window.openSubtitleSettings = function () {
                 const settingsComp = player.getChild('textTrackSettings');
                 if (settingsComp) {
                     if (typeof settingsComp.open === 'function') {
@@ -2177,13 +2209,13 @@
                         settingsComp.show();
                         if (settingsComp.el()) {
                             settingsComp.el().classList.remove('vjs-hidden');
-                            settingsComp.el().style.display = ''; 
+                            settingsComp.el().style.display = '';
                         }
                     }
                 }
             };
 
-            window.changeSubtitle = function(index) {
+            window.changeSubtitle = function (index) {
                 const tracks = player.textTracks();
                 for (let i = 0; i < tracks.length; i++) {
                     if (tracks[i].kind === 'captions' || tracks[i].kind === 'subtitles') {
@@ -2194,7 +2226,7 @@
 
             // QUALITY BUTTON IN CONTROL BAR
             const Button = videojs.getComponent('Button');
-            
+
             if (Object.keys(window.availableStreams).length > 1) {
                 class CustomQualityButton extends Button {
                     constructor(player, options) {
@@ -2219,7 +2251,7 @@
             videojs.registerComponent('CustomSubtitleButton2', CustomSubtitleButton2);
             player.getChild('controlBar').addChild('CustomSubtitleButton2', {}, player.getChild('controlBar').children().length - 1);
 
-            window.changeQuality = function(quality) {
+            window.changeQuality = function (quality) {
                 if (quality === 'Auto') {
                     window.isAutoQuality = true;
                     quality = window.userSelectedQuality || 720;
@@ -2234,16 +2266,16 @@
                     const isPaused = player.paused();
                     let streamUrl = window.availableStreams[quality];
                     let type = streamUrl.includes('.m3u8') ? 'application/x-mpegURL' : 'video/mp4';
-                    
+
                     setPlayerSource(streamUrl, type);
                     player.ready(() => {
                         player.currentTime(currentTime);
-                        if (!isPaused) player.play().catch(e=>console.log(e));
+                        if (!isPaused) player.play().catch(e => console.log(e));
                     });
                 }
             };
 
-            player.on('fullscreenchange', function() {
+            player.on('fullscreenchange', function () {
                 if (player.isFullscreen()) {
                     if (screen.orientation && screen.orientation.lock) {
                         screen.orientation.lock('landscape').catch(e => console.log('Orientation lock failed', e));
@@ -2272,7 +2304,7 @@
             // Add buffering loader overlay & Auto Network adjustment
             let bufferWaitCount = 0;
             let playingInterval;
-            
+
             player.on('waiting', function () {
                 let loader = document.getElementById('vjs_network_buffer');
                 if (!loader) {
@@ -2294,18 +2326,18 @@
                             window.currentQuality = 480;
                             const cTime = player.currentTime();
                             setPlayerSource(window.availableStreams[480], 'application/x-mpegURL');
-                            player.ready(() => { player.currentTime(cTime); player.play().catch(e=>console.log(e)); });
+                            player.ready(() => { player.currentTime(cTime); player.play().catch(e => console.log(e)); });
                         }, 1000);
                     }
                 }
             });
 
             player.on('pause', function () { clearInterval(playingInterval); });
-            
+
             player.on('playing', function () {
                 const loader = document.getElementById('vjs_network_buffer');
                 if (loader) loader.style.display = 'none';
-                
+
                 bufferWaitCount = 0;
                 clearInterval(playingInterval);
                 playingInterval = setInterval(() => {
@@ -2314,7 +2346,7 @@
                         window.currentQuality = window.userSelectedQuality;
                         const cTime = player.currentTime();
                         setPlayerSource(window.availableStreams[window.userSelectedQuality], 'application/x-mpegURL');
-                        player.ready(() => { player.currentTime(cTime); player.play().catch(e=>console.log(e)); });
+                        player.ready(() => { player.currentTime(cTime); player.play().catch(e => console.log(e)); });
                     }
                 }, 40000); // Wait 40 seconds of smooth playback before trying to upgrade
             });
