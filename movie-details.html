@@ -2005,6 +2005,84 @@
                 }
             });
 
+            // Subtitle tracks initialization
+            let engCap = null;
+            let taCap = null;
+            let isSourceEn = false;
+            let isSourceTa = false;
+
+            if (MOVIE_DATA.captions && MOVIE_DATA.captions.length > 0) {
+                engCap = MOVIE_DATA.captions.find(c => {
+                    const l = c.lan || c.lang || "";
+                    return l.toLowerCase().includes('en');
+                });
+                taCap = MOVIE_DATA.captions.find(c => {
+                    const l = c.lan || c.lang || "";
+                    return l.toLowerCase().includes('ta') || l.toLowerCase().includes('tamil');
+                });
+
+                if (engCap) isSourceEn = true;
+                if (taCap) isSourceTa = true;
+
+                if (!engCap) engCap = MOVIE_DATA.captions[0];
+            }
+
+            let enSub = engCap ? engCap.url : (MOVIE_DATA.subtitleUrl || "");
+            let taSub = taCap ? taCap.url : "";
+
+            function injectSubtitles() {
+                if (enSub || taSub) {
+                    if (enSub) {
+                        let enLangParam = isSourceEn ? 'en_native' : 'en';
+                        let enProxyUrl = `https://stream.moviestream.lat/api/subtitle/proxy?url=${encodeURIComponent(enSub)}&lang=${enLangParam}`;
+                        let siProxyUrl = `https://stream.moviestream.lat/api/subtitle/proxy?url=${encodeURIComponent(enSub)}&lang=si&from=en`;
+
+                        player.addRemoteTextTrack({ kind: 'captions', src: enProxyUrl, srclang: 'en', label: 'English' }, false);
+                        player.addRemoteTextTrack({ kind: 'captions', src: siProxyUrl, srclang: 'si', label: 'Sinhala' }, false);
+                    }
+
+                    if (taSub) {
+                        let taProxyUrl = `https://stream.moviestream.lat/api/subtitle/proxy?url=${encodeURIComponent(taSub)}&lang=ta_native`;
+                        player.addRemoteTextTrack({ kind: 'captions', src: taProxyUrl, srclang: 'ta', label: 'Tamil' }, false);
+                    } else if (enSub) {
+                        let taLangParam = isSourceTa ? 'ta_native' : 'ta';
+                        let taProxyUrl = `https://stream.moviestream.lat/api/subtitle/proxy?url=${encodeURIComponent(enSub)}&lang=${taLangParam}&from=en`;
+                        player.addRemoteTextTrack({ kind: 'captions', src: taProxyUrl, srclang: 'ta', label: 'Tamil' }, false);
+                    }
+                }
+            }
+
+            function setPlayerSource(streamUrl, typeStr) {
+                let currentSubLabel = 'off';
+                const tracks = player.textTracks();
+                if (tracks) {
+                    for (let i = 0; i < tracks.length; i++) {
+                        if ((tracks[i].kind === 'captions' || tracks[i].kind === 'subtitles') && tracks[i].mode === 'showing') {
+                            currentSubLabel = tracks[i].label;
+                            break;
+                        }
+                    }
+                }
+
+                player.src({ type: typeStr, src: streamUrl });
+                injectSubtitles();
+
+                setTimeout(() => {
+                    const newTracks = player.textTracks();
+                    if (newTracks) {
+                        for (let i = 0; i < newTracks.length; i++) {
+                            if ((newTracks[i].kind === 'captions' || newTracks[i].kind === 'subtitles')) {
+                                if (currentSubLabel !== 'off' && newTracks[i].label === currentSubLabel) {
+                                    newTracks[i].mode = 'showing';
+                                } else {
+                                    newTracks[i].mode = 'disabled';
+                                }
+                            }
+                        }
+                    }
+                }, 500);
+            }
+
             // CUSTOM POPUP CONTROLLERS
             window.openPlayerQualityPopup = function() {
                 let existing = document.getElementById('vjs_inline_quality_menu');
@@ -2157,7 +2235,7 @@
                     let streamUrl = window.availableStreams[quality];
                     let type = streamUrl.includes('.m3u8') ? 'application/x-mpegURL' : 'video/mp4';
                     
-                    player.src({ type: type, src: streamUrl });
+                    setPlayerSource(streamUrl, type);
                     player.ready(() => {
                         player.currentTime(currentTime);
                         if (!isPaused) player.play().catch(e=>console.log(e));
@@ -2188,7 +2266,7 @@
                 streamUrl = `https://api.moviestream.lat/stream/${msgId}${chatId ? '?chat=' + chatId : ''}`;
             }
 
-            player.src({ type: streamUrl.includes('.m3u8') ? 'application/x-mpegURL' : 'video/mp4', src: streamUrl });
+            setPlayerSource(streamUrl, streamUrl.includes('.m3u8') ? 'application/x-mpegURL' : 'video/mp4');
             if (MOVIE_DATA.imageUrl) player.poster(MOVIE_DATA.imageUrl);
 
             // Add buffering loader overlay & Auto Network adjustment
@@ -2215,7 +2293,7 @@
                         setTimeout(() => {
                             window.currentQuality = 480;
                             const cTime = player.currentTime();
-                            player.src({ type: 'application/x-mpegURL', src: window.availableStreams[480] });
+                            setPlayerSource(window.availableStreams[480], 'application/x-mpegURL');
                             player.ready(() => { player.currentTime(cTime); player.play().catch(e=>console.log(e)); });
                         }, 1000);
                     }
@@ -2235,56 +2313,13 @@
                         // Recover back to user's desired quality
                         window.currentQuality = window.userSelectedQuality;
                         const cTime = player.currentTime();
-                        player.src({ type: 'application/x-mpegURL', src: window.availableStreams[window.userSelectedQuality] });
+                        setPlayerSource(window.availableStreams[window.userSelectedQuality], 'application/x-mpegURL');
                         player.ready(() => { player.currentTime(cTime); player.play().catch(e=>console.log(e)); });
                     }
                 }, 40000); // Wait 40 seconds of smooth playback before trying to upgrade
             });
 
-            // Add Subtitle Tracks
-            let engCap = null;
-            let taCap = null;
-            let isSourceEn = false;
-            let isSourceTa = false;
-
-            if (MOVIE_DATA.captions && MOVIE_DATA.captions.length > 0) {
-                engCap = MOVIE_DATA.captions.find(c => {
-                    const l = c.lan || c.lang || "";
-                    return l.toLowerCase().includes('en');
-                });
-                taCap = MOVIE_DATA.captions.find(c => {
-                    const l = c.lan || c.lang || "";
-                    return l.toLowerCase().includes('ta') || l.toLowerCase().includes('tamil');
-                });
-
-                if (engCap) isSourceEn = true;
-                if (taCap) isSourceTa = true;
-
-                if (!engCap) engCap = MOVIE_DATA.captions[0];
-            }
-
-            let enSub = engCap ? engCap.url : (MOVIE_DATA.subtitleUrl || "");
-            let taSub = taCap ? taCap.url : "";
-
-            if (enSub || taSub) {
-                if (enSub) {
-                    let enLangParam = isSourceEn ? 'en_native' : 'en';
-                    let enProxyUrl = `https://stream.moviestream.lat/api/subtitle/proxy?url=${encodeURIComponent(enSub)}&lang=${enLangParam}`;
-                    let siProxyUrl = `https://stream.moviestream.lat/api/subtitle/proxy?url=${encodeURIComponent(enSub)}&lang=si&from=en`;
-
-                    player.addRemoteTextTrack({ kind: 'captions', src: enProxyUrl, srclang: 'en', label: 'English' }, false);
-                    player.addRemoteTextTrack({ kind: 'captions', src: siProxyUrl, srclang: 'si', label: 'Sinhala' }, false);
-                }
-
-                if (taSub) {
-                    let taProxyUrl = `https://stream.moviestream.lat/api/subtitle/proxy?url=${encodeURIComponent(taSub)}&lang=ta_native`;
-                    player.addRemoteTextTrack({ kind: 'captions', src: taProxyUrl, srclang: 'ta', label: 'Tamil' }, false);
-                } else if (enSub) {
-                    let taLangParam = isSourceTa ? 'ta_native' : 'ta';
-                    let taProxyUrl = `https://stream.moviestream.lat/api/subtitle/proxy?url=${encodeURIComponent(enSub)}&lang=${taLangParam}&from=en`;
-                    player.addRemoteTextTrack({ kind: 'captions', src: taProxyUrl, srclang: 'ta', label: 'Tamil' }, false);
-                }
-            }
+            // Subtitle tracks already injected via setPlayerSource
 
             player.play().catch(e => console.log("Autoplay blocked", e));
             document.getElementById('video_display_area').scrollIntoView({ behavior: 'smooth' });
