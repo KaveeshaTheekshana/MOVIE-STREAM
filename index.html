@@ -2195,7 +2195,6 @@
                             const json = await asithaRes.json();
                             if (json.status && json.data && Array.isArray(json.data)) {
                                 asithaItems = json.data.map(i => {
-                                    // The ID is in the link format 'moviepro:type:id'
                                     const idMatch = i.link ? i.link.split(':').pop() : '';
                                     return {
                                         _id: idMatch,
@@ -2210,10 +2209,38 @@
                         } catch(e) {}
                     }
 
+                    if (asithaItems.length === 0) {
+                        // Fallback to local MASTER_DATA search
+                        const qLower = q.toLowerCase();
+                        const localResults = MASTER_DATA.filter(m => (m.title || m.name || "").toLowerCase().includes(qLower));
+                        asithaItems = localResults.map(m => ({
+                            _id: m._id || m.id || m.originalId,
+                            title: m.title || m.name,
+                            year: m.year || "",
+                            imageUrl: m.imageUrl || m.coverImage,
+                            detailPath: m.detailPath || "",
+                            quality: m.quality || 'HD',
+                            fromPanel: m.fromPanel
+                        }));
+                    }
+
                     renderSuggestions(asithaItems);
                 } catch (e) {
                     console.error("Live search error:", e);
-                    renderSuggestions([]);
+                    
+                    // Fallback to local MASTER_DATA search on error
+                    const qLower = q.toLowerCase();
+                    const localResults = MASTER_DATA.filter(m => (m.title || m.name || "").toLowerCase().includes(qLower));
+                    const fallbackItems = localResults.map(m => ({
+                        _id: m._id || m.id || m.originalId,
+                        title: m.title || m.name,
+                        year: m.year || "",
+                        imageUrl: m.imageUrl || m.coverImage,
+                        detailPath: m.detailPath || "",
+                        quality: m.quality || 'HD',
+                        fromPanel: m.fromPanel
+                    }));
+                    renderSuggestions(fallbackItems);
                 }
             }, 300);
         }
