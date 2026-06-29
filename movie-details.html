@@ -1168,6 +1168,16 @@
                     }
                 }
 
+                if (!foundApiMovie) {
+                    try {
+                        const savedResultsStr = localStorage.getItem('ms_last_search');
+                        if (savedResultsStr) {
+                            const savedResults = JSON.parse(savedResultsStr);
+                            foundApiMovie = savedResults.find(m => m.subjectId === movieId || m.id === movieId);
+                        }
+                    } catch(e) {}
+                }
+
                 // If path is missing or failed, attempt to fetch from details/:id proxy (which returns recommendations as fallback)
                 if (!foundApiMovie) {
                     try {
@@ -1175,7 +1185,7 @@
                         if (apiResponse.ok) {
                             const apiJson = await apiResponse.json();
                             if (apiJson && apiJson.data && apiJson.data.items) {
-                                foundApiMovie = apiJson.data.items.find(m => m.subjectId === movieId) || apiJson.data.items[0];
+                                foundApiMovie = apiJson.data.items.find(m => m.subjectId === movieId);
                             }
                         }
                     } catch (err) {
