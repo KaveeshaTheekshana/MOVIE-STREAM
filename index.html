@@ -1357,7 +1357,7 @@
     <script>
         const DB_URL = "https://panel.moviestream.lat/api/movies";
         const SCRAPER_CATEGORIES = [
-            "Movies", "Popular Movie", "Popular Series", "TV Series", "K-Drama", "C-Drama",
+            "Popular Movie", "Popular Series", "Movies", "TV Series", "K-Drama", "C-Drama",
             "Bollywood", "Indian", "Turkish Drama",
             "Anime English Dubbed", "BoxOffice TOP200", "Action Movies",
             "Horror Movies", "Romance", "Comedy", "Adventure", "Fantasy",
@@ -1720,13 +1720,13 @@
 
         function initFilters() {
             const categories = [
+                { id: "Popular Movie", name: "Popular Movie", fontClass: "" },
+                { id: "Popular Series", name: "Popular Series", fontClass: "" },
                 { id: "Marvel", name: "Marvel", fontClass: "text-[#E62429] font-black uppercase tracking-widest text-[10px]" },
                 { id: "Pixar", name: "Pixar", fontClass: "text-[#00d2ff] font-black uppercase tracking-widest text-[10px]" },
                 { id: "Disney", name: "Disney", fontClass: "text-[#00d2ff] font-black uppercase tracking-widest text-[10px]" },
                 { id: "Sinhala Dubbing", name: "Sinhala Dubbing", fontClass: "text-[#e50914] font-black uppercase tracking-widest text-[10px]" },
                 { id: "Movies", name: "Movies", fontClass: "" },
-                { id: "Popular Movie", name: "Popular Movie", fontClass: "" },
-                { id: "Popular Series", name: "Popular Series", fontClass: "" },
                 { id: "TV Series", name: "TV Series", fontClass: "" },
                 { id: "BoxOffice TOP200", name: "BoxOffice TOP200", fontClass: "" },
                 { id: "Bollywood", name: "Bollywood", fontClass: "" },
@@ -1937,11 +1937,12 @@
             let fullHtml = '';
 
             const cats = [
+                { id: "Popular Movie", name: "Popular Movie", fontClass: "text-[#00d2ff]" },
+                { id: "Popular Series", name: "Popular Series", fontClass: "" },
                 { id: "Marvel", name: "Marvel", fontClass: "text-[#E62429] font-black uppercase tracking-widest text-[10px]" },
                 { id: "Pixar", name: "Pixar", fontClass: "text-[#00d2ff] font-black uppercase tracking-widest text-[10px]" },
                 { id: "Disney", name: "Disney", fontClass: "text-[#00d2ff] font-black uppercase tracking-widest text-[10px]" },
                 { id: "Sinhala Dubbing", name: "Sinhala Dubbing", fontClass: "text-[#e50914] font-black uppercase tracking-widest text-[10px]" },
-                { id: "Popular Movie", name: "Popular Movie", fontClass: "text-[#00d2ff]" },
                 { id: "TV Series", name: "TV Series", fontClass: "" },
                 { id: "Bollywood", name: "Bollywood", fontClass: "" },
                 { id: "Indian", name: "Indian", fontClass: "" },
@@ -2194,15 +2195,16 @@
                         try {
                             const json = await asithaRes.json();
                             if (json.status && json.data && Array.isArray(json.data)) {
+                                localStorage.setItem('ms_last_search', JSON.stringify(json.data));
                                 asithaItems = json.data.map(i => {
-                                    const idMatch = i.link ? i.link.split(':').pop() : '';
+                                    const idMatch = i.id || i.subjectId || '';
                                     return {
                                         _id: idMatch,
-                                        title: i.title,
-                                        year: i.year,
-                                        imageUrl: i.imageSrc,
-                                        detailPath: i.detailPath || "",
-                                        quality: i.quality || 'HD'
+                                        title: i.title || '',
+                                        year: i.releaseDate ? i.releaseDate.split('-')[0] : (i.year || ''),
+                                        imageUrl: i.cover && i.cover.url ? i.cover.url : (i.imageSrc || ''),
+                                        detailPath: idMatch,
+                                        quality: i.quality || '1080p / 720p / 480p'
                                     };
                                 });
                             }
@@ -2219,7 +2221,7 @@
                             year: m.year || "",
                             imageUrl: m.imageUrl || m.coverImage,
                             detailPath: m.detailPath || "",
-                            quality: m.quality || 'HD',
+                            quality: m.quality || '1080p / 720p / 480p',
                             fromPanel: m.fromPanel
                         }));
                     }
