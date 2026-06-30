@@ -1258,7 +1258,8 @@
                 if (!MOVIE_DATA) {
                     document.getElementById('movie_title').innerText = "CONTENT UNAVAILABLE";
                     document.getElementById('movie_desc').innerText = "The movie you are looking for is no longer available on our servers.";
-                    document.getElementById('hero_badge_area').style.display = 'none';
+                    const heroBadge = document.getElementById('hero_badge_area');
+                    if (heroBadge) heroBadge.style.display = 'none';
                     document.getElementById('download_anchor').style.display = 'none';
                     return;
                 }
