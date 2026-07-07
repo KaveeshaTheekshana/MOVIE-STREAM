@@ -1244,7 +1244,7 @@
 
                     // Fetch full description using detail2 proxy
                     try {
-                        const detailRes = await fetch(`https://stream.moviestream.lat/api/detail2?path=${encodeURIComponent(foundApiMovie.detailPath)}`);
+                        const detailRes = await fetch(`https://stream.moviestream.lat/api/detail2?path=${encodeURIComponent(MOVIE_DATA.detailPath)}`);
                         if (detailRes.ok) {
                             const detailJson = await detailRes.json();
                             if (detailJson.data && detailJson.data.subject) {
@@ -1982,7 +1982,7 @@
             let dLink = MOVIE_DATA.downloadLink;
 
             if (MOVIE_DATA.streams && MOVIE_DATA.streams.length > 0) {
-                const qualitiesToKeep = [480, 720, 1080];
+                const qualitiesToKeep = [360, 480, 720, 1080];
                 qualitiesToKeep.forEach(q => {
                     const st = MOVIE_DATA.streams.find(s => parseInt(s.resolutions) === q || s.resolutions == q.toString() || (s.quality && String(s.quality).includes(q.toString())));
                     if (st && st.url) {
@@ -2239,27 +2239,31 @@
             const Button = videojs.getComponent('Button');
 
             if (Object.keys(window.availableStreams).length > 1) {
-                class CustomQualityButton extends Button {
-                    constructor(player, options) {
-                        super(player, options);
-                        this.controlText('Quality');
-                        this.addClass('vjs-icon-cog');
+                if (!videojs.getComponent('CustomQualityButton')) {
+                    class CustomQualityButton extends Button {
+                        constructor(player, options) {
+                            super(player, options);
+                            this.controlText('Quality');
+                            this.addClass('vjs-icon-cog');
+                        }
+                        handleClick() { window.openPlayerQualityPopup(); }
                     }
-                    handleClick() { window.openPlayerQualityPopup(); }
+                    videojs.registerComponent('CustomQualityButton', CustomQualityButton);
                 }
-                videojs.registerComponent('CustomQualityButton', CustomQualityButton);
                 player.getChild('controlBar').addChild('CustomQualityButton', {}, player.getChild('controlBar').children().length - 1);
             }
 
-            class CustomSubtitleButton2 extends Button {
-                constructor(player, options) {
-                    super(player, options);
-                    this.controlText('Subtitles');
-                    this.addClass('vjs-icon-subtitles');
+            if (!videojs.getComponent('CustomSubtitleButton2')) {
+                class CustomSubtitleButton2 extends Button {
+                    constructor(player, options) {
+                        super(player, options);
+                        this.controlText('Subtitles');
+                        this.addClass('vjs-icon-subtitles');
+                    }
+                    handleClick() { window.openPlayerSubtitleMenu(); }
                 }
-                handleClick() { window.openPlayerSubtitleMenu(); }
+                videojs.registerComponent('CustomSubtitleButton2', CustomSubtitleButton2);
             }
-            videojs.registerComponent('CustomSubtitleButton2', CustomSubtitleButton2);
             player.getChild('controlBar').addChild('CustomSubtitleButton2', {}, player.getChild('controlBar').children().length - 1);
 
             window.changeQuality = function (quality) {
