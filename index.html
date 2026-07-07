@@ -2198,12 +2198,19 @@
                                 localStorage.setItem('ms_last_search', JSON.stringify(json.data));
                                 asithaItems = json.data.map(i => {
                                     const idMatch = i.id || i.subjectId || '';
+                                    let pathMatch = idMatch;
+                                    if (i.detailUrl) {
+                                        const urlParts = i.detailUrl.split('/');
+                                        pathMatch = urlParts[urlParts.length - 1];
+                                    } else if (i.detailPath) {
+                                        pathMatch = i.detailPath;
+                                    }
                                     return {
                                         _id: idMatch,
                                         title: i.title || '',
                                         year: i.releaseDate ? i.releaseDate.split('-')[0] : (i.year || ''),
                                         imageUrl: i.cover && i.cover.url ? i.cover.url : (i.imageSrc || ''),
-                                        detailPath: idMatch,
+                                        detailPath: pathMatch,
                                         quality: i.quality || '1080p / 720p / 480p'
                                     };
                                 });
