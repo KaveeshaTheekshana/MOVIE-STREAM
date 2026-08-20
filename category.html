@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Category | MOVIESTREAM</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=Montserrat:wght@700;800&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          "colors": {
+                  "secondary": "#c8c6c5",
+                  "on-secondary-fixed": "#1c1b1b",
+                  "surface-container-low": "#1c1b1b",
+                  "on-background": "#e5e2e1",
+                  "primary": "#ffb4aa",
+                  "on-surface": "#e5e2e1",
+                  "primary-container": "#e50914",
+                  "background": "#131313",
+                  "surface": "#131313",
+                  "on-primary-container": "#fff7f6",
+                  "outline-variant": "#5e3f3b"
+          },
+          "fontFamily": {
+                  "display-hero": ["Montserrat"],
+                  "body-lg": ["Inter"],
+                  "label-bold": ["Inter"],
+                  "body-md": ["Inter"],
+                  "headline-md": ["Montserrat"],
+                  "display-hero-mobile": ["Montserrat"]
+          },
+          "spacing": {
+                  "edge-margin-mobile": "20px",
+                  "edge-margin-desktop": "60px",
+                  "stack-lg": "40px",
+                  "stack-md": "16px",
+                  "container-max": "1440px"
+          },
+          "fontSize": {
+                  "display-hero": ["72px", {"lineHeight": "80px", "letterSpacing": "-0.02em", "fontWeight": "800"}],
+                  "label-bold": ["14px", {"lineHeight": "20px", "letterSpacing": "0.05em", "fontWeight": "600"}],
+                  "headline-md": ["24px", {"lineHeight": "32px", "fontWeight": "700"}],
+                  "display-hero-mobile": ["40px", {"lineHeight": "48px", "letterSpacing": "-0.02em", "fontWeight": "800"}]
+          }
+        },
+      },
+    }
+</script>
+<style>
+    .movie-card:hover .movie-overlay { opacity: 1; }
+    .movie-card { transition: transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94), box-shadow 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94); }
+    .movie-card:hover { transform: scale(1.08); z-index: 10; box-shadow: 0 10px 30px rgba(229, 9, 20, 0.3); }
+    .glass-panel { background: rgba(255, 255, 255, 0.08); backdrop-filter: blur(40px); -webkit-backdrop-filter: blur(40px); border: 1px solid rgba(255, 255, 255, 0.1); }
+</style>
+</head>
+<body class="bg-background text-on-background min-h-screen font-body-md overflow-x-hidden selection:bg-primary-container selection:text-on-primary-container relative pt-[100px]">
+
+<nav class="fixed top-0 w-full z-50 bg-black/90 backdrop-blur-xl flex justify-between items-center px-edge-margin-mobile md:px-edge-margin-desktop py-4 w-full transition-all duration-300 border-b border-white/10">
+    <div class="flex items-center gap-8">
+        <a class="font-display-hero-mobile text-2xl font-black text-primary-container tracking-tighter hover:scale-105 transition-transform" href="index.html">MOVIESTREAM</a>
+    </div>
+    <div class="flex items-center gap-4">
+        <a href="index.html" class="text-on-surface hover:text-primary transition flex items-center gap-2 font-label-bold bg-white/10 px-4 py-2 rounded-full">
+            <span class="material-symbols-outlined text-[18px]">home</span> Back Home
+        </a>
+    </div>
+</nav>
+
+<div class="max-w-container-max mx-auto px-edge-margin-mobile md:px-edge-margin-desktop mb-stack-md mt-6">
+    <div class="flex flex-col md:flex-row md:items-end justify-between gap-4 border-l-4 border-primary-container pl-4">
+        <div>
+            <span id="cat_badge" class="px-2 py-1 bg-white/10 text-secondary rounded text-[10px] font-bold uppercase tracking-widest mb-2 inline-block">Loading...</span>
+            <h1 id="page_title" class="font-display-hero-mobile md:font-display-hero text-display-hero-mobile md:text-5xl text-on-surface drop-shadow-lg">Loading Category...</h1>
+        </div>
+        <div id="loader" class="text-primary font-bold animate-pulse hidden">Fetching content...</div>
+    </div>
+</div>
+
+<div id="movies_grid" class="max-w-container-max mx-auto grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4 md:gap-6 px-edge-margin-mobile md:px-edge-margin-desktop pb-20">
+    <!-- Grid injected by JS -->
+</div>
+
+<div class="flex justify-center mb-20 px-edge-margin-mobile">
+    <button id="btn_load_more" onclick="loadMore()" class="hidden bg-white/10 hover:bg-white/20 text-on-surface font-label-bold py-3 px-8 rounded-full border border-white/20 transition hover:-translate-y-1">Load More</button>
+</div>
+
+<footer class="w-full mt-stack-lg border-t border-white/10 bg-black/50 backdrop-blur-xl flex justify-center items-center py-stack-md">
+    <div class="font-label-sm text-secondary opacity-70">© 2026 MOVIESTREAM. All rights reserved.</div>
+</footer>
+
+<script>
+    const urlParams = new URLSearchParams(window.location.search);
+    const categoryName = urlParams.get('type');
+    const mode = urlParams.get('mode') || 'original'; // 'original' or 'cinesubz'
+    
+    document.getElementById('cat_badge').innerText = mode.toUpperCase() + " API";
+    document.getElementById('page_title').innerText = categoryName || "All Movies";
+    document.title = (categoryName || "Category") + " | MOVIESTREAM";
+
+    const API_BASE = "https://cinesubz.moviestream.lat";
+    const ORIGINAL_API = "https://stream.moviestream.lat/api";
+    
+    let currentPage = 1;
+    let isLoading = false;
+    
+    // For Cinesubz, data is pre-fetched since it's one big JSON
+    let cachedCinesubzData = [];
+
+    async function fetchMovies(page) {
+        if (!categoryName) return [];
+
+        if (mode === 'cinesubz') {
+            try {
+                // If it's page 1, show the loader because we might have a slight delay
+                const res = await fetch(`${API_BASE}/api/category/${encodeURIComponent(categoryName)}?page=${page}`);
+                const json = await res.json();
+                if (json && json.results) {
+                    return json.results;
+                }
+            } catch(e) { console.error(e); }
+            return [];
+        } 
+        
+        else {
+            // Original API logic
+            let fetchUrl = "";
+            if (categoryName === "Sinhala Movies") fetchUrl = `${ORIGINAL_API}/genre/SinhalaMovies?page=${page}`;
+            else if (categoryName === "Sinhala Dubbing") fetchUrl = `${ORIGINAL_API}/genre/SinhalaDubbing?page=${page}`;
+            else if (categoryName === "TV Series") fetchUrl = `${ORIGINAL_API}/tvseries?page=${page}`;
+            else if (categoryName === "Movies") fetchUrl = `${ORIGINAL_API}/movies-general?page=${page}`;
+            else {
+                const isTrending = categoryName === "Popular Movie" || categoryName === "Trending TV" || categoryName === "Trending Movie" || categoryName === "New Movie";
+                const endpoint = isTrending ? `/trending` : `/genre/${categoryName.replace(/\s+/g, '')}`;
+                fetchUrl = `${ORIGINAL_API}${endpoint}?page=${page}`;
+            }
+
+            try {
+                const res = await fetch(fetchUrl);
+                const data = await res.json();
+                if (Array.isArray(data)) return data;
+                if (data && data.data) return data.data.subjectList || data.data.items || data.data.rankingListContentList || [];
+                return [];
+            } catch(e) {
+                console.error(e);
+                return [];
+            }
+        }
+    }
+
+    function renderCards(items) {
+        let cardsHtml = '';
+        const isCinesubz = mode === 'cinesubz';
+        
+        items.forEach((m, idx) => {
+            const id = isCinesubz ? encodeURIComponent(m.url) : (m.id || m.subjectId || m._id || ('scrap_' + idx));
+            const detailPath = isCinesubz ? '' : (m.detailPath || id);
+            const finalId = isCinesubz ? id : (detailPath || id);
+            
+            const imgUrl = m.imageUrl || m.cover?.url || m.coverUrl || m.cover || m.pic || m.image || 'https://via.placeholder.com/200x300';
+            const quality = m.quality || m.type || 'HD';
+            const title = m.title || m.name || 'Unknown';
+            
+            cardsHtml += `
+                <div class="movie-card relative w-full aspect-[2/3] rounded-lg overflow-hidden border border-white/10 cursor-pointer bg-surface-container-low" onclick="window.location.href='movie-details.html?id=${finalId}&source=${mode}'">
+                    <img src="${imgUrl}" class="w-full h-full object-cover" onerror="this.src='https://via.placeholder.com/200x300?text=No+Image'">
+                    <div class="movie-overlay absolute inset-0 bg-gradient-to-t from-black via-black/60 to-transparent opacity-0 transition-opacity duration-300 flex flex-col justify-end p-4 backdrop-blur-[2px]">
+                        <h3 class="font-label-bold text-label-bold text-on-surface mb-2 truncate drop-shadow-md">${title}</h3>
+                        <div class="flex gap-2">
+                            ${isCinesubz ? `<span class="text-[10px] font-bold px-1.5 py-0.5 bg-primary-container text-on-primary-container rounded shadow-[0_0_5px_rgba(229,9,20,0.5)]">SINHALA</span>` : ''}
+                            <span class="text-[10px] font-bold px-1.5 py-0.5 border border-white/20 text-secondary rounded backdrop-blur-md bg-black/30">${quality}</span>
+                        </div>
+                    </div>
+                </div>
+            `;
+        });
+        return cardsHtml;
+    }
+
+    async function loadMore() {
+        if (isLoading) return;
+        isLoading = true;
+        document.getElementById('loader').classList.remove('hidden');
+        document.getElementById('btn_load_more').classList.add('opacity-50');
+        
+        const items = await fetchMovies(currentPage);
+        
+        if (items && items.length > 0) {
+            document.getElementById('movies_grid').insertAdjacentHTML('beforeend', renderCards(items));
+            currentPage++;
+            document.getElementById('btn_load_more').classList.remove('hidden');
+        } else {
+            // No more items
+            document.getElementById('btn_load_more').classList.add('hidden');
+            if (currentPage === 1) {
+                document.getElementById('movies_grid').innerHTML = `<div class="col-span-full text-center py-10 text-secondary">No movies found in this category.</div>`;
+            }
+        }
+        
+        isLoading = false;
+        document.getElementById('loader').classList.add('hidden');
+        document.getElementById('btn_load_more').classList.remove('opacity-50');
+    }
+
+    // Init
+    loadMore();
+</script>
+</body></html>

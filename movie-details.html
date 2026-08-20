@@ -1,0 +1,1721 @@
+
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>MOVIESTREAM - Cinematic Streaming</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=Montserrat:wght@700;800&amp;display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="https://cdn.plyr.io/3.7.8/plyr.css" />
+<script src="https://cdn.plyr.io/3.7.8/plyr.js"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "secondary": "#c8c6c5",
+                      "on-secondary-fixed": "#1c1b1b",
+                      "tertiary-fixed-dim": "#c8c6c6",
+                      "surface-container-low": "#1c1b1b",
+                      "surface-tint": "#ffb4aa",
+                      "on-background": "#e5e2e1",
+                      "on-surface-variant": "#e9bcb6",
+                      "inverse-on-surface": "#313030",
+                      "on-primary-fixed-variant": "#930007",
+                      "on-tertiary-container": "#fbf8f8",
+                      "error": "#ffb4ab",
+                      "secondary-container": "#474746",
+                      "tertiary-fixed": "#e4e2e1",
+                      "surface-bright": "#3a3939",
+                      "secondary-fixed-dim": "#c8c6c5",
+                      "tertiary": "#c8c6c6",
+                      "on-primary-container": "#fff7f6",
+                      "on-tertiary-fixed": "#1b1c1c",
+                      "primary": "#ffb4aa",
+                      "surface-container": "#201f1f",
+                      "inverse-primary": "#c0000c",
+                      "outline": "#af8782",
+                      "surface-container-high": "#2a2a2a",
+                      "surface-variant": "#353534",
+                      "secondary-fixed": "#e5e2e1",
+                      "on-secondary-fixed-variant": "#474746",
+                      "outline-variant": "#5e3f3b",
+                      "on-surface": "#e5e2e1",
+                      "primary-container": "#e50914",
+                      "on-error-container": "#ffdad6",
+                      "surface-container-lowest": "#0e0e0e",
+                      "on-error": "#690005",
+                      "background": "#131313",
+                      "inverse-surface": "#e5e2e1",
+                      "surface-container-highest": "#353534",
+                      "on-primary": "#690003",
+                      "surface": "#131313",
+                      "on-secondary": "#313030",
+                      "on-secondary-container": "#b7b5b4",
+                      "primary-fixed-dim": "#ffb4aa",
+                      "surface-dim": "#131313",
+                      "on-tertiary-fixed-variant": "#474747",
+                      "error-container": "#93000a",
+                      "on-tertiary": "#303030",
+                      "on-primary-fixed": "#410001",
+                      "primary-fixed": "#ffdad5",
+                      "tertiary-container": "#737272"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.125rem",
+                      "lg": "0.25rem",
+                      "xl": "0.5rem",
+                      "full": "0.75rem"
+              },
+              "spacing": {
+                      "edge-margin-mobile": "20px",
+                      "edge-margin-tablet": "32px",
+                      "stack-lg": "40px",
+                      "stack-sm": "8px",
+                      "edge-margin-desktop": "60px",
+                      "gutter": "24px",
+                      "stack-md": "16px",
+                      "container-max": "1440px"
+              },
+              "fontFamily": {
+                      "display-hero": ["Montserrat"],
+                      "body-lg": ["Inter"],
+                      "headline-lg": ["Montserrat"],
+                      "label-sm": ["Inter"],
+                      "label-bold": ["Inter"],
+                      "body-md": ["Inter"],
+                      "headline-md": ["Montserrat"],
+                      "display-hero-mobile": ["Montserrat"]
+              },
+              "fontSize": {
+                      "display-hero": ["72px", {"lineHeight": "80px", "letterSpacing": "-0.02em", "fontWeight": "800"}],
+                      "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "400"}],
+                      "headline-lg": ["32px", {"lineHeight": "40px", "fontWeight": "700"}],
+                      "label-sm": ["12px", {"lineHeight": "16px", "fontWeight": "500"}],
+                      "label-bold": ["14px", {"lineHeight": "20px", "letterSpacing": "0.05em", "fontWeight": "600"}],
+                      "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                      "headline-md": ["24px", {"lineHeight": "32px", "fontWeight": "700"}],
+                      "display-hero-mobile": ["40px", {"lineHeight": "48px", "letterSpacing": "-0.02em", "fontWeight": "800"}]
+              },
+              animation: {
+                'fade-in-up': 'fadeInUp 0.8s ease-out forwards',
+              },
+              keyframes: {
+                fadeInUp: {
+                  '0%': { opacity: '0', transform: 'translateY(20px)' },
+                  '100%': { opacity: '1', transform: 'translateY(0)' },
+                }
+              }
+            },
+          },
+        }
+    </script>
+<style>
+        /* Custom scrollbar for carousels */
+        .hide-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .hide-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+        
+        .movie-card:hover .movie-overlay {
+            opacity: 1;
+        }
+        
+        .movie-card {
+            transition: transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94), box-shadow 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+        
+        .movie-card:hover {
+            transform: scale(1.08);
+            z-index: 10;
+            box-shadow: 0 10px 30px rgba(229, 9, 20, 0.3);
+        }
+        
+        /* Glassmorphism effects */
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(40px);
+            -webkit-backdrop-filter: blur(40px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        /* Parallax effect on hero */
+        .parallax-bg {
+            transform: translateZ(-1px) scale(2);
+            z-index: -1;
+        }
+        
+        .animation-delay-100 { animation-delay: 100ms; }
+        .animation-delay-200 { animation-delay: 200ms; }
+        .animation-delay-300 { animation-delay: 300ms; }
+        .animation-delay-400 { animation-delay: 400ms; }
+    </style>
+
+    <link href="https://vjs.zencdn.net/8.10.0/video-js.css" rel="stylesheet" />
+    <script src="https://vjs.zencdn.net/8.10.0/video.min.js"></script>
+
+</head>
+<body class="bg-background text-on-background min-h-screen font-body-md overflow-x-hidden selection:bg-primary-container selection:text-on-primary-container relative">
+<!-- Global Loader -->
+<div id="global_loader" class="fixed inset-0 z-[999] bg-background flex flex-col items-center justify-center transition-opacity duration-500">
+    <div class="w-16 h-16 border-4 border-primary/20 border-t-primary rounded-full animate-spin mb-6 shadow-[0_0_15px_rgba(229,9,20,0.5)]"></div>
+    <h2 class="font-display-hero-mobile text-3xl font-black text-primary-container tracking-tighter animate-pulse drop-shadow-[0_0_10px_rgba(229,9,20,0.8)]">MOVIESTREAM</h2>
+    <p class="text-secondary mt-2 font-label-bold">Loading Cinematic Experience...</p>
+</div>
+<nav class="fixed top-0 w-full z-50 bg-transparent backdrop-blur-xl bg-gradient-to-b from-black/80 to-transparent flex justify-between items-center px-4 md:px-edge-margin-desktop py-4 w-full transition-all duration-300">
+<!-- Brand -->
+<div class="flex items-center gap-4 md:gap-8 overflow-hidden">
+<a class="font-display-hero-mobile text-2xl md:text-display-hero-mobile font-black text-primary-container tracking-tighter hover:scale-105 transition-transform shrink-0" href="#">MOVIESTREAM</a>
+<!-- Desktop Navigation Links -->
+<ul class="hidden md:flex items-center gap-6 font-label-bold text-label-bold">
+<li><a class="text-on-primary font-bold border-b-2 border-primary-container pb-1 block" href="#">Home</a></li>
+<li><a class="text-on-surface opacity-70 hover:opacity-100 hover:text-primary transition-all duration-300 block" href="#">Movies</a></li>
+<li><a class="text-on-surface opacity-70 hover:opacity-100 hover:text-primary transition-all duration-300 block" href="#">TV Shows</a></li>
+<li><a class="text-on-surface opacity-70 hover:opacity-100 hover:text-primary transition-all duration-300 block" href="#">My List</a></li>
+</ul>
+</div>
+<!-- Trailing Actions -->
+<div class="flex items-center gap-6">
+<button aria-label="Search" class="text-on-surface opacity-70 hover:opacity-100 hover:text-primary transition-all duration-300 scale-105 transition-transform">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">search</span>
+</button>
+<!-- Mobile Menu Toggle -->
+<button aria-label="Menu" class="md:hidden text-on-surface opacity-70 hover:opacity-100 hover:text-primary transition-all duration-300">
+<span class="material-symbols-outlined">menu</span>
+</button>
+</div>
+</nav>
+<main>
+<!-- Hero Section -->
+<section class="relative w-full h-[870px] min-h-[600px] flex items-end pb-stack-lg overflow-hidden perspective-[1px] transform-style-preserve-3d" id="hero-section">
+<!-- Hero Background with Parallax -->
+<div class="absolute inset-0 z-0 parallax-bg" id="hero">
+<img alt="Hero Movie Background" class="w-full h-full object-cover transition-transform duration-[10s] ease-out hover:scale-105" data-alt="A spectacular, wide cinematic shot of a vast desert planet landscape with colossal sandworms erupting from the dunes under a blazing orange sun. The lighting is intense and dramatic, capturing a sci-fi epic atmosphere. Deep shadows and high contrast, visually stunning and immersive." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCHd7CGV4_VvjnnbMbfARjJ1MU0Vc1b0IDcMwe9SvV1DTcSPjlDnJvwSqIlOwrhCYp6IuVUNb8HeA9Xk8647G5FABA5K-9ufFF5R2LRtcMRtACtskKhHZYgxkNUdjam7UDi-LqmRXH6gE61566F-RQuLZBWd0LMgHAk4x6tIRbrIR6mJPnWpvRo8LgI79agGbGQ2Jr0B3AQJgDc0LaRZkolJCbKHYK8QwqMdlYoiAvjBDIDXVUtdY6rVQ"/>
+<!-- Gradient Overlays for readability and fading into background -->
+<div class="absolute inset-0 bg-gradient-to-t from-background via-background/80 to-transparent"></div>
+<div class="absolute inset-0 bg-gradient-to-r from-background via-background/50 to-transparent w-2/3"></div>
+</div>
+<!-- 3D Scene Depth -->
+<!-- STITCH_THREEJS_START:ANIMATION_7 class="absolute top-0 right-0 w-1/2 h-full bg-transparent pointer-events-none opacity-40 z-0" -->
+<div class="absolute top-0 right-0 w-1/2 h-full bg-transparent pointer-events-none opacity-40 z-0" style="display:block;">
+<script src="https://ajax.googleapis.com/ajax/libs/threejs/r125/three.min.js"></script>
+<div id="threejs-container-ANIMATION_7" style="width:100%;height:100%"></div>
+<script>
+(function() {
+  const container = document.getElementById('threejs-container-ANIMATION_7');
+  const devicePixelRatio = window.devicePixelRatio || 1;
+  
+(function() {
+  const container = document.getElementById('threejs-container-ANIMATION_6');
+  if (!container) return;
+
+  const width = container.clientWidth || window.innerWidth;
+  const height = container.clientHeight || window.innerHeight;
+
+  const scene = new THREE.Scene();
+  const camera = new THREE.PerspectiveCamera(75, width / height, 0.1, 1000);
+  const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
+
+  renderer.setSize(width, height);
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+  container.appendChild(renderer.domElement);
+
+  // Group to hold our icons for rotation
+  const iconGroup = new THREE.Group();
+  scene.add(iconGroup);
+
+  // Function to create a "3D Movie Ticket" icon
+  function createTicketIcon(color) {
+    const group = new THREE.Group();
+    const bodyGeom = new THREE.BoxGeometry(2, 1.2, 0.2);
+    const material = new THREE.MeshPhongMaterial({ 
+      color: color, 
+      shininess: 100,
+      specular: 0xffffff
+    });
+    const ticketBody = new THREE.Mesh(bodyGeom, material);
+    group.add(ticketBody);
+
+    // Punch holes
+    const holeGeom = new THREE.CylinderGeometry(0.15, 0.15, 0.3, 16);
+    const holeMat = new THREE.MeshPhongMaterial({ color: 0x000000 });
+    for(let i = -0.45; i <= 0.45; i += 0.45) {
+      const h1 = new THREE.Mesh(holeGeom, holeMat);
+      h1.position.set(-0.9, i, 0);
+      h1.rotation.x = Math.PI / 2;
+      group.add(h1);
+      const h2 = new THREE.Mesh(holeGeom, holeMat);
+      h2.position.set(0.9, i, 0);
+      h2.rotation.x = Math.PI / 2;
+      group.add(h2);
+    }
+    return group;
+  }
+
+  // Function to create a "3D Play" icon
+  function createPlayIcon(color) {
+    const shape = new THREE.Shape();
+    shape.moveTo(0, 0.8);
+    shape.lineTo(0, -0.8);
+    shape.lineTo(1.2, 0);
+    shape.closePath();
+
+    const extrudeSettings = { depth: 0.3, bevelEnabled: true, bevelThickness: 0.1, bevelSize: 0.1 };
+    const geometry = new THREE.ExtrudeGeometry(shape, extrudeSettings);
+    const material = new THREE.MeshPhongMaterial({ color: color, shininess: 90 });
+    return new THREE.Mesh(geometry, material);
+  }
+
+  // Add multiple animated icons in a circular formation
+  const colors = [0xe50914, 0xffffff, 0x444444, 0xe50914];
+  for(let i = 0; i < 4; i++) {
+    const angle = (i / 4) * Math.PI * 2;
+    const icon = i % 2 === 0 ? createTicketIcon(colors[i]) : createPlayIcon(colors[i]);
+    icon.position.set(Math.cos(angle) * 8, Math.sin(angle) * 8, 0);
+    icon.userData = { 
+      rotSpeed: 0.01 + Math.random() * 0.02,
+      floatOffset: Math.random() * Math.PI * 2
+    };
+    iconGroup.add(icon);
+  }
+
+  // Center Piece: Abstract Cinematic Crystal
+  const crystalGeom = new THREE.OctahedronGeometry(3, 0);
+  const crystalMat = new THREE.MeshPhongMaterial({ 
+    color: 0xe50914, 
+    transparent: true, 
+    opacity: 0.8, 
+    shininess: 100,
+    wireframe: false
+  });
+  const crystal = new THREE.Mesh(crystalGeom, crystalMat);
+  scene.add(crystal);
+
+  const wireframeGeom = new THREE.OctahedronGeometry(3.2, 0);
+  const wireframeMat = new THREE.MeshBasicMaterial({ color: 0xffffff, wireframe: true, transparent: true, opacity: 0.2 });
+  const crystalWire = new THREE.Mesh(wireframeGeom, wireframeMat);
+  scene.add(crystalWire);
+
+  // Atmospheric Particles
+  const particlesGeometry = new THREE.BufferGeometry();
+  const particlesCount = 800;
+  const posArray = new Float32Array(particlesCount * 3);
+  for(let i = 0; i < particlesCount * 3; i++) {
+    posArray[i] = (Math.random() - 0.5) * 60;
+  }
+  particlesGeometry.setAttribute('position', new THREE.BufferAttribute(posArray, 3));
+  const particlesMaterial = new THREE.PointsMaterial({ size: 0.05, color: 0xffffff, transparent: true, opacity: 0.4 });
+  const particlesMesh = new THREE.Points(particlesGeometry, particlesMaterial);
+  scene.add(particlesMesh);
+
+  // Lights
+  const ambientLight = new THREE.AmbientLight(0xffffff, 0.4);
+  scene.add(ambientLight);
+  const pointLight1 = new THREE.PointLight(0xe50914, 2, 50);
+  pointLight1.position.set(10, 10, 10);
+  scene.add(pointLight1);
+  const pointLight2 = new THREE.PointLight(0xffffff, 1, 50);
+  pointLight2.position.set(-10, -10, 5);
+  scene.add(pointLight2);
+
+  camera.position.z = 25;
+
+  let mouseX = 0, mouseY = 0;
+  window.addEventListener('mousemove', (e) => {
+    mouseX = (e.clientX - window.innerWidth / 2) / 100;
+    mouseY = (e.clientY - window.innerHeight / 2) / 100;
+  });
+
+  function animate(t) {
+    requestAnimationFrame(animate);
+    
+    crystal.rotation.y += 0.005;
+    crystal.rotation.x += 0.003;
+    crystalWire.rotation.y -= 0.005;
+    
+    iconGroup.children.forEach((icon, i) => {
+      icon.rotation.y += icon.userData.rotSpeed;
+      icon.rotation.x += 0.01;
+      icon.position.y += Math.sin(t * 0.002 + icon.userData.floatOffset) * 0.01;
+    });
+
+    iconGroup.rotation.z += 0.002;
+    
+    // Parallax
+    camera.position.x += (mouseX - camera.position.x) * 0.05;
+    camera.position.y += (-mouseY - camera.position.y) * 0.05;
+    camera.lookAt(scene.position);
+
+    particlesMesh.rotation.y += 0.0005;
+    
+    renderer.render(scene, camera);
+  }
+
+  window.addEventListener('resize', () => {
+    const w = container.clientWidth || window.innerWidth;
+    const h = container.clientHeight || window.innerHeight;
+    camera.aspect = w / h;
+    camera.updateProjectionMatrix();
+    renderer.setSize(w, h);
+  });
+
+  animate(0);
+})();
+
+})();
+</script>
+</div>
+<!-- STITCH_THREEJS_END:ANIMATION_7 -->
+<!-- Hero Content -->
+<div class="relative z-10 w-full px-edge-margin-mobile md:px-edge-margin-desktop max-w-container-max mx-auto">
+<div class="flex flex-col md:flex-row gap-8 items-start">
+    <!-- Poster Card -->
+    <div class="hidden md:block w-64 shrink-0 rounded-xl overflow-hidden shadow-[0_20px_50px_rgba(0,0,0,0.5)] border border-white/10 group perspective-[1000px] mb-4">
+        <img id="movie_poster" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" class="w-full h-auto object-cover hover:scale-105 transition-transform duration-500">
+    </div>
+    
+    <div class="max-w-2xl">
+<!-- Format Tags -->
+<div class="flex flex-wrap items-center gap-3 mb-4 opacity-0 animate-fade-in-up animation-delay-100">
+<span class="px-2 py-1 border border-outline-variant rounded text-label-sm font-label-sm text-secondary backdrop-blur-sm bg-black/20">4K ULTRA HD</span>
+<span class="px-2 py-1 border border-outline-variant rounded text-label-sm font-label-sm text-secondary backdrop-blur-sm bg-black/20">IMAX ENHANCED</span>
+<span class="px-2 py-1 bg-primary-container text-on-primary-container rounded text-label-sm font-label-sm font-bold shadow-[0_0_10px_rgba(229,9,20,0.5)]">SINHALA SUBS</span>
+</div>
+<!-- Title -->
+<h1 id="movie_title" class="text-4xl md:text-5xl lg:text-6xl font-extrabold text-on-surface mb-4 drop-shadow-2xl leading-tight break-words overflow-hidden text-ellipsis">Loading...</h1>
+<!-- Metadata -->
+<div class="flex items-center gap-4 text-secondary font-label-bold text-label-bold mb-6 opacity-0 animate-fade-in-up animation-delay-300">
+<span class="flex items-center gap-1 text-primary drop-shadow-[0_0_5px_rgba(255,180,170,0.5)]"><span class="material-symbols-outlined text-[16px]" style="font-variation-settings: 'FILL' 1;">star</span> 8.9</span>
+<span>2024</span>
+<span>2h 45m</span>
+<span>Sci-Fi / Action</span>
+</div>
+
+<div class="flex flex-wrap items-center gap-4 text-label-sm font-label-sm text-secondary mb-stack-lg">
+    <div id="imdb_rating_area" class="hidden items-center gap-1 bg-yellow-500/20 text-yellow-500 px-2 py-1 rounded">
+        <i class="fa-solid fa-star"></i> <span id="imdb_val"></span> <span id="imdb_count" class="text-[10px] ml-1 opacity-70"></span>
+    </div>
+    <span id="movie_duration" class="hidden"></span>
+    <span id="movie_country" class="hidden"></span>
+    <span id="movie_genre" class="hidden"></span>
+    <span id="movie_size_bottom"></span>
+</div>
+
+<!-- Action Buttons -->
+
+<div id="tv_info" class="hidden text-primary font-bold mt-4"></div>
+<div id="episodes_section" class="hidden mt-4 bg-white/5 p-4 rounded-xl backdrop-blur-md inline-block w-full max-w-md">
+    <div class="flex flex-col gap-2">
+        <label class="text-[10px] uppercase text-secondary font-bold tracking-wider">Select Season & Episode</label>
+        <div class="flex gap-2">
+            <select id="season_selector" onchange="renderEpisodes(this.value)" class="flex-1 bg-black/50 border border-white/20 rounded p-2 text-white outline-none focus:border-primary transition-colors"></select>
+            <select id="episode_selector" onchange="changeEpisode(this.value)" class="flex-1 bg-black/50 border border-white/20 rounded p-2 text-white outline-none focus:border-primary transition-colors"></select>
+        </div>
+    </div>
+</div>
+
+
+<!-- Cinesubz Seasons Container -->
+<div id="cinesubz_seasons_section" class="hidden mt-8 w-full max-w-4xl opacity-0 animate-fade-in-up animation-delay-400">
+    <h3 class="text-xl font-bold text-white mb-4">Seasons</h3>
+    <div class="flex gap-2 overflow-x-auto pb-4 mb-4 scrollbar-hide" id="cinesubz_seasons_tabs">
+        <!-- Season tabs injected here -->
+    </div>
+    <div id="cinesubz_episodes_list" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+        <!-- Episode cards injected here -->
+    </div>
+</div>
+
+<!-- Cinesubz Downloads Container -->
+<div id="cinesubz_downloads_section" class="hidden mt-8 w-full max-w-4xl opacity-0 animate-fade-in-up animation-delay-400">
+    <h3 class="text-xl font-bold text-white mb-4" id="cinesubz_downloads_title">Download Links</h3>
+    <div id="cinesubz_downloads_list" class="flex flex-col gap-4 w-full">
+        <!-- Buttons will be injected here dynamically -->
+    </div>
+</div>
+</div>
+</div>
+
+</div>
+</section>
+
+<section class="w-full px-edge-margin-mobile md:px-edge-margin-desktop py-stack-lg">
+
+</section>
+</main>
+<script>
+
+        const DB_API_URL = "https://panel.moviestream.lat/api/movies";
+        const API_BASE_URL = "https://api.moviestream.lat";
+        let MOVIE_DATA = {};
+        window.allMoviesData = [];
+        let player = null;
+
+        window.downloadSubtitleFile = async function (url, filename, btnElement, langKey) {
+            if (langKey && window.PRELOADED_SUBS && window.PRELOADED_SUBS[langKey]) {
+                const a = document.createElement('a');
+                a.href = window.PRELOADED_SUBS[langKey];
+                a.download = filename;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                if (btnElement) {
+                    const orig = btnElement.dataset.originalHtml || btnElement.innerHTML;
+                    btnElement.innerHTML = `<i class="fa-solid fa-check"></i> Done`;
+                    setTimeout(() => { btnElement.innerHTML = orig; }, 2000);
+                }
+                return;
+            }
+
+            if (btnElement) {
+                btnElement.dataset.originalHtml = btnElement.innerHTML;
+                btnElement.innerHTML = `<i class="fa-solid fa-circle-notch fa-spin"></i> Wait...`;
+                btnElement.disabled = true;
+                btnElement.classList.add('opacity-70', 'cursor-not-allowed');
+            }
+            try {
+                const response = await fetch(url);
+                let text = await response.text();
+
+                // Convert VTT to SRT format
+                text = text.replace(/^WEBVTT.*\n?\n?/m, ''); // Remove WEBVTT header
+                text = text.replace(/(\d{2}:\d{2}:\d{2})\.(\d{3})/g, '$1,$2'); // Replace . with , in timestamps
+
+                const blob = new Blob([text], { type: 'text/srt' });
+                const objUrl = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = objUrl;
+                a.download = filename;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                setTimeout(() => URL.revokeObjectURL(objUrl), 5000);
+
+                if (btnElement) {
+                    btnElement.innerHTML = `<i class="fa-solid fa-check"></i> Done`;
+                    btnElement.classList.replace('text-gray-300', 'text-green-400');
+                    btnElement.classList.replace('text-[#00d2ff]', 'text-green-400');
+                    btnElement.classList.add('border-green-400');
+                    setTimeout(() => {
+                        btnElement.innerHTML = btnElement.dataset.originalHtml;
+                        btnElement.classList.remove('border-green-400', 'text-green-400');
+                        btnElement.classList.add(btnElement.dataset.originalHtml.includes('Sinhala') ? 'text-[#00d2ff]' : 'text-gray-300');
+                        btnElement.disabled = false;
+                        btnElement.classList.remove('opacity-70', 'cursor-not-allowed');
+                    }, 3000);
+                }
+            } catch (e) {
+                console.error('Subtitle download failed', e);
+                if (btnElement) {
+                    btnElement.innerHTML = `<i class="fa-solid fa-triangle-exclamation"></i> Error`;
+                    btnElement.classList.add('text-red-500', 'border-red-500');
+                    setTimeout(() => {
+                        btnElement.innerHTML = btnElement.dataset.originalHtml;
+                        btnElement.classList.remove('text-red-500', 'border-red-500');
+                        btnElement.disabled = false;
+                        btnElement.classList.remove('opacity-70', 'cursor-not-allowed');
+                    }, 3000);
+                }
+            }
+        };
+
+        
+        const urlParams = new URLSearchParams(window.location.search);
+        const movieId = urlParams.get('id');
+        const detailPathParam = urlParams.get('path');
+        const reqS = urlParams.get('s') || 1;
+        const reqE = urlParams.get('e') || 1;
+        const source = urlParams.get('source');
+        
+        MOVIE_DATA = null;
+
+        window.onload = async () => {
+            if (source === 'cinesubz') {
+                return loadCinesubzDetails();
+            }
+
+            try {
+                const urlParams = new URLSearchParams(window.location.search);
+                const movieId = urlParams.get('id') || urlParams.get('subjectId');
+                const reqS = parseInt(urlParams.get('s')) || 1;
+                const reqE = parseInt(urlParams.get('e')) || 1;
+                const scrapedVideoUrl = urlParams.get('videoUrl');
+
+                if (!movieId) {
+                    showGlobalLoader('index.html');
+                    return;
+                }
+
+                // Track page view
+                try {
+                    fetch(`${API_BASE_URL}/track/view/${movieId}`, { method: 'POST' }).catch(e => console.error('Track Error:', e));
+                } catch (e) { }
+
+
+                const savedNum = localStorage.getItem('ms_user_num');
+                const savedName = localStorage.getItem('ms_user_name');
+                if (savedNum) document.getElementById('user_num').value = savedNum;
+                if (savedName) {
+                    document.getElementById('user_name').value = savedName;
+                    document.getElementById('top_user_name').innerText = `Hey, ${savedName}`;
+                    if (window.innerWidth > 768) {
+                        document.getElementById('top_user_name').classList.remove('hidden');
+                    }
+                }
+
+                // First, check if we have a proper detailPath passed via URL
+                let foundApiMovie = null;
+                const detailPathParam = urlParams.get('path');
+
+                if (detailPathParam) {
+                    try {
+                        const detailRes = await fetch(`https://stream.moviestream.lat/api/detail2?id=${movieId}&path=${encodeURIComponent(detailPathParam)}`);
+                        if (detailRes.ok) {
+                            const detailJson = await detailRes.json();
+                            if (detailJson.data && detailJson.data.subject) {
+                                foundApiMovie = detailJson.data.subject;
+                            }
+                        }
+                    } catch (e) {
+                        console.log("detail2 proxy fetch failed", e);
+                    }
+                }
+
+                if (!foundApiMovie) {
+                    try {
+                        const savedResultsStr = localStorage.getItem('ms_last_search');
+                        if (savedResultsStr) {
+                            const savedResults = JSON.parse(savedResultsStr);
+                            foundApiMovie = savedResults.find(m => m.subjectId === movieId || m.id === movieId);
+                        }
+                    } catch(e) {}
+                }
+
+                // If path is missing or failed, attempt to fetch from details/:id proxy (which returns recommendations as fallback)
+                if (!foundApiMovie) {
+                    try {
+                        const apiResponse = await fetch(`https://stream.moviestream.lat/api/details/${movieId}`);
+                        if (apiResponse.ok) {
+                            const apiJson = await apiResponse.json();
+                            if (apiJson && apiJson.data && apiJson.data.items) {
+                                foundApiMovie = apiJson.data.items.find(m => m.subjectId === movieId);
+                            }
+                        }
+                    } catch (err) {
+                        console.log("Proxy API fetch failed, falling back to local DB if available.", err);
+                    }
+                }
+
+                // Fallback to local DB if API fails
+                if (!foundApiMovie) {
+                    try {
+                        const res = await fetch(`${DB_API_URL}?v=${new Date().getTime()}`);
+                        window.allMoviesData = await res.json();
+                        MOVIE_DATA = window.allMoviesData.find(m => m._id === movieId);
+                    } catch (e) {
+                        console.log("Local DB fetch failed");
+                    }
+                } else {
+                    let coverUrl = foundApiMovie.cover?.url || foundApiMovie.cover;
+                    if (typeof coverUrl === 'string' && coverUrl.includes('url=')) {
+                        const match = coverUrl.match(/url=([^;]+)/);
+                        if (match) coverUrl = match[1];
+                    }
+
+                    // Format Duration
+                    let durationStr = "";
+                    if (foundApiMovie.duration) {
+                        let d = foundApiMovie.duration;
+                        let h = Math.floor(d / 3600);
+                        let m = Math.floor((d % 3600) / 60);
+                        if (h > 0) durationStr += h + " h ";
+                        durationStr += m + " m";
+                    }
+
+                    // Format Genres
+                    let genresStr = foundApiMovie.genre ? foundApiMovie.genre.replace(/,/g, '  ') : "";
+
+                    MOVIE_DATA = {
+                        _id: foundApiMovie.subjectId || foundApiMovie.id || movieId,
+                        detailPath: foundApiMovie.detailPath || detailPathParam || foundApiMovie.subjectId || foundApiMovie.id || movieId,
+                        title: foundApiMovie.title,
+                        category: foundApiMovie.genre ? foundApiMovie.genre.split(',')[0] : "Movie",
+                        quality: "1080p / 720p / 480p",
+                        fileSize: "Unknown",
+                        description: foundApiMovie.description || foundApiMovie.introduction || foundApiMovie.brief || foundApiMovie.plot || (window.allMoviesData ? window.allMoviesData.find(m => m._id === movieId)?.description : null) || "මෙම චිත්‍රපටය පිළිබඳ වැඩි විස්තරයක් අප වෙත ලැබී නොමැත.",
+                        imageUrl: coverUrl,
+                        bgImage: coverUrl,
+                        downloadLink: scrapedVideoUrl || "",
+                        subtitleUrl: "",
+                        year: foundApiMovie.releaseDate ? foundApiMovie.releaseDate.split('-')[0] : "2026",
+                        imdbRating: foundApiMovie.imdbRatingValue,
+                        imdbCount: foundApiMovie.imdbRatingCount || "",
+                        country: foundApiMovie.countryName || "",
+                        duration: durationStr,
+                        genres: genresStr
+                    };
+
+                    // Fetch full description using detail2 proxy
+                    try {
+                        const detailRes = await fetch(`https://stream.moviestream.lat/api/detail2?id=${MOVIE_DATA._id || MOVIE_DATA.id || movieId}&path=${encodeURIComponent(MOVIE_DATA.detailPath)}`);
+                        if (detailRes.ok) {
+                            const detailJson = await detailRes.json();
+                            if (detailJson.data && detailJson.data.subject) {
+                                const s = detailJson.data.subject;
+                                MOVIE_DATA.description = s.description || s.introduction || s.brief || s.plot || MOVIE_DATA.description;
+                            }
+                        }
+                    } catch (e) { console.log("Detail2 fetch failed"); }
+                }
+
+                if (!MOVIE_DATA) {
+                    document.getElementById('movie_title').innerText = "CONTENT UNAVAILABLE";
+                    document.getElementById('movie_desc').innerText = "The movie you are looking for is no longer available on our servers.";
+                    const heroBadge = document.getElementById('hero_badge_area');
+                    if (heroBadge) heroBadge.style.display = 'none';
+                    document.getElementById('download_anchor').style.display = 'none';
+                    return;
+                }
+
+                // --- SERIES LOGIC UI ---
+                let isSeries = foundApiMovie && foundApiMovie.subjectType === 2;
+                if (isSeries) {
+                    try {
+                        const detailPath = foundApiMovie.detailPath || MOVIE_DATA._id;
+                        const sRes = await fetch(`https://stream.moviestream.lat/api/series-info?path=${detailPath}`);
+                        if (sRes.ok) {
+                            const seasons = await sRes.json();
+                            if (seasons && seasons.length > 0) {
+                                renderSeriesUI(seasons, reqS, reqE, movieId);
+                            }
+                        }
+                    } catch (e) { console.log("Series info fetch failed"); }
+                }
+
+                // ðŸŸ¢ NEW: Fetch the proxy video link from our VPS API
+                try {
+                    const detailPath = MOVIE_DATA.detailPath || MOVIE_DATA._id;
+                    let videoApiUrl = `https://stream.moviestream.lat/api/video-link?id=${MOVIE_DATA._id}&path=${detailPath}`;
+                    if (isSeries) {
+                        videoApiUrl += `&s=${reqS}&e=${reqE}`;
+                    }
+                    const streamRes = await fetch(videoApiUrl);
+                    if (streamRes.ok) {
+                        const streamData = await streamRes.json();
+                        if (streamData.url) {
+                            MOVIE_DATA.downloadLink = streamData.url;
+                            MOVIE_DATA.captions = streamData.captions || [];
+                            MOVIE_DATA.streams = streamData.streams || [];
+                        }
+                    }
+                } catch (e) {
+                    console.log("Failed to fetch proxy video link", e);
+                }
+
+                // Pre-warm subtitle cache in background
+                preWarmSubtitles();
+
+                document.getElementById('movie_poster').src = MOVIE_DATA.imageUrl;
+                window.MAIN_SHOW_TITLE = MOVIE_DATA.title;
+                document.getElementById('movie_title').innerText = MOVIE_DATA.title;
+                document.getElementById('movie_year').innerText = MOVIE_DATA.year || "2026";
+                document.getElementById('m_cat').innerText = MOVIE_DATA.category;
+
+                document.getElementById('m_qual').innerText = MOVIE_DATA.quality || "4K Ultra";
+                document.getElementById('movie_size_bottom').innerText = MOVIE_DATA.fileSize || "1.4 GB";
+
+                if (MOVIE_DATA.imdbRating && MOVIE_DATA.imdbRating !== "0.0" && MOVIE_DATA.imdbRating !== "0") {
+                    document.getElementById('imdb_rating_area').classList.remove('hidden');
+                    document.getElementById('imdb_rating_area').classList.add('flex');
+                    document.getElementById('imdb_val').innerText = MOVIE_DATA.imdbRating;
+                    if (MOVIE_DATA.imdbCount) {
+                        document.getElementById('imdb_count').innerText = MOVIE_DATA.imdbCount + " people rated";
+                    }
+                }
+
+                if (MOVIE_DATA.duration) {
+                    let dEl = document.getElementById('movie_duration');
+                    dEl.innerText = "• " + MOVIE_DATA.duration;
+                    dEl.classList.remove('hidden');
+                }
+                if (MOVIE_DATA.country) {
+                    let cEl = document.getElementById('movie_country');
+                    cEl.innerText = "• " + MOVIE_DATA.country;
+                    cEl.classList.remove('hidden');
+                }
+                if (MOVIE_DATA.genres) {
+                    let gEl = document.getElementById('movie_genre');
+                    gEl.innerText = "• " + MOVIE_DATA.genres;
+                    gEl.classList.remove('hidden');
+                }
+
+                document.getElementById('movie_desc').innerText = MOVIE_DATA.description || "Movie description not available";
+                document.getElementById('page_title').innerText = `${MOVIE_DATA.title} | MovieStream`;
+
+                const bgUrl = MOVIE_DATA.bgImage || MOVIE_DATA.imageUrl;
+                document.getElementById('hero').style.backgroundImage = `url('${bgUrl}')`;
+
+                if (MOVIE_DATA.category === 'TV Series') {
+                    document.getElementById('tv_info').innerText = `Season ${MOVIE_DATA.season || '-'} • Episode ${MOVIE_DATA.episode || '-'}`;
+                    document.getElementById('tv_info').classList.remove('hidden');
+
+                    if (window.allMoviesData) {
+                        window.SHOW_EPISODES = window.allMoviesData.filter(m => m.title.toLowerCase() === MOVIE_DATA.title.toLowerCase());
+
+                        if (window.SHOW_EPISODES.length > 0) {
+                            document.getElementById('episodes_section').classList.remove('hidden');
+
+                            const seasons = [...new Set(window.SHOW_EPISODES.map(ep => ep.season).filter(Boolean))].sort();
+                            const seasonSelect = document.getElementById('season_selector');
+                            seasonSelect.innerHTML = '';
+
+                            seasons.forEach(s => {
+                                const opt = document.createElement('option');
+                                opt.value = s;
+                                opt.innerText = `Season ${s.replace(/[^0-9]/g, '')}`;
+                                if (s === MOVIE_DATA.season) opt.selected = true;
+                                seasonSelect.appendChild(opt);
+                            });
+
+                            renderEpisodes(MOVIE_DATA.season || seasons[0]);
+                        }
+                    }
+                }
+
+                const screens = [MOVIE_DATA.ss1, MOVIE_DATA.ss2, MOVIE_DATA.ss3].filter(s => s && s.trim() !== "");
+                if (screens.length > 0) {
+                    document.getElementById('screenshots_section').classList.remove('hidden');
+                    const screenList = document.getElementById('screen_list');
+                    screenList.innerHTML = '';
+                    screens.forEach(s => {
+                        screenList.innerHTML += `<div class="ss-card animate__animated animate__fadeInUp"><img src="${s}"></div>`;
+                    });
+                }
+            } catch (e) {
+                console.error("Fetch Error: ", e);
+                document.getElementById('movie_title').innerText = "OFFLINE MODE";
+            } finally {
+                document.body.classList.add('loaded');
+                const loader = document.getElementById('global_netflix_loader');
+                if (loader) {
+                    loader.classList.add('hidden');
+                    loader.classList.remove('active');
+                }
+            }
+        };
+
+        function renderEpisodes(selectedSeason) {
+            const epSelect = document.getElementById('episode_selector');
+            epSelect.innerHTML = '';
+
+            const filteredEps = window.SHOW_EPISODES.filter(ep => ep.season === selectedSeason);
+
+            filteredEps.sort((a, b) => {
+                const epA = Number(a.episode?.replace(/[^0-9]/g, '')) || 0;
+                const epB = Number(b.episode?.replace(/[^0-9]/g, '')) || 0;
+                return epA - epB;
+            }).forEach(ep => {
+                const opt = document.createElement('option');
+                opt.value = ep._id;
+                opt.innerText = `Episode ${ep.episode || '-'}`;
+                if (ep._id === MOVIE_DATA._id) opt.selected = true;
+                epSelect.appendChild(opt);
+            });
+
+            if (!filteredEps.find(e => e._id === MOVIE_DATA._id)) {
+                if (filteredEps.length > 0) {
+                    changeEpisode(filteredEps[0]._id);
+                }
+            }
+        }
+
+        function changeEpisode(epId) {
+            const ep = window.SHOW_EPISODES.find(e => e._id === epId);
+            if (ep) {
+                MOVIE_DATA = ep;
+
+                window.history.pushState({ path: `movie-details.html?id=${epId}` }, '', `movie-details.html?id=${epId}`);
+
+                // 🟢 PRE-WARM SUBTITLE CACHE IN BACKGROUND (Instant)
+                preWarmSubtitles();
+
+                document.getElementById('tv_info').innerText = `Season ${ep.season || '-'} • Episode ${ep.episode || '-'}`;
+
+                document.getElementById('movie_size_bottom').innerText = ep.fileSize || "1.4 GB";
+                document.getElementById('m_qual').innerText = ep.quality || "4K Ultra";
+                document.getElementById('hero_quality').innerText = ep.quality || "4K";
+                document.getElementById('main_hero_quality').innerText = ep.quality || "4K";
+
+                document.getElementById('movie_desc').innerText = ep.description || "මෙම චිත්‍රපටය පිළිබඳ වැඩි විස්තරයක් අප වෙත ලැබී නොමැත.";
+
+                if (player && document.getElementById('video_display_area').style.display === 'block') {
+                    playNowDirectly();
+                }
+            }
+        }
+
+        function openSeasonPopup() {
+            const popup = document.getElementById('season_popup');
+            const content = document.getElementById('season_popup_content');
+            if (popup && content) {
+                popup.style.display = 'flex';
+                setTimeout(() => {
+                    popup.style.opacity = '1';
+                    content.style.transform = 'scale(1)';
+                }, 10);
+            }
+        }
+
+        function closeSeasonPopup() {
+            const popup = document.getElementById('season_popup');
+            const content = document.getElementById('season_popup_content');
+            if (popup && content) {
+                popup.style.opacity = '0';
+                content.style.transform = 'scale(0.95)';
+                setTimeout(() => {
+                    popup.style.display = 'none';
+                }, 300);
+            }
+        }
+
+        function closeAllPopups() {
+            document.querySelectorAll('.custom-popup').forEach(p => p.style.display = 'none');
+            closeSeasonPopup();
+        }
+        function changeEpisodeLoader(newS, newE, movieId) {
+            const loader = document.getElementById('full_page_loader');
+            if (loader) {
+                loader.style.display = 'flex';
+                setTimeout(() => {
+                    showGlobalLoader(`movie-details.html?id=${movieId}&s=${newS}&e=${newE}`);
+                }, 800);
+            } else {
+                showGlobalLoader(`movie-details.html?id=${movieId}&s=${newS}&e=${newE}`);
+            }
+        }
+
+        function renderSeriesUI(seasons, currentS, currentE, movieId) {
+            let container = document.getElementById('series_ui');
+            if (!container) {
+                container = document.createElement('div');
+                container.id = 'series_ui';
+                container.className = 'mt-8 mb-8 text-left w-full max-w-4xl border-t border-white/10 pt-6';
+
+                const downloadAnchor = document.getElementById('download_anchor');
+                if (downloadAnchor) {
+                    downloadAnchor.parentNode.insertBefore(container, downloadAnchor);
+                }
+            }
+
+            let seasonItems = seasons.map(s => `
+                <button onclick="closeSeasonPopup(); changeEpisodeLoader(${s.se}, 1, '${movieId}')" class="w-full text-left px-5 py-4 rounded-xl text-sm font-bold ${s.se == currentS ? 'bg-[#e50914] text-white shadow-[0_0_15px_rgba(229,9,20,0.3)]' : 'text-gray-300 hover:bg-white/5'} transition-all flex justify-between items-center">
+                    <span>Season ${s.se}</span>
+                    <span class="text-xs ${s.se == currentS ? 'text-white/80' : 'text-gray-500'} font-normal">${s.maxEp || 1} Episodes</span>
+                </button>
+            `).join('');
+
+            const popupList = document.getElementById('season_popup_list');
+            if (popupList) popupList.innerHTML = seasonItems;
+
+            const currentSeasonObj = seasons.find(s => s.se == currentS) || seasons[0];
+            const maxEp = currentSeasonObj.maxEp || 1;
+
+            let episodeButtons = '';
+            for (let i = 1; i <= maxEp; i++) {
+                const isActive = (i == currentE);
+                const btnClass = isActive
+                    ? 'bg-[#e50914] text-white font-black border border-[#e50914] shadow-[0_0_15px_rgba(229,9,20,0.5)] scale-105'
+                    : 'bg-black/60 text-gray-400 border border-white/10 hover:bg-white/10 hover:text-white hover:scale-105';
+
+                episodeButtons += `<button onclick="changeEpisodeLoader(${currentSeasonObj.se}, ${i}, '${movieId}')" class="py-3 rounded-lg text-sm text-center transition-all duration-300 ${btnClass}">${i}</button>`;
+            }
+
+            container.innerHTML = `
+            <div class="flex items-center gap-4 mb-6">
+                <button onclick="openSeasonPopup()" class="flex items-center gap-2 bg-transparent border-none text-white text-xl md:text-2xl font-black outline-none hover:text-[#e50914] transition-colors cursor-pointer group">
+                    SEASON ${currentS} <i class="fa fa-chevron-down text-sm text-gray-500 group-hover:text-[#e50914] transition-colors"></i>
+                </button>
+                <span class="text-gray-500 text-lg">|</span>
+                <span class="text-gray-300 text-sm font-medium tracking-widest uppercase">${maxEp} Episodes</span>
+            </div>
+            <div class="grid grid-cols-5 md:grid-cols-10 gap-3 max-h-64 overflow-y-auto custom-scrollbar pr-2 pb-2" id="episode_grid">
+                ${episodeButtons}
+            </div>
+        `;
+
+            // Update TV Info Header
+            const tvInfo = document.getElementById('tv_info');
+            if (tvInfo) {
+                tvInfo.innerText = `SEASON ${currentS} • EPISODE ${currentE}`;
+                tvInfo.classList.remove('hidden');
+                tvInfo.classList.add('text-[#e50914]');
+                tvInfo.classList.remove('text-[#00d2ff]');
+            }
+        }
+
+        function warnOnline() { closeAllPopups(); document.getElementById('popup_online_warn').style.display = 'flex'; }
+
+        function showCancelWarning() {
+            closeAllPopups();
+            document.getElementById('popup_cancel_warn').style.display = 'flex';
+        }
+
+        function closeCancelWarning() {
+            closeAllPopups();
+        }
+
+        function openWhatsAppStep2() {
+            closeAllPopups();
+            document.getElementById('popup_step2').style.display = 'flex';
+        }
+        function openWhatsAppStep1(bypassCheck = false) {
+            let engCap = null;
+            let taCap = null;
+            let siCap = null;
+
+            if (MOVIE_DATA.captions && MOVIE_DATA.captions.length > 0) {
+                engCap = MOVIE_DATA.captions.find(c => {
+                    const l = c.lan || c.lang || "";
+                    return l.toLowerCase().includes('en');
+                });
+                taCap = MOVIE_DATA.captions.find(c => {
+                    const l = c.lan || c.lang || "";
+                    return l.toLowerCase().includes('ta') || l.toLowerCase().includes('tamil');
+                });
+                siCap = MOVIE_DATA.captions.find(c => {
+                    const l = c.lan || c.lang || "";
+                    return l.toLowerCase().includes('si');
+                });
+                if (!engCap) engCap = MOVIE_DATA.captions[0];
+            }
+
+            let enSub = engCap ? engCap.url : (MOVIE_DATA.subtitleUrl || "");
+            let taSub = taCap ? taCap.url : "";
+            let siSub = siCap ? siCap.url : "";
+
+            function injectSubtitles() {
+                if (enSub) {
+                    let enProxyUrl = `https://stream.moviestream.lat/api/subtitle/proxy?url=${encodeURIComponent(enSub)}`;
+                    player.addRemoteTextTrack({ kind: 'captions', src: enProxyUrl, srclang: 'en', label: 'English' }, false);
+                }
+                if (siSub) {
+                    let siProxyUrl = `https://stream.moviestream.lat/api/subtitle/proxy?url=${encodeURIComponent(siSub)}`;
+                    player.addRemoteTextTrack({ kind: 'captions', src: siProxyUrl, srclang: 'si', label: 'Sinhala' }, false);
+                }
+                if (taSub) {
+                    let taProxyUrl = `https://stream.moviestream.lat/api/subtitle/proxy?url=${encodeURIComponent(taSub)}`;
+                    player.addRemoteTextTrack({ kind: 'captions', src: taProxyUrl, srclang: 'ta', label: 'Tamil' }, false);
+                } else if (enSub) {
+                    let taProxyUrl = `https://stream.moviestream.lat/api/subtitle/proxy?url=${encodeURIComponent(enSub)}&lang=ta&from=en`;
+                    player.addRemoteTextTrack({ kind: 'captions', src: taProxyUrl, srclang: 'ta', label: 'Tamil' }, false);
+                }
+            }
+
+            function setPlayerSource(streamUrl, typeStr) {
+                let currentSubLabel = 'off';
+                const tracks = player.textTracks();
+                if (tracks) {
+                    for (let i = 0; i < tracks.length; i++) {
+                        if ((tracks[i].kind === 'captions' || tracks[i].kind === 'subtitles') && tracks[i].mode === 'showing') {
+                            currentSubLabel = tracks[i].label;
+                            break;
+                        }
+                    }
+                }
+
+                player.src({ type: typeStr, src: streamUrl });
+                injectSubtitles();
+
+                setTimeout(() => {
+                    const newTracks = player.textTracks();
+                    if (newTracks) {
+                        for (let i = 0; i < newTracks.length; i++) {
+                            if ((newTracks[i].kind === 'captions' || newTracks[i].kind === 'subtitles')) {
+                                if (currentSubLabel !== 'off' && newTracks[i].label === currentSubLabel) {
+                                    newTracks[i].mode = 'showing';
+                                } else {
+                                    newTracks[i].mode = 'disabled';
+                                }
+                            }
+                        }
+                    }
+                }, 500);
+            }
+
+            // CUSTOM POPUP CONTROLLERS
+            window.openPlayerQualityPopup = function () {
+                let existing = document.getElementById('vjs_inline_quality_menu');
+                if (existing) {
+                    existing.remove();
+                    return; // Toggle off if already open
+                }
+
+                const playerEl = player.el(); // Append to video.js container so it works in fullscreen!
+                let menu = document.createElement('div');
+                menu.id = 'vjs_inline_quality_menu';
+                menu.style.cssText = 'position:absolute; bottom:50px; right:10px; background:rgba(28,28,28,0.9); backdrop-filter:blur(10px); border-radius:10px; padding:10px 0; z-index:999; display:flex; flex-direction:column; min-width:140px; box-shadow:0 10px 30px rgba(0,0,0,0.5);';
+
+                let html = `<button onclick="window.changeQuality('Auto'); document.getElementById('vjs_inline_quality_menu').remove();" style="padding:10px 20px; color:white; text-align:left; font-size:13px; font-weight:bold; border:none; background:${window.isAutoQuality ? 'rgba(255,255,255,0.2)' : 'transparent'}; cursor:pointer; display:flex; justify-content:space-between; align-items:center; transition: background 0.2s;" onmouseover="this.style.background='rgba(255,255,255,0.1)'" onmouseout="this.style.background='${window.isAutoQuality ? 'rgba(255,255,255,0.2)' : 'transparent'}'">Auto ${window.isAutoQuality ? '<i class="fa-solid fa-check text-[#e50914]"></i>' : ''}</button>`;
+
+                Object.keys(window.availableStreams).sort((a, b) => b - a).forEach(q => {
+                    const isSelected = !window.isAutoQuality && window.currentQuality === parseInt(q);
+                    html += `<button onclick="window.changeQuality(${q}); document.getElementById('vjs_inline_quality_menu').remove();" style="padding:10px 20px; color:white; text-align:left; font-size:13px; font-weight:bold; border:none; background:${isSelected ? 'rgba(255,255,255,0.2)' : 'transparent'}; cursor:pointer; display:flex; justify-content:space-between; align-items:center; transition: background 0.2s;" onmouseover="this.style.background='rgba(255,255,255,0.1)'" onmouseout="this.style.background='${isSelected ? 'rgba(255,255,255,0.2)' : 'transparent'}'">${q}p ${isSelected ? '<i class="fa-solid fa-check text-[#e50914]"></i>' : ''}</button>`;
+                });
+
+                menu.innerHTML = html;
+                playerEl.appendChild(menu);
+
+                // Close when clicking outside
+                setTimeout(() => {
+                    const closer = (e) => {
+                        if (menu && !menu.contains(e.target)) {
+                            menu.remove();
+                            document.removeEventListener('click', closer);
+                        }
+                    };
+                    document.addEventListener('click', closer);
+                }, 100);
+            };
+
+            window.openPlayerSubtitleMenu = function () {
+                let existing = document.getElementById('vjs_inline_subtitle_menu');
+                if (existing) {
+                    existing.remove();
+                    return;
+                }
+
+                const playerEl = player.el();
+                let menu = document.createElement('div');
+                menu.id = 'vjs_inline_subtitle_menu';
+                menu.style.cssText = 'position:absolute; bottom:50px; right:40px; background:rgba(28,28,28,0.9); backdrop-filter:blur(10px); border-radius:10px; padding:10px 0; z-index:999; display:flex; flex-direction:column; min-width:140px; box-shadow:0 10px 30px rgba(0,0,0,0.5);';
+
+                const tracks = player.textTracks();
+                let activeTrack = 'off';
+                let validTracks = [];
+                for (let i = 0; i < tracks.length; i++) {
+                    if (tracks[i].kind === 'captions' || tracks[i].kind === 'subtitles') {
+                        validTracks.push({ index: i, label: tracks[i].label, language: tracks[i].language });
+                        if (tracks[i].mode === 'showing') activeTrack = i;
+                    }
+                }
+
+                let html = `<button onclick="window.changeSubtitle('off'); document.getElementById('vjs_inline_subtitle_menu').remove();" style="padding:10px 20px; color:white; text-align:left; font-size:13px; font-weight:bold; border:none; background:${activeTrack === 'off' ? 'rgba(255,255,255,0.2)' : 'transparent'}; cursor:pointer; display:flex; justify-content:space-between; align-items:center; transition: background 0.2s;" onmouseover="this.style.background='rgba(255,255,255,0.1)'" onmouseout="this.style.background='${activeTrack === 'off' ? 'rgba(255,255,255,0.2)' : 'transparent'}'">Off ${activeTrack === 'off' ? '<i class="fa-solid fa-check text-[#e50914]"></i>' : ''}</button>`;
+
+                if (validTracks.length === 0) {
+                    html += `<div style="padding:10px 20px; color:#888; font-size:12px; text-align:center;">No Subtitles Available</div>`;
+                } else {
+                    validTracks.forEach(t => {
+                        const isSelected = activeTrack === t.index;
+                        html += `<button onclick="window.changeSubtitle(${t.index}); document.getElementById('vjs_inline_subtitle_menu').remove();" style="padding:10px 20px; color:white; text-align:left; font-size:13px; font-weight:bold; border:none; background:${isSelected ? 'rgba(255,255,255,0.2)' : 'transparent'}; cursor:pointer; display:flex; justify-content:space-between; align-items:center; transition: background 0.2s;" onmouseover="this.style.background='rgba(255,255,255,0.1)'" onmouseout="this.style.background='${isSelected ? 'rgba(255,255,255,0.2)' : 'transparent'}'">${t.label} ${isSelected ? '<i class="fa-solid fa-check text-[#e50914]"></i>' : ''}</button>`;
+                    });
+                }
+
+                html += `<div style="width:100%; height:1px; background:rgba(255,255,255,0.1); margin: 5px 0;"></div>`;
+                html += `<button onclick="window.openSubtitleSettings(); document.getElementById('vjs_inline_subtitle_menu').remove();" style="padding:10px 20px; color:#aaa; text-align:left; font-size:12px; font-weight:bold; border:none; background:transparent; cursor:pointer; display:flex; justify-content:flex-start; align-items:center; transition: color 0.2s;" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='#aaa'"><i class="fa-solid fa-gear" style="margin-right:8px;"></i> Subtitle Settings</button>`;
+
+                menu.innerHTML = html;
+                playerEl.appendChild(menu);
+
+                setTimeout(() => {
+                    const closer = (e) => {
+                        if (menu && !menu.contains(e.target)) {
+                            menu.remove();
+                            document.removeEventListener('click', closer);
+                        }
+                    };
+                    document.addEventListener('click', closer);
+                }, 100);
+            };
+
+            window.openSubtitleSettings = function () {
+                const settingsComp = player.getChild('textTrackSettings');
+                if (settingsComp) {
+                    if (typeof settingsComp.open === 'function') {
+                        settingsComp.open();
+                    } else {
+                        settingsComp.show();
+                        if (settingsComp.el()) {
+                            settingsComp.el().classList.remove('vjs-hidden');
+                            settingsComp.el().style.display = '';
+                        }
+                    }
+                }
+            };
+
+            window.changeSubtitle = function (index) {
+                const tracks = player.textTracks();
+                for (let i = 0; i < tracks.length; i++) {
+                    if (tracks[i].kind === 'captions' || tracks[i].kind === 'subtitles') {
+                        tracks[i].mode = (index === 'off') ? 'disabled' : ((i === index) ? 'showing' : 'disabled');
+                    }
+                }
+            };
+
+            // QUALITY BUTTON IN CONTROL BAR
+            const Button = videojs.getComponent('Button');
+
+            if (Object.keys(window.availableStreams).length > 1) {
+                if (!videojs.getComponent('CustomQualityButton')) {
+                    class CustomQualityButton extends Button {
+                        constructor(player, options) {
+                            super(player, options);
+                            this.controlText('Quality');
+                            this.addClass('vjs-icon-cog');
+                        }
+                        handleClick() { window.openPlayerQualityPopup(); }
+                    }
+                    videojs.registerComponent('CustomQualityButton', CustomQualityButton);
+                }
+                player.getChild('controlBar').addChild('CustomQualityButton', {}, player.getChild('controlBar').children().length - 1);
+            }
+
+            if (!videojs.getComponent('CustomSubtitleButton2')) {
+                class CustomSubtitleButton2 extends Button {
+                    constructor(player, options) {
+                        super(player, options);
+                        this.controlText('Subtitles');
+                        this.addClass('vjs-icon-subtitles');
+                    }
+                    handleClick() { window.openPlayerSubtitleMenu(); }
+                }
+                videojs.registerComponent('CustomSubtitleButton2', CustomSubtitleButton2);
+            }
+            player.getChild('controlBar').addChild('CustomSubtitleButton2', {}, player.getChild('controlBar').children().length - 1);
+
+            window.changeQuality = function (quality) {
+                if (quality === 'Auto') {
+                    window.isAutoQuality = true;
+                    quality = window.userSelectedQuality || 720;
+                } else {
+                    window.isAutoQuality = false;
+                    window.userSelectedQuality = quality;
+                }
+                window.currentQuality = quality;
+
+                if (window.availableStreams[quality]) {
+                    const currentTime = player.currentTime();
+                    const isPaused = player.paused();
+                    let streamUrl = window.availableStreams[quality];
+                    let type = streamUrl.includes('.m3u8') ? 'application/x-mpegURL' : 'video/mp4';
+
+                    setPlayerSource(streamUrl, type);
+                    player.ready(() => {
+                        player.currentTime(currentTime);
+                        if (!isPaused) player.play().catch(e => console.log(e));
+                    });
+                }
+            };
+
+            player.on('fullscreenchange', function () {
+                if (player.isFullscreen()) {
+                    if (screen.orientation && screen.orientation.lock) {
+                        screen.orientation.lock('landscape').catch(e => console.log('Orientation lock failed', e));
+                    }
+                } else {
+                    if (screen.orientation && screen.orientation.unlock) {
+                        screen.orientation.unlock();
+                    }
+                }
+            });
+
+            let streamUrl = dLink;
+            if (dLink.includes('t.me/')) {
+                const parts = dLink.split('/');
+                const msgId = parts[parts.length - 1];
+                let chatId = '';
+                if (dLink.includes('/c/')) {
+                    chatId = '-100' + parts[parts.length - 2];
+                }
+                streamUrl = `https://api.moviestream.lat/stream/${msgId}${chatId ? '?chat=' + chatId : ''}`;
+            }
+
+            setPlayerSource(streamUrl, streamUrl.includes('.m3u8') ? 'application/x-mpegURL' : 'video/mp4');
+            if (MOVIE_DATA.imageUrl) player.poster(MOVIE_DATA.imageUrl);
+
+            // Add buffering loader overlay & Auto Network adjustment
+            let bufferWaitCount = 0;
+            let playingInterval;
+
+            player.on('waiting', function () {
+                let loader = document.getElementById('vjs_network_buffer');
+                if (!loader) {
+                    loader = document.createElement('div');
+                    loader.id = 'vjs_network_buffer';
+                    loader.innerHTML = '<i class="fa-solid fa-spinner fa-spin text-2xl mb-2 text-[#00d2ff]"></i><p class="text-[10px] font-bold uppercase tracking-widest text-white text-center" id="vjs_network_text">Network issue buffering</p>';
+                    loader.style.cssText = 'position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);z-index:999;background:rgba(0,0,0,0.7);padding:15px;border-radius:10px;display:flex;flex-direction:column;align-items:center;pointer-events:none;';
+                    playerWrapper.appendChild(loader);
+                }
+                document.getElementById('vjs_network_text').innerText = "Network issue buffering";
+                loader.style.display = 'flex';
+
+                // Network adjustment
+                if (window.isAutoQuality && window.currentQuality > 480 && window.availableStreams[480]) {
+                    bufferWaitCount++;
+                    if (bufferWaitCount >= 3) {
+                        document.getElementById('vjs_network_text').innerText = "Network slow! Auto switching to 480p...";
+                        setTimeout(() => {
+                            window.currentQuality = 480;
+                            const cTime = player.currentTime();
+                            setPlayerSource(window.availableStreams[480], 'application/x-mpegURL');
+                            player.ready(() => { player.currentTime(cTime); player.play().catch(e => console.log(e)); });
+                        }, 1000);
+                    }
+                }
+            });
+
+            player.on('pause', function () { clearInterval(playingInterval); });
+
+            player.on('playing', function () {
+                const loader = document.getElementById('vjs_network_buffer');
+                if (loader) loader.style.display = 'none';
+
+                bufferWaitCount = 0;
+                clearInterval(playingInterval);
+                playingInterval = setInterval(() => {
+                    if (window.isAutoQuality && window.currentQuality < window.userSelectedQuality && window.availableStreams[window.userSelectedQuality]) {
+                        // Recover back to user's desired quality
+                        window.currentQuality = window.userSelectedQuality;
+                        const cTime = player.currentTime();
+                        setPlayerSource(window.availableStreams[window.userSelectedQuality], 'application/x-mpegURL');
+                        player.ready(() => { player.currentTime(cTime); player.play().catch(e => console.log(e)); });
+                    }
+                }, 40000); // Wait 40 seconds of smooth playback before trying to upgrade
+            });
+
+            // Subtitle tracks already injected via setPlayerSource
+
+            player.play().catch(e => console.log("Autoplay blocked", e));
+            document.getElementById('video_display_area').scrollIntoView({ behavior: 'smooth' });
+
+            window.triggerDownload = function(quality) {
+                closeAllPopups();
+                let linkToDownload = window.MOVIE_DATA.downloadLink;
+                if (window.MOVIE_DATA.streams && window.MOVIE_DATA.streams.length > 0) {
+                    const resMatch = quality.replace('p', '');
+                    const foundStream = window.MOVIE_DATA.streams.find(s => s.resolutions === resMatch);
+                    if (foundStream && foundStream.url) {
+                        linkToDownload = `https://stream.moviestream.lat/stream?url=${encodeURIComponent(foundStream.url)}`;
+                    }
+                }
+                if (linkToDownload) {
+                    if (linkToDownload.includes('.m3u8')) {
+                        document.getElementById('warning_msg').innerText = "Direct MP4 Download is unavailable for this video format. Please use 'Play Online' or request via WhatsApp.";
+                        document.getElementById('popup_warning').style.display = 'flex';
+                        return;
+                    }
+                    const link = document.createElement('a');
+                    link.href = linkToDownload;
+                    link.setAttribute('download', `${window.MOVIE_DATA.title}_${quality}.mp4`);
+                    link.setAttribute('target', '_blank');
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
+                }
+            };
+
+            window.downloadSubtitleFile = async function (url, filename, btnElement) {
+                if (btnElement) {
+                    btnElement.dataset.originalHtml = btnElement.innerHTML;
+                    btnElement.innerHTML = `<i class="fa-solid fa-circle-notch fa-spin"></i> Wait...`;
+                    btnElement.disabled = true;
+                    btnElement.classList.add('opacity-70', 'cursor-not-allowed');
+                }
+                try {
+                    const response = await fetch(url);
+                    let text = await response.text();
+                    text = text.replace(/^WEBVTT.*\n?\n?/m, ''); 
+                    text = text.replace(/(\d{2}:\d{2}:\d{2})\.(\d{3})/g, '$1,$2'); 
+                    const blob = new Blob([text], { type: 'text/srt' });
+                    const objUrl = URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = objUrl;
+                    a.download = filename;
+                    document.body.appendChild(a);
+                    a.click();
+                    document.body.removeChild(a);
+                    URL.revokeObjectURL(objUrl);
+                    if (btnElement) {
+                        btnElement.innerHTML = `<i class="fa-solid fa-check"></i> Done`;
+                        btnElement.classList.replace('text-gray-300', 'text-green-400');
+                        btnElement.classList.replace('text-[#00d2ff]', 'text-green-400');
+                        btnElement.classList.add('border-green-400');
+                        setTimeout(() => {
+                            btnElement.innerHTML = btnElement.dataset.originalHtml;
+                            btnElement.classList.remove('border-green-400', 'text-green-400');
+                            btnElement.classList.add(btnElement.dataset.originalHtml.includes('Sinhala') ? 'text-[#00d2ff]' : 'text-gray-300');
+                            btnElement.disabled = false;
+                            btnElement.classList.remove('opacity-70', 'cursor-not-allowed');
+                        }, 3000);
+                    }
+                } catch (e) {
+                    console.error('Subtitle download failed', e);
+                }
+            };
+
+            window.preWarmSubtitles = function() {
+                if (!window.MOVIE_DATA || !window.MOVIE_DATA.captions) return;
+                let engCap = null, taCap = null, siCap = null;
+                if (window.MOVIE_DATA.captions.length > 0) {
+                    engCap = window.MOVIE_DATA.captions.find(c => (c.lan || c.lang || "").toLowerCase().includes('en'));
+                    taCap = window.MOVIE_DATA.captions.find(c => (c.lan || c.lang || "").toLowerCase().includes('ta') || (c.lan || c.lang || "").toLowerCase().includes('tamil'));
+                    siCap = window.MOVIE_DATA.captions.find(c => (c.lan || c.lang || "").toLowerCase().includes('si'));
+                    if (!engCap) engCap = window.MOVIE_DATA.captions[0];
+                }
+                let enSub = engCap ? engCap.url : (window.MOVIE_DATA.subtitleUrl || "");
+                let taSub = taCap ? taCap.url : "";
+                let siSub = siCap ? siCap.url : "";
+                if (enSub) fetch(`https://stream.moviestream.lat/api/subtitle/proxy?url=` + encodeURIComponent(enSub)).catch(()=>{});
+                let siUrlToUse = siSub || enSub;
+                if (siUrlToUse) fetch(`https://stream.moviestream.lat/api/subtitle/proxy?url=` + encodeURIComponent(siUrlToUse) + `&lang=` + (siSub ? 'si_native' : 'si')).catch(()=>{});
+                let taUrlToUse = taSub || enSub;
+                if (taUrlToUse) fetch(`https://stream.moviestream.lat/api/subtitle/proxy?url=` + encodeURIComponent(taUrlToUse) + `&lang=` + (taSub ? 'ta_native' : 'ta')).catch(()=>{});
+            };
+        }
+    
+
+    async function loadCinesubzDetails() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const cinesubzUrl = urlParams.get('id');
+        if (!cinesubzUrl) return;
+
+        try {
+            const res = await fetch(`https://cinesubz.moviestream.lat/api/details?url=${encodeURIComponent(cinesubzUrl)}`);
+            const json = await res.json();
+            
+            if (json && json.details) {
+                const details = json.details;
+                MOVIE_DATA = {
+                    title: details.title && details.title !== 'N/A' ? details.title : "Unknown Title",
+                    description: details.synopsis && details.synopsis !== 'N/A' ? details.synopsis : "Description not available",
+                    imageUrl: details.poster && details.poster !== 'N/A' ? details.poster : "https://placehold.co/300x450?text=No+Image",
+                    bgImage: details.cover_image && details.cover_image !== 'N/A' ? details.cover_image : (details.poster && details.poster !== 'N/A' ? details.poster : "https://placehold.co/1200x800?text=No+Background"),
+                    year: details.year && details.year !== 'N/A' ? details.year : "",
+                    quality: details.quality && details.quality !== 'N/A' ? details.quality : "HD",
+                    imdbRating: details.imdb && details.imdb !== 'N/A' ? details.imdb : "",
+                    imdbCount: details.imdb_count && details.imdb_count !== 'N/A' ? details.imdb_count : "",
+                    duration: details.runtime || "",
+                    categories: details.genre && details.genre !== 'N/A' ? details.genre : "Movie",
+                    downloadLink: "", // Not direct download from API?
+                    cinesubzLinks: json.details.download_links || []
+                };
+
+                // Setup UI safely
+                const elTitle = document.getElementById('movie_title');
+                if (elTitle) elTitle.innerText = MOVIE_DATA.title;
+                
+                const elDesc = document.getElementById('movie_desc');
+                if (elDesc) {
+                    elDesc.innerText = MOVIE_DATA.description;
+                    if (MOVIE_DATA.description.length > 200) {
+                        const toggleBtn = document.getElementById('desc_toggle_btn');
+                        if (toggleBtn) toggleBtn.classList.remove('hidden');
+                    }
+                }
+                
+                const elPoster = document.getElementById('movie_poster');
+                if (elPoster) elPoster.src = MOVIE_DATA.imageUrl;
+                
+                const elHero = document.getElementById('hero');
+                if (elHero) {
+                    const heroImg = elHero.querySelector('img');
+                    if (heroImg) heroImg.src = MOVIE_DATA.bgImage;
+                }
+                
+                const elQual = document.getElementById('m_qual');
+                if (elQual) elQual.innerText = MOVIE_DATA.quality;
+                
+                const elYear = document.getElementById('movie_year');
+                if (MOVIE_DATA.year && elYear) elYear.innerText = MOVIE_DATA.year;
+                
+                if (MOVIE_DATA.imdbRating) {
+                    const elImdbArea = document.getElementById('imdb_rating_area');
+                    if (elImdbArea) {
+                        elImdbArea.classList.remove('hidden');
+                        elImdbArea.classList.add('flex');
+                    }
+                    const elImdbVal = document.getElementById('imdb_val');
+                    if (elImdbVal) elImdbVal.innerText = MOVIE_DATA.imdbRating;
+                    
+                    const elImdbCount = document.getElementById('imdb_count');
+                    if (elImdbCount && MOVIE_DATA.imdbCount) elImdbCount.innerText = MOVIE_DATA.imdbCount;
+                }
+                
+                const elCat = document.getElementById('m_cat');
+                if (elCat && MOVIE_DATA.categories) elCat.innerText = MOVIE_DATA.categories;
+                
+                // If it's a direct streamable movie with links
+                if (details.download_links && details.download_links.length > 0) {
+                    // Let's grab the first working stream
+                    let streamLink = details.download_links.find(l => {
+                        const dl = l.real_direct_download_url || '';
+                        return dl.includes('stream') || dl.includes('mp4') || dl.includes('mkv');
+                    });
+                    
+                    if (streamLink) {
+                        MOVIE_DATA.downloadLink = streamLink.real_direct_download_url;
+                    } else if (details.download_links[0].real_direct_download_url) {
+                        MOVIE_DATA.downloadLink = details.download_links[0].real_direct_download_url; // fallback
+                    }
+                    
+                    // Populate UI with all 3 download qualities
+                    const downloadsSection = document.getElementById('cinesubz_downloads_section');
+                    const downloadsList = document.getElementById('cinesubz_downloads_list');
+                    if (downloadsSection && downloadsList) {
+                        downloadsList.innerHTML = '';
+                        details.download_links.forEach(linkObj => {
+                            let cinesubzLink = linkObj.cinesubz_link;
+                            let dlUrl = linkObj.real_direct_download_url || cinesubzLink;
+                            
+                            let qInfo = linkObj.quality_info || 'Download';
+                            
+                            let cardHtml = `
+                                <div class="flex flex-col sm:flex-row items-center justify-between bg-black/40 backdrop-blur-md border border-white/10 rounded-xl p-4 gap-4 hover:bg-black/60 transition-colors w-full">
+                                    <div class="flex items-center gap-3 w-full sm:w-auto">
+                                        <div class="bg-primary/20 text-primary p-2 rounded-lg flex items-center justify-center">
+                                            <span class="material-symbols-outlined">high_quality</span>
+                                        </div>
+                                        <span class="text-white font-bold text-lg whitespace-nowrap">${qInfo}</span>
+                                    </div>
+                                    <div class="flex items-center gap-3 w-full sm:w-auto">
+                            `;
+
+                            // 1. WATCH ONLINE BUTTON (Custom Player)
+                            let watchUrl = "";
+                            if (dlUrl) {
+                                watchUrl = `https://cinesubz.moviestream.lat/api/download?url=${encodeURIComponent(dlUrl)}`;
+                            }
+                            
+                            if (watchUrl && watchUrl !== 'N/A') {
+                                cardHtml += `
+                                    <button onclick="openPlayer('${watchUrl}')" class="flex-1 sm:flex-none bg-primary text-black font-bold py-3 px-6 rounded-lg flex items-center justify-center gap-2 hover:bg-white transition-colors">
+                                        <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">play_arrow</span> Play
+                                    </button>
+                                `;
+                            }
+
+                            // 2. DIRECT DOWNLOAD BUTTON
+                            let dlFinalUrl = dlUrl;
+                            if (dlUrl) {
+                                dlFinalUrl = `https://cinesubz.moviestream.lat/api/download?url=${encodeURIComponent(dlUrl)}&download=1`;
+                            }
+                            
+                            if (dlFinalUrl && dlFinalUrl !== 'N/A') {
+                                cardHtml += `
+                                    <a href="${dlFinalUrl}" target="_blank" rel="noreferrer noopener" class="flex-1 sm:flex-none bg-white/10 text-white font-bold py-3 px-6 rounded-lg flex items-center justify-center gap-2 hover:bg-white/20 transition-colors">
+                                        <span class="material-symbols-outlined">download</span> Download
+                                    </a>
+                                `;
+                            }
+                            
+                            cardHtml += `
+                                    </div>
+                                </div>
+                            `;
+                            
+                            downloadsList.insertAdjacentHTML('beforeend', cardHtml);
+                        });
+                        downloadsSection.classList.remove('hidden');
+                    }
+                }
+                
+                // If it's a TV Show with seasons
+                if (details.seasons && details.seasons.length > 0) {
+                    const seasonsSection = document.getElementById('cinesubz_seasons_section');
+                    const seasonsTabs = document.getElementById('cinesubz_seasons_tabs');
+                    const episodesList = document.getElementById('cinesubz_episodes_list');
+                    
+                    window.TV_SEASONS = details.seasons;
+                    
+                    if (seasonsSection && seasonsTabs && episodesList) {
+                        seasonsTabs.innerHTML = '';
+                        details.seasons.forEach((s, idx) => {
+                            const btn = document.createElement('button');
+                            btn.className = `whitespace-nowrap px-6 py-2 rounded-full font-bold transition-all ${idx === 0 ? 'bg-primary text-black' : 'bg-white/10 text-white hover:bg-white/20'}`;
+                            btn.innerText = `Season ${s.season_num}`;
+                            btn.onclick = () => window.renderEpisodes(idx, btn);
+                            seasonsTabs.appendChild(btn);
+                        });
+                        
+                        window.renderEpisodes = (seasonIdx, btnElem) => {
+                            if (btnElem) {
+                                Array.from(seasonsTabs.children).forEach(c => {
+                                    c.className = 'whitespace-nowrap px-6 py-2 rounded-full font-bold transition-all bg-white/10 text-white hover:bg-white/20';
+                                });
+                                btnElem.className = 'whitespace-nowrap px-6 py-2 rounded-full font-bold transition-all bg-primary text-black';
+                            }
+                            
+                            const season = window.TV_SEASONS[seasonIdx];
+                            episodesList.innerHTML = '';
+                            season.episodes.forEach(ep => {
+                                let epPath = ep.url;
+                                try { epPath = new URL(ep.url).pathname; } catch(e) {}
+                                
+                                const card = `
+                                    <a href="movie-details.html?source=cinesubz&path=${encodeURIComponent(epPath)}" class="flex flex-col bg-black/40 backdrop-blur-md border border-white/10 rounded-xl p-4 hover:border-primary transition-colors cursor-pointer group">
+                                        <div class="flex items-center justify-between mb-2">
+                                            <span class="bg-white/10 text-white text-xs font-bold px-2 py-1 rounded">EP ${ep.num}</span>
+                                            <span class="text-white/50 text-xs">${ep.date}</span>
+                                        </div>
+                                        <span class="text-white font-bold group-hover:text-primary transition-colors">${ep.title}</span>
+                                    </a>
+                                `;
+                                episodesList.insertAdjacentHTML('beforeend', card);
+                            });
+                        };
+                        
+                        window.renderEpisodes(0, seasonsTabs.children[0]);
+                        seasonsSection.classList.remove('hidden');
+                        
+                        const downloadsSection = document.getElementById('cinesubz_downloads_section');
+                        if (downloadsSection) downloadsSection.classList.add('hidden');
+                    }
+                }
+            } else if (json.links && json.type === "TV Show / Episode") {
+                // TV Series logic for cinesubz
+                MOVIE_DATA = {
+                    title: "TV Series Episode",
+                    description: "Enjoy watching this episode with Sinhala Subtitles.",
+                    downloadLink: json.links[0]?.url || "",
+                    imageUrl: "https://placehold.co/300x450"
+                };
+                document.getElementById('movie_title').innerText = MOVIE_DATA.title;
+            } else {
+                showErrorState("This movie is currently unavailable. The scraper could not extract data.");
+                return;
+            }
+
+            document.body.classList.add('loaded');
+            const loader = document.getElementById('global_loader');
+            if(loader) {
+                loader.classList.add('opacity-0');
+                setTimeout(() => loader.classList.add('hidden'), 500);
+            }
+        } catch (e) {
+            console.error(e);
+            showErrorState("Network connection failed. Please ensure cinesubz.moviestream.lat is reachable and not blocked by your ISP/Antivirus.");
+        }
+    }
+    
+    function showErrorState(message) {
+        document.getElementById('movie_title').innerText = "Oops!";
+        document.getElementById('movie_desc').innerText = message;
+        
+        const linksContainer = document.getElementById('cinesubz_links');
+        if(linksContainer) {
+            linksContainer.innerHTML = `<p class="text-secondary p-4 bg-error/20 rounded border border-error/50">${message}</p>`;
+        }
+        
+        // Hide global loader
+        const loader = document.getElementById('global_loader');
+        if(loader) {
+            loader.classList.add('opacity-0');
+            setTimeout(() => loader.classList.add('hidden'), 500);
+        }
+    }
+
+</script>
+    <script>
+        function toggleDesc() {
+            const desc = document.getElementById('movie_desc');
+            const btn = document.getElementById('desc_toggle_btn');
+            if (desc.classList.contains('line-clamp-4')) {
+                desc.classList.remove('line-clamp-4');
+                btn.innerText = 'See Less';
+            } else {
+                desc.classList.add('line-clamp-4');
+                btn.innerText = 'See More';
+            }
+        }
+        
+        // Video Player Logic
+        let customPlyr = null;
+        
+        function openPlayer(url) {
+            const modal = document.getElementById('video_modal');
+            const videoElement = document.getElementById('custom_player');
+            
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+            // small delay for transition
+            setTimeout(() => modal.classList.remove('opacity-0'), 10);
+            
+            if (!customPlyr) {
+                customPlyr = new Plyr(videoElement, {
+                    controls: ['play-large', 'play', 'progress', 'current-time', 'mute', 'volume', 'captions', 'settings', 'pip', 'airplay', 'fullscreen'],
+                    settings: ['quality', 'speed']
+                });
+                
+                customPlyr.on('playing', () => {
+                    document.getElementById('player_loader').classList.add('hidden');
+                });
+                customPlyr.on('waiting', () => {
+                    document.getElementById('player_loader').classList.remove('hidden');
+                });
+                customPlyr.on('canplay', () => {
+                    document.getElementById('player_loader').classList.add('hidden');
+                });
+                customPlyr.on('error', () => {
+                    const pl = document.getElementById('player_loader');
+                    if (pl) {
+                        pl.classList.remove('hidden');
+                        pl.innerHTML = '<span class="material-symbols-outlined text-5xl text-primary-container mb-2">error</span><p class="text-primary-container font-bold text-xl drop-shadow-md">Stream Unavailable.</p><p class="text-secondary text-sm mt-1">Please try again later or contact developer.</p>';
+                    }
+                });
+            }
+            
+            document.getElementById('player_loader').classList.remove('hidden');
+            
+            customPlyr.source = {
+                type: 'video',
+                sources: [
+                    {
+                        src: url,
+                        type: 'video/mp4',
+                    },
+                ],
+            };
+            customPlyr.play();
+        }
+        
+        function closePlayer() {
+            const modal = document.getElementById('video_modal');
+            
+            modal.classList.add('opacity-0');
+            setTimeout(() => {
+                modal.classList.add('hidden');
+                modal.classList.remove('flex');
+                if (customPlyr) {
+                    customPlyr.stop();
+                    customPlyr.source = null;
+                }
+            }, 300);
+        }
+
+    </script>
+    
+    <!-- Video Player Modal -->
+    <div id="video_modal" class="fixed inset-0 z-[100] hidden flex-col items-center justify-center bg-black/95 backdrop-blur-xl opacity-0 transition-opacity duration-300">
+        <button onclick="closePlayer()" class="absolute top-6 right-6 text-white hover:text-primary transition-colors z-[101]">
+            <span class="material-symbols-outlined text-4xl">close</span>
+        </button>
+        <div class="w-full max-w-6xl w-[95%] aspect-video rounded-2xl overflow-hidden shadow-[0_0_50px_rgba(229,9,20,0.3)] relative">
+            <div id="player_loader" class="absolute inset-0 z-[150] flex flex-col items-center justify-center bg-black/80 backdrop-blur-md hidden pointer-events-none">
+                <div class="w-12 h-12 border-4 border-primary/20 border-t-primary rounded-full animate-spin mb-4 shadow-[0_0_15px_rgba(229,9,20,0.5)]"></div>
+                <h3 class="font-display-hero-mobile text-xl font-black text-primary-container tracking-tighter animate-pulse drop-shadow-[0_0_10px_rgba(229,9,20,0.8)]">MOVIESTREAM</h3>
+                <p class="text-secondary mt-1 font-label-bold text-sm">Loading Stream...</p>
+            </div>
+            <video id="custom_player" controls playsinline referrerpolicy="no-referrer">
+                <source src="" type="video/mp4" />
+            </video>
+        </div>
+    </div>
+</body>
+</html>
