@@ -111,45 +111,53 @@
     // For Cinesubz, data is pre-fetched since it's one big JSON
     let cachedCinesubzData = [];
 
+    let allFilteredItems = [];
+    let isDataLoaded = false;
+    
     async function fetchMovies(page) {
         if (!categoryName) return [];
 
-        if (mode === 'cinesubz') {
-            try {
-                // If it's page 1, show the loader because we might have a slight delay
-                const res = await fetch(`${API_BASE}/api/category/${encodeURIComponent(categoryName)}?page=${page}`);
-                const json = await res.json();
-                if (json && json.results) {
-                    return json.results;
-                }
-            } catch(e) { console.error(e); }
-            return [];
-        } 
-        
-        else {
-            // Original API logic
-            let fetchUrl = "";
-            if (categoryName === "Sinhala Movies") fetchUrl = `${ORIGINAL_API}/genre/SinhalaMovies?page=${page}`;
-            else if (categoryName === "Sinhala Dubbing") fetchUrl = `${ORIGINAL_API}/genre/SinhalaDubbing?page=${page}`;
-            else if (categoryName === "TV Series") fetchUrl = `${ORIGINAL_API}/tvseries?page=${page}`;
-            else if (categoryName === "Movies") fetchUrl = `${ORIGINAL_API}/movies-general?page=${page}`;
-            else {
-                const isTrending = categoryName === "Popular Movie" || categoryName === "Trending TV" || categoryName === "Trending Movie" || categoryName === "New Movie";
-                const endpoint = isTrending ? `/trending` : `/genre/${categoryName.replace(/\s+/g, '')}`;
-                fetchUrl = `${ORIGINAL_API}${endpoint}?page=${page}`;
+        if (!isDataLoaded) {
+            if (mode === 'cinesubz') {
+                try {
+                    const res = await fetch(`${API_BASE}/api/homepage?t=${new Date().getTime()}`);
+                    const json = await res.json();
+                    if (json) {
+                        const targetCat = (categoryName || '').toLowerCase().trim();
+                        for (const key in json) {
+                            if (key.toLowerCase().trim() === targetCat) {
+                                allFilteredItems = json[key];
+                                break;
+                            }
+                        }
+                    }
+                } catch(e) { console.error(e); }
+            } else {
+                try {
+                    // Fetch original movies dump for blazing fast client-side sorting and filtering
+                    const res = await fetch(`https://panel.moviestream.lat/api/movies?v=${new Date().getTime()}`);
+                    const data = await res.json();
+                    if (Array.isArray(data)) {
+                        if (categoryName.includes('Trending') || categoryName.includes('Popular') || categoryName.includes('New')) {
+                            // First 50 as trending fallback
+                            allFilteredItems = data.slice(0, 50);
+                        } else {
+                            allFilteredItems = data.filter(m => {
+                                const catStr = (m.categories || '').toLowerCase();
+                                const typeStr = (m.type || '').toLowerCase();
+                                const search = categoryName.toLowerCase();
+                                return catStr.includes(search) || typeStr.includes(search);
+                            });
+                        }
+                    }
+                } catch(e) { console.error(e); }
             }
-
-            try {
-                const res = await fetch(fetchUrl);
-                const data = await res.json();
-                if (Array.isArray(data)) return data;
-                if (data && data.data) return data.data.subjectList || data.data.items || data.data.rankingListContentList || [];
-                return [];
-            } catch(e) {
-                console.error(e);
-                return [];
-            }
+            isDataLoaded = true;
         }
+
+        const itemsPerPage = 20;
+        const startIndex = (page - 1) * itemsPerPage;
+        return allFilteredItems.slice(startIndex, startIndex + itemsPerPage);
     }
 
     function renderCards(items) {
