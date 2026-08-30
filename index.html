@@ -322,7 +322,7 @@
                     <div id="modal_meta" class="flex gap-3 text-sm font-label-bold text-secondary mb-2">
                         <!-- Quality, Year, etc. -->
                     </div>
-                    <p id="modal_desc" class="text-sm md:text-base text-tertiary line-clamp-3">Description loading...</p>
+                    <p id="modal_desc" class="hidden text-sm md:text-base text-tertiary line-clamp-3">Description loading...</p>
                 </div>
             </div>
 
@@ -337,12 +337,18 @@
                 <div id="modal_content_area" class="hidden">
                     <!-- TV Series Section (Hidden for movies) -->
                     <div id="modal_tv_section" class="mb-6 hidden">
-                        <h3 class="font-headline-md text-lg text-white mb-3">Episodes</h3>
-                        <div class="flex gap-4">
-                            <select id="season_select" onchange="loadEpisodes(this.value)" class="bg-surface-container border border-white/20 rounded-lg px-4 py-2 text-white outline-none focus:border-primary transition-colors">
-                                <!-- Seasons -->
-                            </select>
+                        <div class="mb-4">
+                            <label class="block text-xs font-label-bold text-tertiary mb-2 uppercase tracking-wider">Select Season</label>
+                            <div class="relative">
+                                <select id="season_select" onchange="loadEpisodes(this.value)" class="w-full appearance-none bg-surface-container-low border border-white/10 hover:border-primary/50 rounded-xl px-4 py-3 text-white font-medium outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all cursor-pointer">
+                                    <!-- Seasons -->
+                                </select>
+                                <div class="absolute inset-y-0 right-0 flex items-center px-4 pointer-events-none">
+                                    <span class="material-symbols-outlined text-tertiary">expand_more</span>
+                                </div>
+                            </div>
                         </div>
+                        <label class="block text-xs font-label-bold text-tertiary mb-2 uppercase tracking-wider">Select Episode</label>
                         <div id="episodes_list" class="mt-4 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3 max-h-40 overflow-y-auto pr-2 custom-scrollbar">
                             <!-- Episodes -->
                         </div>
@@ -551,7 +557,7 @@ function loadEpisodes(seasonName, source) {
     episodes.forEach((ep, idx) => {
         const title = ep.episode || ep.title || ep.name || `Episode ${ep.num || idx + 1}`;
         list.innerHTML += `
-            <button type="button" onclick="selectEpisode(${idx}, '${seasonName.replace(/'/g, "\\'")}')" id="ep_btn_${idx}" class="series-episode-btn w-full text-left bg-surface-container-low hover:bg-white/10 border border-white/5 rounded px-3 py-2 text-sm text-on-surface transition-all">
+            <button type="button" onclick="selectEpisode(${idx}, '${seasonName.replace(/'/g, "\\'")}')" id="ep_btn_${idx}" class="series-episode-btn w-full text-left bg-surface-container-low hover:bg-white/10 border border-white/5 rounded-xl px-4 py-3 text-sm text-on-surface transition-all font-medium hover:border-primary/50">
                 ${title}
             </button>
         `;
