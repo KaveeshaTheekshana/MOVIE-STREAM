@@ -147,13 +147,14 @@
                     const res = await fetch(`https://panel.moviestream.lat/api/movies?v=${new Date().getTime()}`);
                     const data = await res.json();
                     if (Array.isArray(data)) {
-                        if (categoryName.includes('Trending') || categoryName.includes('Popular') || categoryName.includes('New')) {
+                        if (categoryName.toLowerCase().includes('all') || categoryName.includes('Trending') || categoryName.includes('Popular') || categoryName.includes('New') || categoryName === 'Movies') {
                             allFilteredItems = data;
                         } else {
                             allFilteredItems = data.filter(m => {
                                 const catStr = (m.categories || '').toLowerCase();
                                 const typeStr = (m.type || '').toLowerCase();
-                                const search = categoryName.toLowerCase();
+                                const search = categoryName.toLowerCase().replace(/movies?|tv|series/g, '').trim();
+                                if (!search) return true;
                                 return catStr.includes(search) || typeStr.includes(search);
                             });
                         }
