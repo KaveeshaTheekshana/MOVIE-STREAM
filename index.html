@@ -432,8 +432,8 @@ async function fetchMovieDetails(id, source, detailPath) {
                 <span>${data.year || ''}</span>
             `;
             
-            if (data.isTvSeries && data.episodes && data.episodes.length > 0) {
-                setupTvSeriesCinesubz(data.episodes);
+            if (data.seasons && data.seasons.length > 0) {
+                setupTvSeriesCinesubz(data.seasons);
             } else {
                 extractMovieLinkCinesubz(data);
             }
@@ -495,12 +495,11 @@ function extractMovieLinkOriginal(data) {
     showForm();
 }
 
-function setupTvSeriesCinesubz(episodes) {
+function setupTvSeriesCinesubz(seasons) {
     const seasonsMap = {};
-    episodes.forEach(ep => {
-        const s = ep.season || 'Season 1';
-        if (!seasonsMap[s]) seasonsMap[s] = [];
-        seasonsMap[s].push(ep);
+    seasons.forEach(s => {
+        const sName = `Season ${s.season_num || 1}`;
+        seasonsMap[sName] = s.episodes || [];
     });
     currentSeriesData = seasonsMap;
     
@@ -552,7 +551,7 @@ function loadEpisodes(seasonName, source) {
     list.innerHTML = '';
     
     episodes.forEach((ep, idx) => {
-        const title = ep.episode || ep.name || `Episode ${idx + 1}`;
+        const title = ep.episode || ep.title || ep.name || `Episode ${ep.num || idx + 1}`;
         list.innerHTML += `
             <button type="button" onclick="selectEpisode(${idx}, '${seasonName.replace(/'/g, "\\'")}')" id="ep_btn_${idx}" class="series-episode-btn w-full text-left bg-surface-container-low hover:bg-white/10 border border-white/5 rounded px-3 py-2 text-sm text-on-surface transition-all">
                 ${title}
@@ -565,18 +564,47 @@ function loadEpisodes(seasonName, source) {
     }
 }
 
-function selectEpisode(idx, seasonName) {
+async function selectEpisode(idx, seasonName) {
     document.querySelectorAll('.series-episode-btn').forEach(b => b.classList.remove('active'));
-    document.getElementById(`ep_btn_${idx}`).classList.add('active');
+    const btn = document.getElementById(`ep_btn_${idx}`);
+    if (btn) btn.classList.add('active');
     
     const ep = currentSeriesData[seasonName][idx];
     
     if (currentMovieData.source === 'cs') {
-        if (ep.downloadLinks && ep.downloadLinks.length > 0) {
-            const link720 = ep.downloadLinks.find(l => l.quality && l.quality.includes('720'));
-            currentDirectLink = link720 ? link720.link : ep.downloadLinks[0].link;
+        currentMovieData.title = `${currentMovieData.title.split(' - ')[0]} - ${seasonName} ${ep.title || ep.num || 'EP'}`;
+        
+        try {
+            const btnWa = document.getElementById('wa_submit_btn');
+            if (btnWa) {
+                btnWa.disabled = true;
+                btnWa.innerHTML = `<div class="w-5 h-5 border-2 border-white/20 border-t-white rounded-full animate-spin"></div> Loading links...`;
+            }
+            
+            let epPath = ep.url;
+            try { epPath = new URL(ep.url).pathname; } catch(e) {}
+            
+            const res = await fetch(`https://cinesubz.moviestream.lat/api/details?url=${encodeURIComponent(epPath)}`);
+            const data = await res.json();
+            
+            if (data.links && data.links.length > 0) {
+                const link720 = data.links.find(l => (l.quality_info || l.quality || '').includes('720'));
+                currentDirectLink = link720 ? (link720.url || link720.link) : (data.links[0].url || data.links[0].link);
+            } else if (ep.downloadLinks && ep.downloadLinks.length > 0) {
+                const link720 = ep.downloadLinks.find(l => l.quality && l.quality.includes('720'));
+                currentDirectLink = link720 ? link720.link : ep.downloadLinks[0].link;
+            } else {
+                currentDirectLink = null;
+            }
+            
+            if (btnWa) {
+                btnWa.disabled = false;
+                btnWa.innerHTML = `<span class="material-symbols-outlined">send</span> Send to WhatsApp`;
+            }
+        } catch(e) {
+            console.error("Failed to load episode links", e);
+            currentDirectLink = null;
         }
-        currentMovieData.title = `${currentMovieData.title.split(' - ')[0]} - ${seasonName} ${ep.episode || 'EP'}`;
     } else {
         if (ep.qualities && ep.qualities.length > 0) {
             const link720 = ep.qualities.find(q => q.quality && q.quality.includes('720'));
