@@ -523,6 +523,9 @@ async function selectEpisode(idx, seasonName) {
             if (data.links && data.links.length > 0) {
                 const link720 = data.links.find(l => (l.quality_info || l.quality || '').includes('720'));
                 currentDirectLink = link720 ? (link720.url || link720.link) : (data.links[0].url || data.links[0].link);
+            } else if (data.download_links && data.download_links.length > 0) {
+                const link720 = data.download_links.find(l => (l.quality_info || l.quality || '').includes('720'));
+                currentDirectLink = link720 ? (link720.real_direct_download_url || link720.cinesubz_link || link720.url) : (data.download_links[0].real_direct_download_url || data.download_links[0].cinesubz_link || data.download_links[0].url);
             } else if (ep.downloadLinks && ep.downloadLinks.length > 0) {
                 const link720 = ep.downloadLinks.find(l => l.quality && l.quality.includes('720'));
                 currentDirectLink = link720 ? link720.link : ep.downloadLinks[0].link;
@@ -544,6 +547,12 @@ async function selectEpisode(idx, seasonName) {
             currentDirectLink = link720 ? link720.url : ep.qualities[0].url;
         } else if (ep.url) {
             currentDirectLink = ep.url;
+        } else if (ep.download_links && ep.download_links.length > 0) {
+            const link720 = ep.download_links.find(l => (l.quality_info || l.quality || '').includes('720'));
+            currentDirectLink = link720 ? (link720.real_direct_download_url || link720.url) : (ep.download_links[0].real_direct_download_url || ep.download_links[0].url);
+        } else if (ep.links && ep.links.length > 0) {
+            const link720 = ep.links.find(l => (l.quality_info || l.quality || '').includes('720'));
+            currentDirectLink = link720 ? (link720.url || link720.link) : (ep.links[0].url || ep.links[0].link);
         }
         currentMovieData.title = `${currentMovieData.originalTitle} - ${seasonName} ${ep.name || ep.title || ep.num || 'EP'}`;
     }
