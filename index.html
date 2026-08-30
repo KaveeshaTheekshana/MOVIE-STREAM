@@ -470,26 +470,26 @@ async function fetchMovieDetails(id, source, detailPath) {
 }
 
 function extractMovieLinkCinesubz(data) {
-    if (data.download_links && data.download_links.length > 0) {
-        const link720 = data.download_links.find(l => (l.quality_info || '').includes('720'));
-        currentDirectLink = link720 ? (link720.real_direct_download_url || link720.cinesubz_link) : (data.download_links[0].real_direct_download_url || data.download_links[0].cinesubz_link);
-    } else if (data.episodes && data.episodes.length > 0) {
-        // Fallback for unexpected structure
-        const link720 = data.episodes[0].downloadLinks?.find(l => l.quality && l.quality.includes('720'));
-        currentDirectLink = link720 ? link720.link : (data.episodes[0].downloadLinks?.[0]?.link || '');
-    }
+    const extractLink = (linksObj) => {
+        if (!linksObj || !linksObj.length) return null;
+        const link720 = linksObj.find(l => (l.quality_info || l.quality || '').includes('720'));
+        if (link720) return link720.real_direct_download_url || link720.cinesubz_link || link720.url || link720.link;
+        return linksObj[0].real_direct_download_url || linksObj[0].cinesubz_link || linksObj[0].url || linksObj[0].link;
+    };
+    currentDirectLink = extractLink(data.download_links) || extractLink(data.links) || data.direct_url || data.url || data.link || null;
     
     // Subtitle logic (Sinhala sub is often integrated into the stream or provided elsewhere, skipping for now unless explicitly in the API)
     showForm();
 }
 
 function extractMovieLinkOriginal(data) {
-    if (data.qualities && data.qualities.length > 0) {
-        const link720 = data.qualities.find(q => q.quality && q.quality.includes('720'));
-        currentDirectLink = link720 ? link720.url : data.qualities[0].url;
-    } else if (data.url) {
-        currentDirectLink = data.url;
-    }
+    const extractLink = (linksObj) => {
+        if (!linksObj || !linksObj.length) return null;
+        const link720 = linksObj.find(l => (l.quality_info || l.quality || '').includes('720'));
+        if (link720) return link720.real_direct_download_url || link720.cinesubz_link || link720.url || link720.link;
+        return linksObj[0].real_direct_download_url || linksObj[0].cinesubz_link || linksObj[0].url || linksObj[0].link;
+    };
+    currentDirectLink = extractLink(data.qualities) || extractLink(data.download_links) || extractLink(data.links) || data.direct_url || data.url || data.link || null;
     
     if (data.subtitles) {
         const siSub = data.subtitles.find(s => s.language === 'Sinhala' || s.lang === 'si');
