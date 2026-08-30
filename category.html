@@ -102,8 +102,17 @@
     document.getElementById('page_title').innerText = categoryName || "All Movies";
     document.title = (categoryName || "Category") + " | MOVIESTREAM";
 
-    const API_BASE = "https://cinesubz.moviestream.lat";
+    const API_BASE = "https://api.moviestream.lat";
     const ORIGINAL_API = "https://stream.moviestream.lat/api";
+    
+    function storeTempData(title, imgUrl) {
+        try {
+            sessionStorage.setItem('temp_movie_data', JSON.stringify({
+                title: decodeURIComponent(title),
+                imageUrl: decodeURIComponent(imgUrl)
+            }));
+        } catch(e) {}
+    }
     
     let currentPage = 1;
     let isLoading = false;
@@ -139,8 +148,7 @@
                     const data = await res.json();
                     if (Array.isArray(data)) {
                         if (categoryName.includes('Trending') || categoryName.includes('Popular') || categoryName.includes('New')) {
-                            // First 50 as trending fallback
-                            allFilteredItems = data.slice(0, 50);
+                            allFilteredItems = data;
                         } else {
                             allFilteredItems = data.filter(m => {
                                 const catStr = (m.categories || '').toLowerCase();
@@ -168,13 +176,16 @@
             const id = isCinesubz ? encodeURIComponent(m.url) : (m.id || m.subjectId || m._id || ('scrap_' + idx));
             const detailPath = isCinesubz ? '' : (m.detailPath || id);
             const finalId = isCinesubz ? id : (detailPath || id);
-            
+            const safeFinalId = finalId ? finalId.toString().replace(/'/g, "%27") : '';
+            const sourceMode = isCinesubz ? 'cs' : 'original';
             const imgUrl = m.imageUrl || m.cover?.url || m.coverUrl || m.cover || m.pic || m.image || 'https://via.placeholder.com/200x300';
             const quality = m.quality || m.type || 'HD';
             const title = m.title || m.name || 'Unknown';
             
+            const safeTitle = encodeURIComponent(title).replace(/'/g, "%27");
+            const safeImg = encodeURIComponent(imgUrl).replace(/'/g, "%27");
             cardsHtml += `
-                <div class="movie-card relative w-full aspect-[2/3] rounded-lg overflow-hidden border border-white/10 cursor-pointer bg-surface-container-low" onclick="window.location.href='movie-details.html?id=${finalId}&source=${mode}'">
+                <div class="movie-card relative w-full aspect-[2/3] rounded-lg overflow-hidden border border-white/10 cursor-pointer bg-surface-container-low" onclick="storeTempData('${safeTitle}', '${safeImg}'); window.location.href='movie-details.html?id=${safeFinalId}&source=${mode}'">
                     <img src="${imgUrl}" class="w-full h-full object-cover" onerror="this.src='https://via.placeholder.com/200x300?text=No+Image'">
                     <div class="movie-overlay absolute inset-0 bg-gradient-to-t from-black via-black/60 to-transparent opacity-0 transition-opacity duration-300 flex flex-col justify-end p-4 backdrop-blur-[2px]">
                         <h3 class="font-label-bold text-label-bold text-on-surface mb-2 truncate drop-shadow-md">${title}</h3>
