@@ -102,7 +102,7 @@
     document.getElementById('page_title').innerText = categoryName || "All Movies";
     document.title = (categoryName || "Category") + " | MOVIESTREAM";
 
-    const API_BASE = "https://api.moviestream.lat";
+    const API_BASE = "https://cinesubz.moviestream.lat";
     const ORIGINAL_API = "https://stream.moviestream.lat/api";
     
     function storeTempData(title, imgUrl) {
@@ -133,10 +133,15 @@
                     const json = await res.json();
                     if (json) {
                         const targetCat = (categoryName || '').toLowerCase().trim();
-                        for (const key in json) {
-                            if (key.toLowerCase().trim() === targetCat) {
-                                allFilteredItems = json[key];
-                                break;
+                        if (targetCat.includes('all')) {
+                            // Merge all categories together
+                            allFilteredItems = Object.values(json).flat();
+                        } else {
+                            for (const key in json) {
+                                if (key.toLowerCase().trim() === targetCat) {
+                                    allFilteredItems = json[key];
+                                    break;
+                                }
                             }
                         }
                     }
