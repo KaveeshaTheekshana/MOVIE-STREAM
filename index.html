@@ -408,7 +408,7 @@ function openMovieModal(id, source, title, imgUrl, detailPath) {
     document.getElementById('modal_tv_section').classList.add('hidden');
     document.getElementById('wa_status').classList.add('hidden');
     
-    currentMovieData = { title: decodeURIComponent(title), id, source, detailPath };
+    currentMovieData = { title: decodeURIComponent(title), originalTitle: decodeURIComponent(title), id, source, detailPath };
     currentDirectLink = null;
     currentSubtitleUrl = null;
     currentSeriesData = null;
@@ -576,7 +576,7 @@ async function selectEpisode(idx, seasonName) {
     const ep = currentSeriesData[seasonName][idx];
     
     if (currentMovieData.source === 'cs') {
-        currentMovieData.title = `${currentMovieData.title.split(' - ')[0]} - ${seasonName} ${ep.title || ep.num || 'EP'}`;
+        currentMovieData.title = `${currentMovieData.originalTitle} - ${seasonName} ${ep.title || ep.num || 'EP'}`;
         
         try {
             const btnWa = document.getElementById('wa_submit_btn');
@@ -616,7 +616,7 @@ async function selectEpisode(idx, seasonName) {
         } else if (ep.url) {
             currentDirectLink = ep.url;
         }
-        currentMovieData.title = `${currentMovieData.title.split(' - ')[0]} - ${seasonName} ${ep.name || 'EP'}`;
+        currentMovieData.title = `${currentMovieData.originalTitle} - ${seasonName} ${ep.name || ep.title || ep.num || 'EP'}`;
     }
 }
 
