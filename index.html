@@ -575,9 +575,24 @@ async function selectEpisode(idx, seasonName) {
     
     const ep = currentSeriesData[seasonName][idx];
     
-    if (currentMovieData.source === 'cs') {
-        currentMovieData.title = `${currentMovieData.originalTitle} - ${seasonName} ${ep.title || ep.num || 'EP'}`;
-        
+    // Set Title
+    currentMovieData.title = `${currentMovieData.originalTitle} - ${seasonName} ${ep.name || ep.title || ep.ep_num || ep.num || 'EP'}`;
+    
+    // Find Direct Link Helper
+    const extractLink = (linksObj) => {
+        if (!linksObj || !linksObj.length) return null;
+        const link720 = linksObj.find(l => (l.quality_info || l.quality || '').includes('720'));
+        if (link720) return link720.real_direct_download_url || link720.cinesubz_link || link720.url || link720.link;
+        return linksObj[0].real_direct_download_url || linksObj[0].cinesubz_link || linksObj[0].url || linksObj[0].link;
+    };
+
+    currentDirectLink = extractLink(ep.download_links) || 
+                        extractLink(ep.links) || 
+                        extractLink(ep.downloadLinks) || 
+                        extractLink(ep.qualities) || 
+                        ep.direct_url || ep.url || ep.link || null;
+
+    if (currentMovieData.source === 'cs' && !currentDirectLink && ep.url) {
         try {
             const btnWa = document.getElementById('wa_submit_btn');
             if (btnWa) {
@@ -591,18 +606,8 @@ async function selectEpisode(idx, seasonName) {
             const res = await fetch(`https://cinesubz.moviestream.lat/api/details?url=${encodeURIComponent(epPath)}`);
             const data = await res.json();
             
-            if (data.links && data.links.length > 0) {
-                const link720 = data.links.find(l => (l.quality_info || l.quality || '').includes('720'));
-                currentDirectLink = link720 ? (link720.url || link720.link) : (data.links[0].url || data.links[0].link);
-            } else if (data.download_links && data.download_links.length > 0) {
-                const link720 = data.download_links.find(l => (l.quality_info || l.quality || '').includes('720'));
-                currentDirectLink = link720 ? (link720.real_direct_download_url || link720.cinesubz_link || link720.url) : (data.download_links[0].real_direct_download_url || data.download_links[0].cinesubz_link || data.download_links[0].url);
-            } else if (ep.downloadLinks && ep.downloadLinks.length > 0) {
-                const link720 = ep.downloadLinks.find(l => l.quality && l.quality.includes('720'));
-                currentDirectLink = link720 ? link720.link : ep.downloadLinks[0].link;
-            } else {
-                currentDirectLink = null;
-            }
+            currentDirectLink = extractLink(data.download_links) || 
+                                extractLink(data.links) || null;
             
             if (btnWa) {
                 btnWa.disabled = false;
@@ -610,22 +615,7 @@ async function selectEpisode(idx, seasonName) {
             }
         } catch(e) {
             console.error("Failed to load episode links", e);
-            currentDirectLink = null;
         }
-    } else {
-        if (ep.qualities && ep.qualities.length > 0) {
-            const link720 = ep.qualities.find(q => q.quality && q.quality.includes('720'));
-            currentDirectLink = link720 ? link720.url : ep.qualities[0].url;
-        } else if (ep.url) {
-            currentDirectLink = ep.url;
-        } else if (ep.download_links && ep.download_links.length > 0) {
-            const link720 = ep.download_links.find(l => (l.quality_info || l.quality || '').includes('720'));
-            currentDirectLink = link720 ? (link720.real_direct_download_url || link720.url) : (ep.download_links[0].real_direct_download_url || ep.download_links[0].url);
-        } else if (ep.links && ep.links.length > 0) {
-            const link720 = ep.links.find(l => (l.quality_info || l.quality || '').includes('720'));
-            currentDirectLink = link720 ? (link720.url || link720.link) : (ep.links[0].url || ep.links[0].link);
-        }
-        currentMovieData.title = `${currentMovieData.originalTitle} - ${seasonName} ${ep.name || ep.title || ep.num || 'EP'}`;
     }
 }
 
