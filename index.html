@@ -425,17 +425,18 @@ async function fetchMovieDetails(id, source, detailPath) {
             // id is already encoded in the onclick handler, so don't double encode it
             const res = await fetch(`https://cinesubz.moviestream.lat/api/details?url=${id}`);
             const data = await res.json();
+            const details = data.details || data;
             
-            document.getElementById('modal_desc').innerText = data.synopsis || 'No description available.';
+            document.getElementById('modal_desc').innerText = details.synopsis || 'No description available.';
             document.getElementById('modal_meta').innerHTML = `
-                <span class="px-2 py-0.5 bg-primary/20 text-primary rounded">${data.quality || 'HD'}</span>
-                <span>${data.year || ''}</span>
+                <span class="px-2 py-0.5 bg-primary/20 text-primary rounded">${details.quality || 'HD'}</span>
+                <span>${details.year || ''}</span>
             `;
             
-            if (data.seasons && data.seasons.length > 0) {
-                setupTvSeriesCinesubz(data.seasons);
+            if (details.seasons && details.seasons.length > 0) {
+                setupTvSeriesCinesubz(details.seasons);
             } else {
-                extractMovieLinkCinesubz(data);
+                extractMovieLinkCinesubz(details);
             }
         } else {
             // Original source
@@ -463,19 +464,16 @@ async function fetchMovieDetails(id, source, detailPath) {
 }
 
 function extractMovieLinkCinesubz(data) {
-    if (data.downloadLinks && data.downloadLinks.length > 0) {
-        const link720 = data.downloadLinks.find(l => l.quality && l.quality.includes('720'));
-        currentDirectLink = link720 ? link720.link : data.downloadLinks[0].link;
+    if (data.download_links && data.download_links.length > 0) {
+        const link720 = data.download_links.find(l => (l.quality_info || '').includes('720'));
+        currentDirectLink = link720 ? (link720.real_direct_download_url || link720.cinesubz_link) : (data.download_links[0].real_direct_download_url || data.download_links[0].cinesubz_link);
     } else if (data.episodes && data.episodes.length > 0) {
-        const link720 = data.episodes[0].downloadLinks.find(l => l.quality && l.quality.includes('720'));
-        currentDirectLink = link720 ? link720.link : data.episodes[0].downloadLinks[0].link;
+        // Fallback for unexpected structure
+        const link720 = data.episodes[0].downloadLinks?.find(l => l.quality && l.quality.includes('720'));
+        currentDirectLink = link720 ? link720.link : (data.episodes[0].downloadLinks?.[0]?.link || '');
     }
     
-    if (data.downloadLinks) {
-        const subLink = data.downloadLinks.find(l => l.quality && l.quality.toLowerCase().includes('sub'));
-        if (subLink) currentSubtitleUrl = subLink.link;
-    }
-    
+    // Subtitle logic (Sinhala sub is often integrated into the stream or provided elsewhere, skipping for now unless explicitly in the API)
     showForm();
 }
 
