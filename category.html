@@ -101,9 +101,25 @@
     document.getElementById('cat_badge').innerText = mode.toUpperCase() + " API";
     document.getElementById('page_title').innerText = categoryName || "All Movies";
     document.title = (categoryName || "Category") + " | MOVIESTREAM";
+    var CINESUBZ_REMOTE_API = "https://cinesubz.moviestream.lat";
+    var CINESUBZ_LOCAL_API = "http://localhost:6555";
+    var API_BASE = CINESUBZ_REMOTE_API;
+    var ORIGINAL_API = "https://stream.moviestream.lat/api";
+    var FALLBACK_POSTER = "https://image.tmdb.org/t/p/w500/8cdWjvZQUExUUTzyp4t6EDMubfO.jpg";
+    var FALLBACK_HERO = "https://image.tmdb.org/t/p/original/8cdWjvZQUExUUTzyp4t6EDMubfO.jpg";
 
-    const API_BASE = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') ? 'http://localhost:6555' : 'https://cinesubz.moviestream.lat';
-    const ORIGINAL_API = "https://stream.moviestream.lat/api";
+    async function fetchCineSubzAPI(endpoint) {
+        const isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+        if (isLocal) {
+            try {
+                const localRes = await fetch(`${CINESUBZ_LOCAL_API}${endpoint}`, { signal: AbortSignal.timeout(1200) });
+                if (localRes.ok) return await localRes.json();
+            } catch(e) {}
+        }
+        const res = await fetch(`${CINESUBZ_REMOTE_API}${endpoint}`);
+        if (!res.ok) throw new Error(`API error ${res.status}`);
+        return await res.json();
+    }
     
     function storeTempData(title, imgUrl) {
         try {
@@ -128,8 +144,7 @@
 
         if (mode === 'cinesubz') {
             try {
-                const res = await fetch(`${API_BASE}/api/category?type=${encodeURIComponent(categoryName)}&page=${page}`);
-                const data = await res.json();
+                const data = await fetchCineSubzAPI(`/api/category?type=${encodeURIComponent(categoryName)}&page=${page}`);
                 if (data && Array.isArray(data.results) && data.results.length > 0) {
                     return data.results;
                 }
@@ -140,8 +155,7 @@
             // Fallback to homepage data if /api/category fails
             if (!isDataLoaded) {
                 try {
-                    const res = await fetch(`${API_BASE}/api/homepage?t=${new Date().getTime()}`);
-                    const json = await res.json();
+                    const json = await fetchCineSubzAPI('/api/homepage');
                     if (json) {
                         const targetCat = (categoryName || '').toLowerCase().trim();
                         if (targetCat.includes('all') || targetCat.includes('movie')) {
@@ -154,7 +168,7 @@
                             allFilteredItems = json[categoryName] || [];
                         }
                     }
-                } catch(e) { console.error(e); }
+                } catch(e) {}
                 isDataLoaded = true;
             }
             const itemsPerPage = 20;
