@@ -102,7 +102,7 @@
     document.getElementById('page_title').innerText = categoryName || "All Movies";
     document.title = (categoryName || "Category") + " | MOVIESTREAM";
 
-    const API_BASE = "https://cinesubz.moviestream.lat";
+    const API_BASE = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') ? 'http://localhost:6555' : 'https://cinesubz.moviestream.lat';
     const ORIGINAL_API = "https://stream.moviestream.lat/api";
     
     function storeTempData(title, imgUrl) {
@@ -264,6 +264,17 @@
                 </div>
 
                 <div id="modal_content_area" class="hidden">
+                    <!-- Direct Download Links Section -->
+                    <div id="modal_download_section" class="mb-5">
+                        <label class="block text-xs font-label-bold text-tertiary mb-2 uppercase tracking-wider flex items-center gap-1.5">
+                            <span class="material-symbols-outlined text-sm text-primary">download</span>
+                            Direct Download & Streaming Mirrors
+                        </label>
+                        <div id="direct_download_buttons" class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                            <!-- Direct links generated dynamically -->
+                        </div>
+                    </div>
+
                     <!-- TV Series Section (Hidden for movies) -->
                     <div id="modal_tv_section" class="mb-6 hidden">
                         <div class="mb-4">
@@ -286,8 +297,8 @@
                     <!-- Request Form -->
                     <div class="bg-surface-container border border-white/5 rounded-xl p-5 relative overflow-hidden">
                         <div class="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent pointer-events-none"></div>
-                        <h3 class="font-headline-md text-xl text-white mb-1">Get Download Link</h3>
-                        <p class="text-sm text-secondary mb-4">Enter your WhatsApp number to receive the 720p movie file directly.</p>
+                        <h3 class="font-headline-md text-xl text-white mb-1">Get Download Link via WhatsApp</h3>
+                        <p class="text-sm text-secondary mb-4">Enter your WhatsApp number to receive the direct movie download link.</p>
                         
                         <form id="whatsapp_form" onsubmit="sendToWhatsApp(event)" class="relative z-10 space-y-4">
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -315,7 +326,7 @@
 
 <script>
 // --- MODAL & KAVIBOT LOGIC ---
-let KAVIBOT_API = "https://api.moviestream.lat/send-movie"; // Update this with your actual VPS IP if needed
+let KAVIBOT_API = "https://api.moviestream.lat/send-movie";
 let currentMovieData = null;
 let currentDirectLink = null;
 let currentSubtitleUrl = null;
@@ -336,6 +347,7 @@ function openMovieModal(id, source, title, imgUrl, detailPath) {
     document.getElementById('modal_content_area').classList.add('hidden');
     document.getElementById('modal_tv_section').classList.add('hidden');
     document.getElementById('wa_status').classList.add('hidden');
+    document.getElementById('direct_download_buttons').innerHTML = '';
     
     currentMovieData = { title: decodeURIComponent(title), originalTitle: decodeURIComponent(title), id, source, detailPath };
     currentDirectLink = null;
@@ -357,8 +369,8 @@ function closeMovieModal() {
 async function fetchMovieDetails(id, source, detailPath) {
     try {
         if (source === 'cs') {
-            // id is already encoded in the onclick handler, so don't double encode it
-            const res = await fetch(`https://cinesubz.moviestream.lat/api/details?url=${id}`);
+            const apiEndpoint = `${API_BASE}/api/details?url=${id}`;
+            const res = await fetch(apiEndpoint);
             const data = await res.json();
             const details = data.details || data;
             
@@ -366,6 +378,7 @@ async function fetchMovieDetails(id, source, detailPath) {
             document.getElementById('modal_meta').innerHTML = `
                 <span class="px-2 py-0.5 bg-primary/20 text-primary rounded">${details.quality || 'HD'}</span>
                 <span>${details.year || ''}</span>
+                ${details.imdb && details.imdb !== 'N/A' ? `<span class="px-2 py-0.5 bg-yellow-500/20 text-yellow-400 rounded">⭐ ${details.imdb}</span>` : ''}
             `;
             
             if (details.seasons && details.seasons.length > 0) {
@@ -398,27 +411,91 @@ async function fetchMovieDetails(id, source, detailPath) {
     }
 }
 
+function renderDownloadButtons(downloadLinks) {
+    const container = document.getElementById('direct_download_buttons');
+    if (!downloadLinks || downloadLinks.length === 0) {
+        container.innerHTML = `<div class="col-span-full text-xs text-secondary bg-white/5 p-3 rounded-lg text-center">No direct links available at this moment.</div>`;
+        return;
+    }
+    
+    let html = '';
+    downloadLinks.forEach((dl, idx) => {
+        const url = dl.real_direct_download_url || dl.url || dl.link;
+        if (!url || !url.startsWith('http')) return;
+        
+        let label = dl.quality_info || dl.quality || `Download Link ${idx + 1}`;
+        let icon = 'download';
+        if (url.includes('pixeldrain.com')) icon = 'cloud_download';
+        else if (url.includes('drive') || url.includes('skylines')) icon = 'play_circle';
+        
+        html += `
+            <a href="${url}" target="_blank" rel="noopener noreferrer" class="flex items-center justify-between bg-surface-container-low hover:bg-primary-container/20 border border-white/10 hover:border-primary/50 text-white rounded-xl px-4 py-3 text-xs md:text-sm font-medium transition-all group shadow-sm">
+                <div class="flex items-center gap-2 truncate">
+                    <span class="material-symbols-outlined text-primary group-hover:scale-110 transition-transform">${icon}</span>
+                    <span class="truncate">${label}</span>
+                </div>
+                <span class="material-symbols-outlined text-xs text-secondary group-hover:text-white shrink-0">open_in_new</span>
+            </a>
+        `;
+    });
+    container.innerHTML = html;
+}
+
 function extractMovieLinkCinesubz(data) {
+    const links = data.download_links || data.links || [];
+    renderDownloadButtons(links);
+    
     const extractLink = (linksObj) => {
         if (!linksObj || !linksObj.length) return null;
+        const isValid = (u) => u && typeof u === 'string' && u.startsWith('http') && !u.includes('cinesubz.net/movies') && !u.includes('cinesubz.net/episodes') && !u.includes('cinesubz.net/tvshows');
+        const getBest = (l) => {
+            if (isValid(l.real_direct_download_url)) return l.real_direct_download_url;
+            if (isValid(l.url)) return l.url;
+            if (isValid(l.link)) return l.link;
+            if (isValid(l.cinesubz_link)) return l.cinesubz_link;
+            return null;
+        };
         const link720 = linksObj.find(l => (l.quality_info || l.quality || '').includes('720'));
-        if (link720) return link720.real_direct_download_url || link720.cinesubz_link || link720.url || link720.link;
-        return linksObj[0].real_direct_download_url || linksObj[0].cinesubz_link || linksObj[0].url || linksObj[0].link;
+        if (link720) {
+            const best = getBest(link720);
+            if (best) return best;
+        }
+        for (let l of linksObj) {
+            const best = getBest(l);
+            if (best) return best;
+        }
+        return null;
     };
-    currentDirectLink = extractLink(data.download_links) || extractLink(data.links) || data.direct_url || data.url || data.link || null;
-    
-    // Subtitle logic (Sinhala sub is often integrated into the stream or provided elsewhere, skipping for now unless explicitly in the API)
+    currentDirectLink = extractLink(links) || data.direct_url || data.url || data.link || null;
     showForm();
 }
 
 function extractMovieLinkOriginal(data) {
+    const links = data.qualities || data.download_links || data.links || [];
+    renderDownloadButtons(links);
+    
     const extractLink = (linksObj) => {
         if (!linksObj || !linksObj.length) return null;
+        const isValid = (u) => u && typeof u === 'string' && u.startsWith('http') && !u.includes('cinesubz.net/movies') && !u.includes('cinesubz.net/episodes') && !u.includes('cinesubz.net/tvshows');
+        const getBest = (l) => {
+            if (isValid(l.real_direct_download_url)) return l.real_direct_download_url;
+            if (isValid(l.url)) return l.url;
+            if (isValid(l.link)) return l.link;
+            if (isValid(l.cinesubz_link)) return l.cinesubz_link;
+            return null;
+        };
         const link720 = linksObj.find(l => (l.quality_info || l.quality || '').includes('720'));
-        if (link720) return link720.real_direct_download_url || link720.cinesubz_link || link720.url || link720.link;
-        return linksObj[0].real_direct_download_url || linksObj[0].cinesubz_link || linksObj[0].url || linksObj[0].link;
+        if (link720) {
+            const best = getBest(link720);
+            if (best) return best;
+        }
+        for (let l of linksObj) {
+            const best = getBest(l);
+            if (best) return best;
+        }
+        return null;
     };
-    currentDirectLink = extractLink(data.qualities) || extractLink(data.download_links) || extractLink(data.links) || data.direct_url || data.url || data.link || null;
+    currentDirectLink = extractLink(links) || data.direct_url || data.url || data.link || null;
     
     if (data.subtitles) {
         const siSub = data.subtitles.find(s => s.language === 'Sinhala' || s.lang === 'si');
@@ -503,58 +580,54 @@ async function selectEpisode(idx, seasonName) {
     if (btn) btn.classList.add('active');
     
     const ep = currentSeriesData[seasonName][idx];
+    currentMovieData.title = `${currentMovieData.originalTitle} - ${seasonName} ${ep.name || ep.title || ep.ep_num || ep.num || 'EP'}`;
     
-    if (currentMovieData.source === 'cs') {
-        currentMovieData.title = `${currentMovieData.originalTitle} - ${seasonName} ${ep.title || ep.num || 'EP'}`;
-        
+    const extractLink = (linksObj) => {
+        if (!linksObj || !linksObj.length) return null;
+        const isValid = (u) => u && typeof u === 'string' && u.startsWith('http') && !u.includes('cinesubz.net/movies') && !u.includes('cinesubz.net/episodes') && !u.includes('cinesubz.net/tvshows');
+        const getBest = (l) => {
+            if (isValid(l.real_direct_download_url)) return l.real_direct_download_url;
+            if (isValid(l.url)) return l.url;
+            if (isValid(l.link)) return l.link;
+            if (isValid(l.cinesubz_link)) return l.cinesubz_link;
+            return null;
+        };
+        const link720 = linksObj.find(l => (l.quality_info || l.quality || '').includes('720'));
+        if (link720) {
+            const best = getBest(link720);
+            if (best) return best;
+        }
+        for (let l of linksObj) {
+            const best = getBest(l);
+            if (best) return best;
+        }
+        return null;
+    };
+
+    currentDirectLink = extractLink(ep.download_links) || 
+                        extractLink(ep.links) || 
+                        extractLink(ep.downloadLinks) || 
+                        extractLink(ep.qualities) || 
+                        ep.direct_url || ep.url || ep.link || null;
+
+    if (currentMovieData.source === 'cs' && ep.url) {
         try {
-            const btnWa = document.getElementById('wa_submit_btn');
-            if (btnWa) {
-                btnWa.disabled = true;
-                btnWa.innerHTML = `<div class="w-5 h-5 border-2 border-white/20 border-t-white rounded-full animate-spin"></div> Loading links...`;
-            }
+            const btnContainer = document.getElementById('direct_download_buttons');
+            btnContainer.innerHTML = `<div class="col-span-full flex items-center justify-center gap-2 text-xs text-primary py-2"><div class="w-4 h-4 border-2 border-primary/20 border-t-primary rounded-full animate-spin"></div> Loading episode download links...</div>`;
             
-            let epPath = ep.url;
-            try { epPath = new URL(ep.url).pathname; } catch(e) {}
-            
-            const res = await fetch(`https://cinesubz.moviestream.lat/api/details?url=${encodeURIComponent(epPath)}`);
+            const res = await fetch(`${API_BASE}/api/details?url=${encodeURIComponent(ep.url)}`);
             const data = await res.json();
+            const epDetails = data.details || data;
             
-            if (data.links && data.links.length > 0) {
-                const link720 = data.links.find(l => (l.quality_info || l.quality || '').includes('720'));
-                currentDirectLink = link720 ? (link720.url || link720.link) : (data.links[0].url || data.links[0].link);
-            } else if (data.download_links && data.download_links.length > 0) {
-                const link720 = data.download_links.find(l => (l.quality_info || l.quality || '').includes('720'));
-                currentDirectLink = link720 ? (link720.real_direct_download_url || link720.cinesubz_link || link720.url) : (data.download_links[0].real_direct_download_url || data.download_links[0].cinesubz_link || data.download_links[0].url);
-            } else if (ep.downloadLinks && ep.downloadLinks.length > 0) {
-                const link720 = ep.downloadLinks.find(l => l.quality && l.quality.includes('720'));
-                currentDirectLink = link720 ? link720.link : ep.downloadLinks[0].link;
-            } else {
-                currentDirectLink = null;
-            }
+            const epLinks = epDetails.download_links || epDetails.links || [];
+            renderDownloadButtons(epLinks);
             
-            if (btnWa) {
-                btnWa.disabled = false;
-                btnWa.innerHTML = `<span class="material-symbols-outlined">send</span> Send to WhatsApp`;
-            }
+            currentDirectLink = extractLink(epLinks) || currentDirectLink;
         } catch(e) {
             console.error("Failed to load episode links", e);
-            currentDirectLink = null;
         }
-    } else {
-        if (ep.qualities && ep.qualities.length > 0) {
-            const link720 = ep.qualities.find(q => q.quality && q.quality.includes('720'));
-            currentDirectLink = link720 ? link720.url : ep.qualities[0].url;
-        } else if (ep.url) {
-            currentDirectLink = ep.url;
-        } else if (ep.download_links && ep.download_links.length > 0) {
-            const link720 = ep.download_links.find(l => (l.quality_info || l.quality || '').includes('720'));
-            currentDirectLink = link720 ? (link720.real_direct_download_url || link720.url) : (ep.download_links[0].real_direct_download_url || ep.download_links[0].url);
-        } else if (ep.links && ep.links.length > 0) {
-            const link720 = ep.links.find(l => (l.quality_info || l.quality || '').includes('720'));
-            currentDirectLink = link720 ? (link720.url || link720.link) : (ep.links[0].url || ep.links[0].link);
-        }
-        currentMovieData.title = `${currentMovieData.originalTitle} - ${seasonName} ${ep.name || ep.title || ep.num || 'EP'}`;
+    } else if (ep.download_links || ep.links) {
+        renderDownloadButtons(ep.download_links || ep.links);
     }
 }
 
