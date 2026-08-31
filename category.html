@@ -671,7 +671,7 @@ async function selectEpisode(idx, seasonName) {
     
     const extractLink = (linksObj) => {
         if (!linksObj || !linksObj.length) return null;
-        const isValid = (u) => u && typeof u === 'string' && u.startsWith('http') && !u.includes('cinesubz.net/movies') && !u.includes('cinesubz.net/episodes') && !u.includes('cinesubz.net/tvshows');
+        const isValid = (u) => u && typeof u === 'string' && u.startsWith('http') && !u.includes('cinesubz.net/movies') && !u.includes('cinesubz.net/episodes') && !u.includes('cinesubz.net/tvshows') && !u.includes('cinesubz.co') && !u.includes('cinesubz.lk');
         const getBest = (l) => {
             if (isValid(l.real_direct_download_url)) return l.real_direct_download_url;
             if (isValid(l.url)) return l.url;
@@ -694,16 +694,21 @@ async function selectEpisode(idx, seasonName) {
     currentDirectLink = extractLink(ep.download_links) || 
                         extractLink(ep.links) || 
                         extractLink(ep.downloadLinks) || 
-                        extractLink(ep.qualities) || 
-                        ep.direct_url || ep.url || ep.link || null;
+                        extractLink(ep.qualities);
+
+    const waBtn = document.getElementById('wa_submit_btn');
 
     if (currentMovieData.source === 'cs' && ep.url) {
         try {
             const btnContainer = document.getElementById('direct_download_buttons');
             btnContainer.innerHTML = `<div class="col-span-full flex items-center justify-center gap-2 text-xs text-primary py-2"><div class="w-4 h-4 border-2 border-primary/20 border-t-primary rounded-full animate-spin"></div> Loading episode download links...</div>`;
             
-            const res = await fetch(`${API_BASE}/api/details?url=${encodeURIComponent(ep.url)}`);
-            const data = await res.json();
+            if (waBtn && !currentDirectLink) {
+                waBtn.disabled = true;
+                waBtn.innerHTML = `<div class="w-4 h-4 border-2 border-white/20 border-t-white rounded-full animate-spin"></div> Loading Episode...`;
+            }
+
+            const data = await fetchCineSubzAPI(`/api/details?url=${encodeURIComponent(ep.url)}`);
             const epDetails = data.details || data;
             
             const epLinks = epDetails.download_links || epDetails.links || [];
@@ -712,6 +717,11 @@ async function selectEpisode(idx, seasonName) {
             currentDirectLink = extractLink(epLinks) || currentDirectLink;
         } catch(e) {
             console.error("Failed to load episode links", e);
+        } finally {
+            if (waBtn) {
+                waBtn.disabled = false;
+                waBtn.innerHTML = `<span class="material-symbols-outlined">send</span> Send to WhatsApp`;
+            }
         }
     } else if (ep.download_links || ep.links) {
         renderDownloadButtons(ep.download_links || ep.links);
@@ -737,8 +747,8 @@ function normalizePhoneNumber(rawNumber) {
 
 async function sendToWhatsApp(e) {
     e.preventDefault();
-    if (!currentDirectLink) {
-        showWaStatus("Error: Could not find a valid download link.", "error");
+    if (!currentDirectLink || currentDirectLink.includes('cinesubz.net/')) {
+        showWaStatus("⏳ Please wait, direct download links for this episode are loading...", "error");
         return;
     }
     
