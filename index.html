@@ -1,356 +1,1234 @@
 <!DOCTYPE html>
-
-<html class="scroll-smooth" lang="en"><head>
+<html class="dark" lang="en"><head>
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>Our Work | Lumina Shades</title>
+<title>MOVIESTREAM - Cinematic Streaming</title>
 <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-<link href="https://fonts.googleapis.com/css2?family=Libre+Caslon+Text:wght@400;700&amp;family=DM+Sans:wght@400;700&amp;display=swap" rel="stylesheet"/>
 <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
-<link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=Montserrat:wght@700;800&amp;display=swap" rel="stylesheet"/>
 <script id="tailwind-config">
         tailwind.config = {
-            darkMode: "class",
-            theme: {
-                extend: {
-                    "colors": {
-                        "tertiary-fixed-dim": "#c6c7c2",
-                        "surface-tint": "#5f5e5b",
-                        "primary-container": "#2d2d2a",
-                        "on-primary-container": "#969490",
-                        "surface-container-lowest": "#ffffff",
-                        "tertiary-fixed": "#e3e3de",
-                        "on-tertiary-container": "#939490",
-                        "surface-dim": "#dbdad4",
-                        "surface": "#fbf9f3",
-                        "on-surface": "#1b1c18",
-                        "on-error-container": "#93000a",
-                        "outline": "#777770",
-                        "on-tertiary-fixed-variant": "#454744",
-                        "on-secondary-fixed": "#261900",
-                        "inverse-surface": "#30312d",
-                        "on-secondary": "#ffffff",
-                        "secondary-fixed-dim": "#e9c176",
-                        "secondary-fixed": "#ffdea5",
-                        "surface-bright": "#fbf9f3",
-                        "secondary": "#775a19",
-                        "tertiary-container": "#2b2d2a",
-                        "primary-fixed": "#e5e2dd",
-                        "on-tertiary": "#ffffff",
-                        "primary-fixed-dim": "#c8c6c2",
-                        "on-tertiary-fixed": "#1a1c19",
-                        "error": "#ba1a1a",
-                        "inverse-on-surface": "#f2f1ea",
-                        "inverse-primary": "#c8c6c2",
-                        "on-error": "#ffffff",
-                        "error-container": "#ffdad6",
-                        "surface-container": "#efeee8",
-                        "on-surface-variant": "#474741",
-                        "on-secondary-fixed-variant": "#5d4201",
-                        "surface-container-high": "#eae8e2",
-                        "on-primary-fixed-variant": "#474743",
-                        "on-primary-fixed": "#1c1c19",
-                        "surface-container-highest": "#e4e2dc",
-                        "background": "#fbf9f3",
-                        "surface-container-low": "#f5f4ed",
-                        "on-background": "#1b1c18",
-                        "secondary-container": "#fed488",
-                        "outline-variant": "#c8c7bf",
-                        "surface-variant": "#e4e2dc",
-                        "on-secondary-container": "#785a1a",
-                        "tertiary": "#161816",
-                        "on-primary": "#ffffff",
-                        "primary": "#181916"
-                    },
-                    "borderRadius": {
-                        "DEFAULT": "0.125rem",
-                        "lg": "0.25rem",
-                        "xl": "0.5rem",
-                        "full": "0.75rem"
-                    },
-                    "spacing": {
-                        "gutter": "32px",
-                        "section-gap-mobile": "64px",
-                        "stack-sm": "12px",
-                        "stack-md": "24px",
-                        "stack-lg": "48px",
-                        "section-gap": "120px",
-                        "container-max": "1280px"
-                    },
-                    "fontFamily": {
-                        "body-md": ["DM Sans"],
-                        "display-lg": ["Libre Caslon Text"],
-                        "body-lg": ["DM Sans"],
-                        "display-lg-mobile": ["Libre Caslon Text"],
-                        "label-caps": ["DM Sans"],
-                        "headline-md": ["Libre Caslon Text"]
-                    },
-                    "fontSize": {
-                        "body-md": ["16px", {"lineHeight": "1.6", "fontWeight": "400"}],
-                        "display-lg": ["64px", {"lineHeight": "1.1", "letterSpacing": "-0.02em", "fontWeight": "400"}],
-                        "body-lg": ["18px", {"lineHeight": "1.6", "fontWeight": "400"}],
-                        "display-lg-mobile": ["40px", {"lineHeight": "1.2", "letterSpacing": "-0.01em", "fontWeight": "400"}],
-                        "label-caps": ["12px", {"lineHeight": "1.2", "letterSpacing": "0.15em", "fontWeight": "700"}],
-                        "headline-md": ["32px", {"lineHeight": "1.3", "fontWeight": "400"}]
-                    }
-                },
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "secondary": "#c8c6c5",
+                      "on-secondary-fixed": "#1c1b1b",
+                      "tertiary-fixed-dim": "#c8c6c6",
+                      "surface-container-low": "#1c1b1b",
+                      "surface-tint": "#ffb4aa",
+                      "on-background": "#e5e2e1",
+                      "on-surface-variant": "#e9bcb6",
+                      "inverse-on-surface": "#313030",
+                      "on-primary-fixed-variant": "#930007",
+                      "on-tertiary-container": "#fbf8f8",
+                      "error": "#ffb4ab",
+                      "secondary-container": "#474746",
+                      "tertiary-fixed": "#e4e2e1",
+                      "surface-bright": "#3a3939",
+                      "secondary-fixed-dim": "#c8c6c5",
+                      "tertiary": "#c8c6c6",
+                      "on-primary-container": "#fff7f6",
+                      "on-tertiary-fixed": "#1b1c1c",
+                      "primary": "#ffb4aa",
+                      "surface-container": "#201f1f",
+                      "inverse-primary": "#c0000c",
+                      "outline": "#af8782",
+                      "surface-container-high": "#2a2a2a",
+                      "surface-variant": "#353534",
+                      "secondary-fixed": "#e5e2e1",
+                      "on-secondary-fixed-variant": "#474746",
+                      "outline-variant": "#5e3f3b",
+                      "on-surface": "#e5e2e1",
+                      "primary-container": "#e50914",
+                      "on-error-container": "#ffdad6",
+                      "surface-container-lowest": "#0e0e0e",
+                      "on-error": "#690005",
+                      "background": "#131313",
+                      "inverse-surface": "#e5e2e1",
+                      "surface-container-highest": "#353534",
+                      "on-primary": "#690003",
+                      "surface": "#131313",
+                      "on-secondary": "#313030",
+                      "on-secondary-container": "#b7b5b4",
+                      "primary-fixed-dim": "#ffb4aa",
+                      "surface-dim": "#131313",
+                      "on-tertiary-fixed-variant": "#474747",
+                      "error-container": "#93000a",
+                      "on-tertiary": "#303030",
+                      "on-primary-fixed": "#410001",
+                      "primary-fixed": "#ffdad5",
+                      "tertiary-container": "#737272"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.125rem",
+                      "lg": "0.25rem",
+                      "xl": "0.5rem",
+                      "full": "0.75rem"
+              },
+              "spacing": {
+                      "edge-margin-mobile": "20px",
+                      "edge-margin-tablet": "32px",
+                      "stack-lg": "40px",
+                      "stack-sm": "8px",
+                      "edge-margin-desktop": "60px",
+                      "gutter": "24px",
+                      "stack-md": "16px",
+                      "container-max": "1440px"
+              },
+              "fontFamily": {
+                      "display-hero": ["Montserrat"],
+                      "body-lg": ["Inter"],
+                      "headline-lg": ["Montserrat"],
+                      "label-sm": ["Inter"],
+                      "label-bold": ["Inter"],
+                      "body-md": ["Inter"],
+                      "headline-md": ["Montserrat"],
+                      "display-hero-mobile": ["Montserrat"]
+              },
+              "fontSize": {
+                      "display-hero": ["72px", {"lineHeight": "80px", "letterSpacing": "-0.02em", "fontWeight": "800"}],
+                      "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "400"}],
+                      "headline-lg": ["32px", {"lineHeight": "40px", "fontWeight": "700"}],
+                      "label-sm": ["12px", {"lineHeight": "16px", "fontWeight": "500"}],
+                      "label-bold": ["14px", {"lineHeight": "20px", "letterSpacing": "0.05em", "fontWeight": "600"}],
+                      "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                      "headline-md": ["24px", {"lineHeight": "32px", "fontWeight": "700"}],
+                      "display-hero-mobile": ["40px", {"lineHeight": "48px", "letterSpacing": "-0.02em", "fontWeight": "800"}]
+              },
+              animation: {
+                'fade-in-up': 'fadeInUp 0.8s ease-out forwards',
+              },
+              keyframes: {
+                fadeInUp: {
+                  '0%': { opacity: '0', transform: 'translateY(20px)' },
+                  '100%': { opacity: '1', transform: 'translateY(0)' },
+                }
+              }
             },
+          },
         }
     </script>
 <style>
-        .material-symbols-outlined {
-            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        /* Custom scrollbar for carousels */
+        .hide-scrollbar::-webkit-scrollbar {
+            display: none;
         }
-        .filter-btn.active {
-            color: #181916;
-            border-bottom: 2px solid #775a19;
+        .hide-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
         }
-
-        /* Enhanced Background: Parchment + Subtle Line Art */
-        body {
-            background-color: #fbf9f3;
-            background-image: 
-                radial-gradient(#e4e2dc 0.5px, transparent 0.5px),
-                url("https://www.transparenttextures.com/patterns/paper-fibers.png"),
-                linear-gradient(45deg, transparent 48%, rgba(119, 90, 25, 0.03) 50%, transparent 52%);
-            background-size: 40px 40px, auto, 200px 200px;
-            background-attachment: fixed;
+        
+        /* Modal Styles */
+        #movie_modal {
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
         }
-
-        /* Museum Style Card Transitions */
-        .museum-card {
-            transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+        .modal-content {
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
         }
-        .museum-card:hover {
-            border-color: rgba(119, 90, 25, 0.3);
-            background-color: rgba(255, 255, 255, 0.4);
+        .series-episode-btn.active {
+            background-color: theme('colors.primary-container');
+            color: theme('colors.on-primary-container');
+            box-shadow: 0 0 15px rgba(229, 9, 20, 0.4);
         }
-
-        /* Masonry-like Grid Adjustments */
-        @media (min-width: 768px) {
-            .masonry-grid {
-                display: grid;
-                grid-template-columns: repeat(12, 1fr);
-                grid-auto-flow: dense;
-                align-items: start;
-            }
+        
+        .movie-card:hover .movie-overlay {
+            opacity: 1;
         }
+        
+        .movie-card {
+            transition: transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94), box-shadow 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+        
+        .movie-card:hover {
+            transform: scale(1.08);
+            z-index: 10;
+            box-shadow: 0 10px 30px rgba(229, 9, 20, 0.3);
+        }
+        
+        /* Glassmorphism effects */
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(40px);
+            -webkit-backdrop-filter: blur(40px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        /* Parallax effect on hero */
+        .parallax-bg {
+            transform: translateZ(-1px) scale(2);
+            z-index: -1;
+        }
+        
+        .animation-delay-100 { animation-delay: 100ms; }
+        .animation-delay-200 { animation-delay: 200ms; }
+        .animation-delay-300 { animation-delay: 300ms; }
+        .animation-delay-400 { animation-delay: 400ms; }
     </style>
 </head>
-<body class="bg-surface text-on-surface font-body-md selection:bg-secondary-container selection:text-on-secondary-container">
-<header class="fixed top-0 w-full z-50 bg-surface/80 backdrop-blur-md border-b border-outline-variant/30">
-<nav class="flex justify-between items-center max-w-container-max mx-auto px-gutter py-4">
-<a href="landing.html" class="font-headline-md text-headline-md text-primary cursor-pointer active:scale-95 transition-all">
-            Lumina Shades
-        </a>
-<div class="hidden md:flex items-center gap-10">
-<a class="text-on-surface-variant hover:text-primary transition-colors font-label-caps text-label-caps cursor-pointer active:scale-95" href="landing.html">Products</a>
-<a class="text-primary border-b border-secondary transition-colors font-label-caps text-label-caps cursor-pointer active:scale-95" href="gallery.html">Gallery</a>
-<a class="text-on-surface-variant hover:text-primary transition-colors font-label-caps text-label-caps cursor-pointer active:scale-95" href="#">Contact</a>
+<body class="bg-background text-on-background min-h-screen font-body-md overflow-x-hidden selection:bg-primary-container selection:text-on-primary-container relative">
+<!-- Global Loader -->
+<div id="global_loader" class="fixed inset-0 z-[999] bg-background flex flex-col items-center justify-center transition-opacity duration-500">
+    <div class="w-16 h-16 border-4 border-primary/20 border-t-primary rounded-full animate-spin mb-6 shadow-[0_0_15px_rgba(229,9,20,0.5)]"></div>
+    <h2 class="font-display-hero-mobile text-3xl font-black text-primary-container tracking-tighter animate-pulse drop-shadow-[0_0_10px_rgba(229,9,20,0.8)]">MOVIESTREAM</h2>
+    <p class="text-secondary mt-2 font-label-bold">Loading Cinematic Experience...</p>
 </div>
-<button class="bg-primary text-on-primary px-8 py-3 font-label-caps text-label-caps cursor-pointer active:scale-95 transition-all hover:bg-primary/90">
-            Consultation
-        </button>
-</nav>
-</header>
-<main class="pt-32">
-<!-- Hero Section -->
-<section class="max-w-container-max mx-auto px-gutter mb-16">
-<div class="grid grid-cols-1 md:grid-cols-12 gap-stack-md">
-<div class="md:col-span-8">
-<h1 class="font-display-lg text-display-lg-mobile md:text-display-lg text-primary mb-stack-md" data-aos="fade-down" data-aos-duration="1200">
-                    The Portfolio of <br/><span class="italic">Atmospheric Light.</span>
-</h1>
-<p class="font-body-lg text-body-lg text-on-surface-variant max-w-2xl" data-aos="fade-up" data-aos-delay="300" data-aos-duration="1200">
-                    Explore our curated selection of bespoke window treatments. Each project is a dialogue between fabric, light, and architecture, crafted to transform the living experience.
-                </p>
+<!-- TopNavBar Component -->
+<nav class="fixed top-0 w-full z-50 bg-transparent backdrop-blur-xl bg-gradient-to-b from-black/80 to-transparent flex justify-between items-center px-4 md:px-edge-margin-desktop py-4 w-full transition-all duration-300">
+<!-- Brand -->
+<div class="flex items-center gap-4 md:gap-8 overflow-hidden">
+<a class="font-display-hero-mobile text-2xl md:text-display-hero-mobile font-black text-primary-container tracking-tighter hover:scale-105 transition-transform shrink-0" href="#">MOVIESTREAM</a>
+<!-- Desktop Navigation Links -->
+<ul class="hidden md:flex items-center gap-6 font-label-bold text-label-bold">
+<li><a class="text-on-primary font-bold border-b-2 border-primary-container pb-1 block" href="#">Home</a></li>
+<li><a class="text-on-surface opacity-70 hover:opacity-100 hover:text-primary transition-all duration-300 block" href="#">Movies</a></li>
+<li><a class="text-on-surface opacity-70 hover:opacity-100 hover:text-primary transition-all duration-300 block" href="#">TV Shows</a></li>
+<li><a class="text-on-surface opacity-70 hover:opacity-100 hover:text-primary transition-all duration-300 block" href="#">My List</a></li>
+</ul>
 </div>
-</div>
-</section>
-<!-- Filters -->
-<section class="max-w-container-max mx-auto px-gutter mb-12">
-<div class="flex flex-wrap items-center gap-8 border-b border-outline-variant/30 pb-4">
-<button class="filter-btn active font-label-caps text-label-caps text-on-surface-variant hover:text-primary transition-all pb-4">All Projects</button>
-<button class="filter-btn font-label-caps text-label-caps text-on-surface-variant hover:text-primary transition-all pb-4">Residential</button>
-<button class="filter-btn font-label-caps text-label-caps text-on-surface-variant hover:text-primary transition-all pb-4">Commercial</button>
-<button class="filter-btn font-label-caps text-label-caps text-on-surface-variant hover:text-primary transition-all pb-4">Motorized</button>
-</div>
-</section>
-<!-- Asymmetrical Masonry Gallery Grid -->
-<section class="max-w-container-max mx-auto px-gutter mb-16">
-<div class="masonry-grid gap-y-16 gap-x-12"><!-- Project 1: Large Featured -->
-<div class="md:col-span-6" data-aos="fade-up" data-aos-duration="1000">
-<div class="museum-card p-4 border border-outline-variant/30 bg-white/5 group">
-<div class="relative overflow-hidden aspect-[4/5] mb-6">
-<img alt="Heritage Estate - Silk Drapery" class="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110" src="https://lh3.googleusercontent.com/aida/AP1WRLtcYsNIl6AyyhCVkXG40xsorRVHHLyphhK9SR1W_fnYZIHxRgaiyraHmQRQMNXeWvD6o8QC0ZqBhZfre4p20djOEKwFgKEOhUF7LFUvg3MyhkexFK8c9Rvr6-ezsSErK5j0lDecSX_H_xK3-wVVHvsfpA1ieWMDwuaAWqeJ34NkjxV_C_Y9SObg5xdzB7mCb-nXIdrDM2N0-5s99bLZCC4DX4g1rdczjFCh6XVp5P0WXL1Ul8tvXdbz0Ks"/>
-<div class="absolute inset-0 bg-primary/20 opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex items-center justify-center p-8">
-<span class="text-on-primary font-headline-md text-2xl border-b border-on-primary/30 pb-2">View Case Study</span>
-</div>
-</div>
-<div class="px-2">
-<span class="font-label-caps text-[10px] tracking-widest text-secondary uppercase block mb-2">Heritage Estate</span>
-<h3 class="font-headline-md text-2xl text-primary mb-2">Silk Drapery Ensemble</h3>
-<p class="font-body-md text-on-surface-variant text-sm italic">Residential Architecture</p>
-</div>
-</div>
-</div>
-<!-- Project 2: Balanced Vertical -->
-<div class="md:col-span-6" data-aos="fade-up" data-aos-duration="1000">
-<div class="museum-card p-4 border border-outline-variant/30 bg-white/5 group">
-<div class="relative overflow-hidden aspect-[4/5] mb-6">
-<img alt="Minimalist Penthouse" class="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110" src="https://lh3.googleusercontent.com/aida/AP1WRLv4C5a3i-PFZLeMwjQzWiwZUTSYS1BayzHMdZFzhbWyPT-jj_sC0DcdiA9Exoukn0AstnDL6kUizhNDOnhmnZ82KbBHW2Oq7TJTLidPtR9QKT8APD51RyqXbmB0EzBWtVHV7Ss4vhDued2hF1G8uRnkbBPnnQAXv0FE8kBtz0UPysaUVFpHDLQm6R7ZrIeCtefmD9OtJnjdOCFGM9ZTOAiXA6JIiK6QaL2LTsSF3yvoq9QTaP6_em-3JOY"/>
-<div class="absolute inset-0 bg-primary/20 opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex items-center justify-center">
-<span class="text-on-primary font-headline-md text-2xl border-b border-on-primary/30 pb-2">Penthouse View</span>
-</div>
-</div>
-<div class="px-2">
-<span class="font-label-caps text-[10px] tracking-widest text-secondary uppercase block mb-2">Minimalist Penthouse</span>
-<h3 class="font-headline-md text-2xl text-primary mb-2">Motorized Sheers</h3>
-<p class="font-body-md text-on-surface-variant text-sm italic">Automated Luxury</p>
-</div>
-</div>
-</div>
-<!-- Project 3: Wide Layout -->
-<div class="md:col-span-12" data-aos="fade-up" data-aos-duration="1000">
-<div class="museum-card p-6 border border-outline-variant/30 bg-white/5 group flex flex-col md:flex-row gap-8">
-<div class="md:w-1/2 relative overflow-hidden aspect-video">
-<img alt="Corporate Suite" class="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110" src="https://lh3.googleusercontent.com/aida/AP1WRLtvc_BU-Rq3w_5NkSfsWeZmQzwm8joiSsM5gdgcEn-Qq37kzFV2g794SZ_unnCqAXVleFnNBHB4VmzeJdnPgpepfqcX7PAIUpQ0RTCAuDSdhN5JvC9hJ23yrzVe9uN6aJ7tDdQ2V0zbG71-vc7fhnxeF3Z_RqUip9jSWjQR48l9Q1I2tSHYPxKuIBHZ17hJAfjsgKU0FC3S1SFKbyVdq6LAtUgtX_bb2ayf-O_UlK1yozsN9GYyB4mf6Do"/>
-</div>
-<div class="md:w-1/2 flex flex-col justify-center">
-<span class="font-label-caps text-[10px] tracking-widest text-secondary uppercase block mb-4">Corporate Suite</span>
-<h3 class="font-display-lg text-3xl text-primary mb-4">Precision Linen Blinds</h3>
-<p class="font-body-md text-on-surface-variant mb-6">A study in professional elegance, using natural fibers to soften the corporate landscape while maintaining strict light control requirements.</p>
-<a class="font-label-caps text-xs tracking-tighter text-primary border-b border-primary/20 w-fit pb-1 hover:border-primary transition-all" href="#">DISCOVER PROJECT</a>
-</div>
-</div>
-</div>
-<!-- Project 4: Grid Pair Left -->
-<div class="md:col-span-4" data-aos="fade-up" data-aos-duration="1000">
-<div class="museum-card p-4 border border-outline-variant/30 bg-white/5 group">
-<div class="relative overflow-hidden aspect-square mb-6">
-<img alt="Lakeside Retreat" class="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110" src="https://lh3.googleusercontent.com/aida/AP1WRLv4C5a3i-PFZLeMwjQzWiwZUTSYS1BayzHMdZFzhbWyPT-jj_sC0DcdiA9Exoukn0AstnDL6kUizhNDOnhmnZ82KbBHW2Oq7TJTLidPtR9QKT8APD51RyqXbmB0EzBWtVHV7Ss4vhDued2hF1G8uRnkbBPnnQAXv0FE8kBtz0UPysaUVFpHDLQm6R7ZrIeCtefmD9OtJnjdOCFGM9ZTOAiXA6JIiK6QaL2LTsSF3yvoq9QTaP6_em-3JOY"/>
-</div>
-<div class="px-2">
-<span class="font-label-caps text-[10px] tracking-widest text-secondary uppercase block mb-2">Lakeside Retreat</span>
-<h3 class="font-headline-md text-2xl text-primary">Sheer Ombre Panels</h3>
-</div>
-</div>
-</div>
-<!-- Project 5: Grid Pair Center -->
-<div class="md:col-span-4" data-aos="fade-up" data-aos-duration="1000">
-<div class="museum-card p-4 border border-outline-variant/30 bg-white/5 group">
-<div class="relative overflow-hidden aspect-square mb-6">
-<img alt="Urban Studio" class="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110" src="https://lh3.googleusercontent.com/aida/AP1WRLtvc_BU-Rq3w_5NkSfsWeZmQzwm8joiSsM5gdgcEn-Qq37kzFV2g794SZ_unnCqAXVleFnNBHB4VmzeJdnPgpepfqcX7PAIUpQ0RTCAuDSdhN5JvC9hJ23yrzVe9uN6aJ7tDdQ2V0zbG71-vc7fhnxeF3Z_RqUip9jSWjQR48l9Q1I2tSHYPxKuIBHZ17hJAfjsgKU0FC3S1SFKbyVdq6LAtUgtX_bb2ayf-O_UlK1yozsN9GYyB4mf6Do"/>
-</div>
-<div class="px-2">
-<span class="font-label-caps text-[10px] tracking-widest text-secondary uppercase block mb-2">Urban Studio</span>
-<h3 class="font-headline-md text-2xl text-primary mb-2">Roman Architecture</h3>
-<p class="font-body-md text-on-surface-variant text-sm italic">Industrial Chic</p>
-</div>
-</div>
-</div>
-<!-- Project 6: Grid Pair Right -->
-<div class="md:col-span-4" data-aos="fade-up" data-aos-duration="1000">
-<div class="museum-card p-4 border border-outline-variant/30 bg-white/5 group">
-<div class="relative overflow-hidden aspect-square mb-6">
-<img alt="Modern Salon" class="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110" src="https://lh3.googleusercontent.com/aida/AP1WRLtcYsNIl6AyyhCVkXG40xsorRVHHLyphhK9SR1W_fnYZIHxRgaiyraHmQRQMNXeWvD6o8QC0ZqBhZfre4p20djOEKwFgKEOhUF7LFUvg3MyhkexFK8c9Rvr6-ezsSErK5j0lDecSX_H_xK3-wVVHvsfpA1ieWMDwuaAWqeJ34NkjxV_C_Y9SObg5xdzB7mCb-nXIdrDM2N0-5s99bLZCC4DX4g1rdczjFCh6XVp5P0WXL1Ul8tvXdbz0Ks"/>
-</div>
-<div class="px-2">
-<span class="font-label-caps text-[10px] tracking-widest text-secondary uppercase block mb-2">Modern Salon</span>
-<h3 class="font-headline-md text-2xl text-primary">Textured Silk Hangings</h3>
-</div>
-</div>
-</div></div>
-<div class="flex flex-col items-center gap-6 mt-10">
-<button class="group flex flex-col items-center gap-4 transition-all">
-<span class="font-label-caps text-label-caps text-on-surface-variant tracking-[0.2em] group-hover:text-primary group-hover:tracking-[0.3em] transition-all">LOAD ARCHIVE</span>
-<div class="w-12 h-12 border border-outline-variant/30 flex items-center justify-center rounded-full group-hover:border-primary group-hover:bg-primary/5 transition-all">
-<span class="material-symbols-outlined text-secondary group-hover:translate-y-1 transition-transform">expand_more</span>
-</div>
+<!-- Trailing Actions -->
+<div class="flex items-center gap-6">
+<button onclick="openSearch()" aria-label="Search" class="text-on-surface opacity-70 hover:opacity-100 hover:text-primary transition-all duration-300 scale-105 transition-transform">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">search</span>
+</button>
+<!-- Mobile Menu Toggle -->
+<button aria-label="Menu" class="md:hidden text-on-surface opacity-70 hover:opacity-100 hover:text-primary transition-all duration-300">
+<span class="material-symbols-outlined">menu</span>
 </button>
 </div>
-</section>
-<!-- Quote Separator -->
-<section class="max-w-container-max mx-auto px-gutter mb-section-gap">
-<div class="py-20 border-y border-outline-variant/30 flex flex-col items-center text-center relative overflow-hidden" data-aos="fade-up" data-aos-duration="1000">
-<div class="absolute top-0 left-0 w-full h-full opacity-[0.03] pointer-events-none" style="background-image: url('https://www.transparenttextures.com/patterns/floral-paper.png');"></div>
-<span class="material-symbols-outlined text-secondary text-5xl mb-8" style="font-variation-settings: 'FILL' 1;">format_quote</span>
-<blockquote class="font-display-lg text-3xl md:text-5xl italic text-primary max-w-4xl leading-snug relative z-10">
-                "Lumina Shades didn't just cover our windows; they choreographed the way light moves through our home."
-            </blockquote>
-<cite class="mt-10 font-label-caps text-label-caps text-secondary not-italic tracking-[0.25em]">INTERIOR DESIGNER, NYC</cite>
+</nav>
+
+<!-- Search Overlay -->
+<div id="search_overlay" class="fixed inset-0 bg-background/95 z-[60] hidden flex-col transition-all duration-500 backdrop-blur-2xl opacity-0">
+    <!-- Decorative background glow -->
+    <div class="absolute top-1/4 left-1/4 w-96 h-96 bg-primary/20 rounded-full blur-[120px] pointer-events-none"></div>
+    <div class="absolute bottom-1/4 right-1/4 w-[500px] h-[500px] bg-primary-container/10 rounded-full blur-[150px] pointer-events-none"></div>
+    
+    <div class="p-6 md:p-12 border-b border-white/5 flex items-center justify-between relative z-10 max-w-container-max mx-auto w-full group">
+        <div class="flex items-center flex-1 gap-4 md:gap-8 border-b-2 border-transparent focus-within:border-primary transition-colors pb-2">
+            <span class="material-symbols-outlined text-3xl md:text-5xl text-white/50 group-focus-within:text-primary transition-colors" style="font-variation-settings: 'FILL' 0;">search</span>
+            <input type="text" id="main_search" oninput="liveSearch(this.value)" placeholder="Search for movies, TV shows..." class="w-full bg-transparent text-white text-2xl md:text-6xl font-black tracking-tight outline-none placeholder:text-white/20 border-none ring-0 focus:ring-0">
+        </div>
+        <button onclick="closeSearch()" class="text-white/50 hover:text-white hover:bg-white/10 p-3 md:p-4 rounded-full ml-4 transition-all duration-300 hover:rotate-90">
+            <span class="material-symbols-outlined text-3xl md:text-4xl">close</span>
+        </button>
+    </div>
+    <div class="flex-1 overflow-y-auto p-6 md:p-12 hide-scrollbar relative z-10">
+        <div id="search_loader" class="hidden flex-col items-center justify-center mt-20 transition-opacity duration-300">
+            <div class="w-12 h-12 border-4 border-primary/20 border-t-primary rounded-full animate-spin shadow-[0_0_15px_rgba(229,9,20,0.5)]"></div>
+            <p class="text-secondary mt-4 font-label-bold animate-pulse text-lg">Searching the universe...</p>
+        </div>
+        <div id="search_results" class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-6 md:gap-8 max-w-container-max mx-auto pb-20 mt-8">
+            <!-- Search Results -->
+        </div>
+    </div>
+</div>
+
+<!-- Main Content -->
+<main>
+<!-- Hero Section -->
+<section class="relative w-full min-h-[600px] h-auto md:h-[870px] flex items-center md:items-end pt-32 pb-16 md:pt-0 md:pb-stack-lg overflow-hidden perspective-[1px] transform-style-preserve-3d" id="hero-section">
+<!-- Hero Background with Parallax -->
+<div class="absolute inset-0 z-0" id="hero-bg">
+<img id="hero-img" alt="Hero Movie Background" class="w-full h-full object-cover object-top" src="https://image.tmdb.org/t/p/original/8cdWjvZQUExUUTzyp4t6EDMubfO.jpg"/>
+<!-- Gradient Overlays for readability and fading into background -->
+<div class="absolute inset-0 bg-gradient-to-t from-background via-background/80 to-transparent"></div>
+<div class="absolute inset-0 bg-gradient-to-r from-background via-background/50 to-transparent w-full md:w-2/3"></div>
+</div>
+
+<!-- Hero Content -->
+<div class="relative z-10 w-full px-edge-margin-mobile md:px-edge-margin-desktop max-w-container-max mx-auto">
+<div class="max-w-2xl">
+<!-- Format Tags -->
+<div class="flex flex-wrap items-center gap-3 mb-4 opacity-0 animate-fade-in-up animation-delay-100">
+<span class="px-2 py-1 border border-outline-variant rounded text-label-sm font-label-sm text-secondary backdrop-blur-sm bg-black/20">4K ULTRA HD</span>
+<span class="px-2 py-1 border border-outline-variant rounded text-label-sm font-label-sm text-secondary backdrop-blur-sm bg-black/20">IMAX ENHANCED</span>
+<span class="px-2 py-1 bg-primary-container text-on-primary-container rounded text-label-sm font-label-sm font-bold shadow-[0_0_10px_rgba(229,9,20,0.5)]">SINHALA SUBS</span>
+</div>
+<!-- Title -->
+<h1 id="hero_title" class="font-display-hero-mobile md:font-display-hero text-display-hero-mobile md:text-display-hero text-on-surface mb-4 drop-shadow-2xl break-words">Title</h1>
+<!-- Metadata -->
+<div class="flex items-center gap-4 text-secondary font-label-bold text-label-bold mb-6 opacity-0 animate-fade-in-up animation-delay-300">
+<span class="flex items-center gap-1 text-primary drop-shadow-[0_0_5px_rgba(255,180,170,0.5)]"><span class="material-symbols-outlined text-[16px]" style="font-variation-settings: 'FILL' 1;">star</span> 8.9</span>
+<span>2024</span>
+<span>2h 45m</span>
+<span>Sci-Fi / Action</span>
+</div>
+<!-- Description -->
+<p class="font-body-lg text-body-lg text-tertiary mb-8 line-clamp-3 md:line-clamp-none max-w-xl opacity-0 animate-fade-in-up animation-delay-400 drop-shadow-md">
+                        An epic journey on the most dangerous planet in the universe. As ancient forces awaken beneath the sands, a reluctant hero must navigate treachery, mysticism, and colossal beasts to secure his people's future.
+                    </p>
+<!-- Action Buttons -->
+<div class="flex flex-wrap items-center gap-4 opacity-0 animate-fade-in-up animation-delay-400">
+<button class="bg-primary-container hover:bg-inverse-primary text-on-primary-container font-label-bold text-label-bold py-4 px-8 rounded-full flex items-center gap-2 transition-all duration-300 shadow-[0_0_20px_rgba(229,9,20,0.4)] hover:shadow-[0_0_30px_rgba(229,9,20,0.6)] hover:-translate-y-1">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">play_arrow</span>
+                            Watch Now
+                        </button>
+<button class="glass-panel text-on-surface hover:bg-white/20 font-label-bold text-label-bold py-4 px-8 rounded-full flex items-center gap-2 transition-all duration-300 hover:-translate-y-1">
+<span class="material-symbols-outlined">add</span>
+                            My List
+                        </button>
+<button aria-label="More Info" class="w-14 h-14 rounded-full glass-panel flex items-center justify-center text-on-surface hover:bg-white/20 transition-all duration-300 ml-auto md:ml-0 hover:rotate-12">
+<span class="material-symbols-outlined">info</span>
+</button>
+</div>
+</div>
 </div>
 </section>
-<!-- CTA Section -->
-<section class="max-w-container-max mx-auto px-gutter mb-section-gap">
-<div class="bg-primary p-gutter md:p-32 relative overflow-hidden text-center flex flex-col items-center">
-<div class="absolute inset-0 opacity-10 pointer-events-none">
-<div class="absolute top-0 left-0 w-full h-full" style="background-image: radial-gradient(circle at 2px 2px, #fff 1px, transparent 0); background-size: 60px 60px;"></div>
+<!-- Subtitle Selection Bar -->
+<section class="w-full px-edge-margin-mobile md:px-edge-margin-desktop py-stack-md border-b border-white/10 sticky top-[72px] z-40 glass-panel shadow-lg transition-all duration-300">
+<div class="max-w-container-max mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
+<div class="flex items-center gap-2 text-on-surface font-label-bold text-label-bold">
+<span class="material-symbols-outlined text-primary">subtitles</span>
+<span>Viewing Preference:</span>
 </div>
-<h2 class="font-display-lg text-display-lg-mobile md:text-display-lg text-on-primary mb-stack-md relative z-10" data-aos="fade-up" data-aos-duration="1000">
-                Ready to frame your view?
-            </h2>
-<p class="text-on-primary-container/80 font-body-lg max-w-xl mb-stack-lg relative z-10" data-aos="fade-up" data-aos-delay="200" data-aos-duration="1000">
-                Schedule a private consultation in our showroom or from the comfort of your home.
-            </p>
-<div class="flex flex-col sm:flex-row gap-6 relative z-10" data-aos="zoom-in" data-aos-delay="400" data-aos-duration="1000">
-<button class="bg-surface text-primary px-12 py-5 font-label-caps text-label-caps hover:bg-secondary-fixed transition-all active:scale-95 shadow-lg">
-                    Book a Consultation
-                </button>
-<button class="border border-on-primary/30 text-on-primary px-12 py-5 font-label-caps text-label-caps hover:bg-white/10 transition-all active:scale-95">
-                    Download Brochure
-                </button>
+<div class="flex bg-black/40 rounded-full p-1.5 border border-white/10 overflow-x-auto w-full md:w-auto hide-scrollbar snap-x backdrop-blur-md">
+<button id="btn_original" onclick="setMode('original')" class="snap-center whitespace-nowrap px-6 py-2 rounded-full font-label-bold text-label-bold text-secondary hover:text-on-surface hover:bg-white/5 transition-all duration-300">Original / No Subs</button>
+<button id="btn_sinhala" onclick="setMode('sinhala')" class="snap-center whitespace-nowrap px-6 py-2 rounded-full font-label-bold text-label-bold bg-primary-container text-on-primary-container shadow-[0_0_15px_rgba(229,9,20,0.3)] transition-all duration-300 scale-105">Sinhala Subtitles</button>
 </div>
 </div>
 </section>
-</main>
-<footer class="bg-surface-container-highest w-full border-t border-outline-variant/30">
-<div class="max-w-container-max mx-auto px-gutter py-20 flex flex-col md:flex-row justify-between gap-16">
-<div class="flex flex-col gap-8">
-<div class="font-headline-md text-headline-md text-primary">
-            Lumina Shades
-        </a>
-<p class="font-body-md text-on-surface-variant max-w-xs leading-relaxed">
-                © 2024 Lumina Shades. The Art of Light Control. <br/>Crafted for those who see the difference.
-            </p>
-</div>
-<div class="grid grid-cols-2 md:flex gap-20">
-<div class="flex flex-col gap-6">
-<span class="font-label-caps text-[11px] text-secondary tracking-widest uppercase border-b border-secondary/20 pb-2">Company</span>
-<a class="font-body-md text-on-surface-variant hover:text-primary transition-colors" href="#">Privacy Policy</a>
-<a class="font-body-md text-on-surface-variant hover:text-primary transition-colors" href="#">Terms of Service</a>
-<a class="font-body-md text-on-surface-variant hover:text-primary transition-colors" href="#">Our Atelier</a>
-</div>
-<div class="flex flex-col gap-6">
-<span class="font-label-caps text-[11px] text-secondary tracking-widest uppercase border-b border-secondary/20 pb-2">Resources</span>
-<a class="font-body-md text-on-surface-variant hover:text-primary transition-colors" href="#">Fabric Care</a>
-<a class="font-body-md text-on-surface-variant hover:text-primary transition-colors" href="#">Sustainability</a>
-<a class="font-body-md text-on-surface-variant hover:text-primary transition-colors" href="#">Trade Program</a>
-</div>
-</div>
-<div class="flex gap-4">
-<div class="w-12 h-12 border border-outline-variant/50 flex items-center justify-center rounded-full text-on-surface-variant hover:border-primary hover:text-primary cursor-pointer transition-all">
-<span class="material-symbols-outlined text-sm">public</span>
-</div>
-<div class="w-12 h-12 border border-outline-variant/50 flex items-center justify-center rounded-full text-on-surface-variant hover:border-primary hover:text-primary cursor-pointer transition-all">
-<span class="material-symbols-outlined text-sm">share</span>
-</div>
-</div>
-</div>
+<div id="dynamic_sections" class="space-y-stack-lg py-stack-lg relative z-10"></div>
+  <!-- Footer Component -->
+<footer class="w-full mt-stack-lg border-t border-white/10 bg-black/50 backdrop-blur-xl flex flex-col md:flex-row justify-between items-center px-edge-margin-mobile md:px-edge-margin-desktop py-stack-md gap-stack-sm relative z-10">
+<div class="font-headline-md text-headline-md font-bold text-on-surface hover:text-primary transition-colors cursor-pointer">MOVIESTREAM</div>
+<ul class="flex flex-wrap justify-center gap-4 md:gap-6 font-label-sm text-label-sm text-on-surface-variant">
+<li><a class="hover:text-primary hover:-translate-y-0.5 inline-block transition-all duration-300" href="#">Privacy Policy</a></li>
+<li><a class="hover:text-primary hover:-translate-y-0.5 inline-block transition-all duration-300" href="#">Terms of Service</a></li>
+<li><a class="hover:text-primary hover:-translate-y-0.5 inline-block transition-all duration-300" href="#">Help Center</a></li>
+<li><a class="hover:text-primary hover:-translate-y-0.5 inline-block transition-all duration-300" href="#">Contact Us</a></li>
+<li><button class="hover:text-primary hover:-translate-y-0.5 flex items-center gap-1 transition-all duration-300"><span class="material-symbols-outlined text-[14px]">language</span> Language: English</button></li>
+</ul>
+<div class="font-label-sm text-label-sm text-secondary opacity-70">© 2024 MOVIESTREAM. All rights reserved.</div>
 </footer>
-<script>// Category filter logic
-    document.querySelectorAll('.filter-btn').forEach(btn => {
-        btn.addEventListener('click', () => {
-            document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
-            btn.classList.add('active');
-        });
-    });
-</script>
-<script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+<!-- Movie/TV Series Modal -->
+<div id="movie_modal" class="fixed inset-0 z-[100] hidden flex-col items-center justify-center p-4 md:p-8 bg-black/80 transition-all duration-300 opacity-0">
+    <div class="relative w-full max-w-4xl bg-surface-container-high rounded-2xl overflow-hidden shadow-2xl modal-content border border-white/10 flex flex-col max-h-[90vh]">
+        <!-- Close Button -->
+        <button onclick="closeMovieModal()" class="absolute top-4 right-4 z-50 bg-black/50 hover:bg-primary-container text-white p-2 rounded-full backdrop-blur-md transition-all duration-300">
+            <span class="material-symbols-outlined">close</span>
+        </button>
+
+        <div class="overflow-y-auto hide-scrollbar flex-1 relative">
+            <!-- Modal Hero -->
+            <div class="relative w-full h-64 md:h-80">
+                <img id="modal_hero_img" src="" alt="Cover" class="w-full h-full object-cover">
+                <div class="absolute inset-0 bg-gradient-to-t from-surface-container-high via-surface-container-high/60 to-transparent"></div>
+                <div class="absolute bottom-4 left-6 pr-6">
+                    <h2 id="modal_title" class="font-display-hero-mobile text-3xl md:text-5xl font-black text-white drop-shadow-lg mb-2">Movie Title</h2>
+                    <div id="modal_meta" class="flex gap-3 text-sm font-label-bold text-secondary mb-2">
+                        <!-- Quality, Year, etc. -->
+                    </div>
+                    <p id="modal_desc" class="hidden text-sm md:text-base text-tertiary line-clamp-3">Description loading...</p>
+                </div>
+            </div>
+
+            <!-- Modal Body -->
+            <div class="p-6 pt-2">
+                <!-- Loader inside modal -->
+                <div id="modal_loader" class="flex flex-col items-center justify-center py-10">
+                    <div class="w-10 h-10 border-4 border-primary/20 border-t-primary rounded-full animate-spin shadow-[0_0_10px_rgba(229,9,20,0.5)]"></div>
+                    <p class="text-primary mt-2 font-label-bold">Fetching Stream Data...</p>
+                </div>
+
+                <div id="modal_content_area" class="hidden">
+                    <!-- Direct Download Links Section -->
+                    <div id="modal_download_section" class="mb-5">
+                        <label class="block text-xs font-label-bold text-tertiary mb-2 uppercase tracking-wider flex items-center gap-1.5">
+                            <span class="material-symbols-outlined text-sm text-primary">download</span>
+                            Direct Download & Streaming Mirrors
+                        </label>
+                        <div id="direct_download_buttons" class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                            <!-- Direct links generated dynamically -->
+                        </div>
+                    </div>
+
+                    <!-- TV Series Section (Hidden for movies) -->
+                    <div id="modal_tv_section" class="mb-6 hidden">
+                        <div class="mb-4">
+                            <label class="block text-xs font-label-bold text-tertiary mb-2 uppercase tracking-wider flex items-center gap-1.5">
+                                <span class="material-symbols-outlined text-sm text-primary">layers</span>
+                                Select Season
+                            </label>
+                            <div class="relative">
+                                <select id="season_select" onchange="loadEpisodes(this.value)" class="w-full appearance-none bg-surface-container-low border border-white/10 hover:border-primary/50 rounded-xl px-4 py-3 text-white font-medium outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all cursor-pointer">
+                                    <!-- Seasons -->
+                                </select>
+                                <div class="absolute inset-y-0 right-0 flex items-center px-4 pointer-events-none">
+                                    <span class="material-symbols-outlined text-tertiary">expand_more</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="flex items-center justify-between mb-2">
+                            <label class="text-xs font-label-bold text-tertiary uppercase tracking-wider flex items-center gap-1.5">
+                                <span class="material-symbols-outlined text-sm text-primary">video_library</span>
+                                Select Episode
+                            </label>
+                            <span id="episodes_count_badge" class="text-[11px] font-mono font-medium text-secondary bg-white/5 border border-white/10 px-2.5 py-0.5 rounded-full"></span>
+                        </div>
+                        <div id="episodes_list" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-2.5 max-h-56 overflow-y-auto pr-1.5 custom-scrollbar">
+                            <!-- Episodes -->
+                        </div>
+                    </div>
+
+                    <!-- Request Form -->
+                    <div class="bg-surface-container border border-white/5 rounded-xl p-5 relative overflow-hidden">
+                        <div class="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent pointer-events-none"></div>
+                        <h3 class="font-headline-md text-xl text-white mb-1">Get Download Link via WhatsApp</h3>
+                        <p class="text-sm text-secondary mb-4">Enter your WhatsApp number to receive the direct movie download link.</p>
+                        
+                        <form id="whatsapp_form" onsubmit="sendToWhatsApp(event)" class="relative z-10 space-y-4">
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div>
+                                    <label class="block text-xs font-label-bold text-tertiary mb-1">Your Name</label>
+                                    <input type="text" id="wa_name" required placeholder="e.g. John" class="w-full bg-surface-container-low border border-white/10 rounded-lg px-4 py-2.5 text-white placeholder:text-white/20 focus:border-primary focus:ring-1 focus:ring-primary transition-all outline-none">
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-label-bold text-tertiary mb-1">WhatsApp Number</label>
+                                    <input type="text" id="wa_number" required placeholder="e.g. 94712345678" class="w-full bg-surface-container-low border border-white/10 rounded-lg px-4 py-2.5 text-white placeholder:text-white/20 focus:border-primary focus:ring-1 focus:ring-primary transition-all outline-none">
+                                </div>
+                            </div>
+                            <button type="submit" id="wa_submit_btn" class="w-full bg-primary-container hover:bg-inverse-primary text-on-primary-container font-bold py-3 rounded-lg flex items-center justify-center gap-2 transition-all shadow-[0_0_15px_rgba(229,9,20,0.3)] hover:shadow-[0_0_25px_rgba(229,9,20,0.5)]">
+                                <span class="material-symbols-outlined">send</span>
+                                Send to WhatsApp
+                            </button>
+                        </form>
+                        <div id="wa_status" class="mt-3 text-sm text-center hidden font-bold"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
 <script>
-    AOS.init({
-        once: true,
-        offset: 50,
+// --- GLOBAL API & CONFIG ---
+var CINESUBZ_REMOTE_API = "https://cinesubz.moviestream.lat";
+var CINESUBZ_LOCAL_API = "http://localhost:6555";
+var API_BASE = CINESUBZ_REMOTE_API;
+var ORIGINAL_API = "https://stream.moviestream.lat/api";
+var PANEL_DB = "https://panel.moviestream.lat/api/movies";
+var KAVIBOT_API = "https://api.moviestream.lat/send-movie";
+var FALLBACK_POSTER = "https://image.tmdb.org/t/p/w500/8cdWjvZQUExUUTzyp4t6EDMubfO.jpg";
+var FALLBACK_HERO = "https://image.tmdb.org/t/p/original/8cdWjvZQUExUUTzyp4t6EDMubfO.jpg";
+
+async function fetchCineSubzAPI(endpoint) {
+    const isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+    if (isLocal) {
+        try {
+            const localRes = await fetch(`${CINESUBZ_LOCAL_API}${endpoint}`, { signal: AbortSignal.timeout(1200) });
+            if (localRes.ok) return await localRes.json();
+        } catch(e) {}
+    }
+    const res = await fetch(`${CINESUBZ_REMOTE_API}${endpoint}`);
+    if (!res.ok) throw new Error(`API error ${res.status}`);
+    return await res.json();
+}
+
+// --- MODAL & KAVIBOT LOGIC ---
+let currentMovieData = null;
+let currentDirectLink = null;
+let currentSubtitleUrl = null;
+let currentSeriesData = null;
+
+function openMovieModal(id, source, title, imgUrl, detailPath) {
+    const modal = document.getElementById('movie_modal');
+    modal.classList.remove('hidden');
+    modal.classList.add('flex');
+    setTimeout(() => modal.classList.remove('opacity-0'), 10);
+    
+    document.getElementById('modal_title').innerText = decodeURIComponent(title);
+    document.getElementById('modal_hero_img').src = decodeURIComponent(imgUrl) || FALLBACK_HERO;
+    document.getElementById('modal_meta').innerHTML = '';
+    document.getElementById('modal_desc').innerText = 'Fetching details...';
+    
+    document.getElementById('modal_loader').classList.remove('hidden');
+    document.getElementById('modal_content_area').classList.add('hidden');
+    document.getElementById('modal_tv_section').classList.add('hidden');
+    document.getElementById('wa_status').classList.add('hidden');
+    document.getElementById('direct_download_buttons').innerHTML = '';
+    
+    currentMovieData = { title: decodeURIComponent(title), originalTitle: decodeURIComponent(title), id, source, detailPath };
+    currentDirectLink = null;
+    currentSubtitleUrl = null;
+    currentSeriesData = null;
+    
+    fetchMovieDetails(id, source, detailPath);
+}
+
+function closeMovieModal() {
+    const modal = document.getElementById('movie_modal');
+    modal.classList.add('opacity-0');
+    setTimeout(() => {
+        modal.classList.add('hidden');
+        modal.classList.remove('flex');
+    }, 300);
+}
+
+async function fetchMovieDetails(id, source, detailPath) {
+    try {
+        if (source === 'cs') {
+            const apiEndpoint = `${API_BASE}/api/details?url=${id}`;
+            const res = await fetch(apiEndpoint);
+            const data = await res.json();
+            const details = data.details || data;
+            
+            document.getElementById('modal_desc').innerText = details.synopsis || 'No description available.';
+            document.getElementById('modal_meta').innerHTML = `
+                <span class="px-2 py-0.5 bg-primary/20 text-primary rounded">${details.quality || 'HD'}</span>
+                <span>${details.year || ''}</span>
+                ${details.imdb && details.imdb !== 'N/A' ? `<span class="px-2 py-0.5 bg-yellow-500/20 text-yellow-400 rounded">⭐ ${details.imdb}</span>` : ''}
+            `;
+            
+            if (details.seasons && details.seasons.length > 0) {
+                setupTvSeriesCinesubz(details.seasons);
+            } else {
+                extractMovieLinkCinesubz(details);
+            }
+        } else {
+            // Original source
+            const pathParam = encodeURIComponent(detailPath || id);
+            const detailRes = await fetch(`https://stream.moviestream.lat/api/detail2?id=${id}&path=${pathParam}`);
+            const data = await detailRes.json();
+            
+            document.getElementById('modal_desc').innerText = data.description || 'No description available.';
+            document.getElementById('modal_meta').innerHTML = `
+                <span class="px-2 py-0.5 bg-primary/20 text-primary rounded">${data.quality || 'HD'}</span>
+                <span>${data.year || ''}</span>
+            `;
+            
+            if (data.isTvSeries || (data.seasons && data.seasons.length > 0)) {
+                setupTvSeriesOriginal(data, pathParam);
+            } else {
+                extractMovieLinkOriginal(data);
+            }
+        }
+    } catch (e) {
+        console.error("Error fetching details:", e);
+        document.getElementById('modal_desc').innerText = "Error loading details.";
+        document.getElementById('modal_loader').classList.add('hidden');
+    }
+}
+
+function renderDownloadButtons(downloadLinks) {
+    const container = document.getElementById('direct_download_buttons');
+    if (!downloadLinks || downloadLinks.length === 0) {
+        container.innerHTML = `<div class="col-span-full text-xs text-secondary bg-white/5 p-3 rounded-lg text-center">No direct links available at this moment.</div>`;
+        return;
+    }
+    
+    let html = '';
+    downloadLinks.forEach((dl, idx) => {
+        const url = dl.real_direct_download_url || dl.url || dl.link;
+        if (!url || !url.startsWith('http')) return;
+        
+        let label = dl.quality_info || dl.quality || `Download Link ${idx + 1}`;
+        let icon = 'download';
+        if (url.includes('pixeldrain.com')) icon = 'cloud_download';
+        else if (url.includes('drive') || url.includes('skylines')) icon = 'play_circle';
+        
+        html += `
+            <a href="${url}" target="_blank" rel="noopener noreferrer" class="flex items-center justify-between bg-surface-container-low hover:bg-primary-container/20 border border-white/10 hover:border-primary/50 text-white rounded-xl px-4 py-3 text-xs md:text-sm font-medium transition-all group shadow-sm">
+                <div class="flex items-center gap-2 truncate">
+                    <span class="material-symbols-outlined text-primary group-hover:scale-110 transition-transform">${icon}</span>
+                    <span class="truncate">${label}</span>
+                </div>
+                <span class="material-symbols-outlined text-xs text-secondary group-hover:text-white shrink-0">open_in_new</span>
+            </a>
+        `;
+    });
+    container.innerHTML = html;
+}
+
+function extractMovieLinkCinesubz(data) {
+    const links = data.download_links || data.links || [];
+    renderDownloadButtons(links);
+    
+    const extractLink = (linksObj) => {
+        if (!linksObj || !linksObj.length) return null;
+        const isValid = (u) => u && typeof u === 'string' && u.startsWith('http') && !u.includes('cinesubz.net/movies') && !u.includes('cinesubz.net/episodes') && !u.includes('cinesubz.net/tvshows');
+        const getBest = (l) => {
+            if (isValid(l.real_direct_download_url)) return l.real_direct_download_url;
+            if (isValid(l.url)) return l.url;
+            if (isValid(l.link)) return l.link;
+            if (isValid(l.cinesubz_link)) return l.cinesubz_link;
+            return null;
+        };
+        const link720 = linksObj.find(l => (l.quality_info || l.quality || '').includes('720'));
+        if (link720) {
+            const best = getBest(link720);
+            if (best) return best;
+        }
+        for (let l of linksObj) {
+            const best = getBest(l);
+            if (best) return best;
+        }
+        return null;
+    };
+    currentDirectLink = extractLink(links) || data.direct_url || data.url || data.link || null;
+    showForm();
+}
+
+function extractMovieLinkOriginal(data) {
+    const links = data.qualities || data.download_links || data.links || [];
+    renderDownloadButtons(links);
+    
+    const extractLink = (linksObj) => {
+        if (!linksObj || !linksObj.length) return null;
+        const isValid = (u) => u && typeof u === 'string' && u.startsWith('http') && !u.includes('cinesubz.net/movies') && !u.includes('cinesubz.net/episodes') && !u.includes('cinesubz.net/tvshows');
+        const getBest = (l) => {
+            if (isValid(l.real_direct_download_url)) return l.real_direct_download_url;
+            if (isValid(l.url)) return l.url;
+            if (isValid(l.link)) return l.link;
+            if (isValid(l.cinesubz_link)) return l.cinesubz_link;
+            return null;
+        };
+        const link720 = linksObj.find(l => (l.quality_info || l.quality || '').includes('720'));
+        if (link720) {
+            const best = getBest(link720);
+            if (best) return best;
+        }
+        for (let l of linksObj) {
+            const best = getBest(l);
+            if (best) return best;
+        }
+        return null;
+    };
+    currentDirectLink = extractLink(links) || data.direct_url || data.url || data.link || null;
+    
+    if (data.subtitles) {
+        const siSub = data.subtitles.find(s => s.language === 'Sinhala' || s.lang === 'si');
+        if (siSub) currentSubtitleUrl = `https://stream.moviestream.lat/api/subtitle/proxy?url=${encodeURIComponent(siSub.url)}&lang=si_native`;
+    }
+    
+    showForm();
+}
+
+function setupTvSeriesCinesubz(seasons) {
+    const seasonsMap = {};
+    seasons.forEach(s => {
+        const sName = `Season ${s.season_num || 1}`;
+        seasonsMap[sName] = s.episodes || [];
+    });
+    currentSeriesData = seasonsMap;
+    
+    const seasonSelect = document.getElementById('season_select');
+    seasonSelect.innerHTML = '';
+    Object.keys(seasonsMap).forEach(s => {
+        seasonSelect.innerHTML += `<option value="${s}">${s}</option>`;
+    });
+    
+    document.getElementById('modal_tv_section').classList.remove('hidden');
+    loadEpisodes(Object.keys(seasonsMap)[0], 'cs');
+    showForm();
+}
+
+async function setupTvSeriesOriginal(data, pathParam) {
+    document.getElementById('modal_tv_section').classList.remove('hidden');
+    try {
+        const sRes = await fetch(`https://stream.moviestream.lat/api/series-info?path=${pathParam}`);
+        const sData = await sRes.json();
+        
+        const seasonsMap = {};
+        if (sData.seasons) {
+            sData.seasons.forEach((season, idx) => {
+                const sName = season.name || `Season ${idx + 1}`;
+                seasonsMap[sName] = season.episodes || [];
+            });
+        }
+        currentSeriesData = seasonsMap;
+        
+        const seasonSelect = document.getElementById('season_select');
+        seasonSelect.innerHTML = '';
+        Object.keys(seasonsMap).forEach(s => {
+            seasonSelect.innerHTML += `<option value="${s}">${s}</option>`;
+        });
+        
+        if (Object.keys(seasonsMap).length > 0) {
+            loadEpisodes(Object.keys(seasonsMap)[0], 'original');
+        }
+        showForm();
+    } catch (e) {
+        console.error(e);
+        showForm();
+    }
+}
+
+function loadEpisodes(seasonName, source) {
+    const episodes = currentSeriesData[seasonName] || [];
+    const list = document.getElementById('episodes_list');
+    const badge = document.getElementById('episodes_count_badge');
+    if (badge) {
+        badge.innerText = `${episodes.length} Episodes`;
+    }
+    list.innerHTML = '';
+    
+    episodes.forEach((ep, idx) => {
+        const rawTitle = ep.title || ep.name || ep.episode || '';
+        const epNum = ep.num || ep.ep_num || (idx + 1);
+        const epNumBadge = String(epNum).toLowerCase().startsWith('ep') ? epNum : `EP ${epNum}`;
+        
+        let cleanTitle = rawTitle.replace(new RegExp(`^(episode|ep)\\s*${epNum}\\s*[-:]*\\s*`, 'i'), '').trim();
+        if (!cleanTitle || cleanTitle.toLowerCase() === `episode ${epNum}`.toLowerCase()) {
+            cleanTitle = `Episode ${epNum}`;
+        }
+
+        list.innerHTML += `
+            <button type="button" onclick="selectEpisode(${idx}, '${seasonName.replace(/'/g, "\\'")}')" id="ep_btn_${idx}" class="series-episode-btn group relative flex flex-col items-start justify-center bg-surface-container-low hover:bg-white/10 border border-white/10 hover:border-primary/50 rounded-xl p-2.5 text-left transition-all duration-200 cursor-pointer overflow-hidden shadow-sm">
+                <div class="flex items-center justify-between w-full gap-1 mb-1">
+                    <span class="ep-num-badge text-xs font-black tracking-wider uppercase text-white font-mono bg-white/10 px-2 py-0.5 rounded transition-all">${epNumBadge}</span>
+                    <span class="ep-status-icon material-symbols-outlined text-sm text-secondary group-hover:text-primary transition-colors">play_circle</span>
+                </div>
+                <span class="ep-sub-title text-[11px] text-tertiary truncate w-full font-medium transition-colors" title="${cleanTitle}">${cleanTitle}</span>
+            </button>
+        `;
+    });
+    
+    if (episodes.length > 0) {
+        selectEpisode(0, seasonName);
+    }
+}
+
+async function selectEpisode(idx, seasonName) {
+    document.querySelectorAll('.series-episode-btn').forEach(b => {
+        b.classList.remove('active', 'border-primary', 'bg-primary-container', 'shadow-[0_0_15px_rgba(229,9,20,0.5)]', 'scale-[1.02]');
+        b.classList.add('bg-surface-container-low', 'border-white/10');
+        const numBadge = b.querySelector('.ep-num-badge');
+        if (numBadge) {
+            numBadge.className = "ep-num-badge text-xs font-black tracking-wider uppercase text-white font-mono bg-white/10 px-2 py-0.5 rounded transition-all";
+        }
+        const icon = b.querySelector('.ep-status-icon');
+        if (icon) {
+            icon.className = "ep-status-icon material-symbols-outlined text-sm text-secondary group-hover:text-primary transition-colors";
+            icon.innerText = "play_circle";
+        }
+        const subTitle = b.querySelector('.ep-sub-title');
+        if (subTitle) {
+            subTitle.className = "ep-sub-title text-[11px] text-tertiary truncate w-full font-medium transition-colors";
+        }
+    });
+
+    const btn = document.getElementById(`ep_btn_${idx}`);
+    if (btn) {
+        btn.classList.add('active', 'border-primary', 'bg-primary-container', 'shadow-[0_0_15px_rgba(229,9,20,0.5)]', 'scale-[1.02]');
+        btn.classList.remove('bg-surface-container-low', 'border-white/10');
+        const numBadge = btn.querySelector('.ep-num-badge');
+        if (numBadge) {
+            numBadge.className = "ep-num-badge text-xs font-black tracking-wider uppercase text-on-primary-container font-mono bg-black/40 px-2 py-0.5 rounded shadow-sm transition-all";
+        }
+        const icon = btn.querySelector('.ep-status-icon');
+        if (icon) {
+            icon.className = "ep-status-icon material-symbols-outlined text-sm text-on-primary-container font-bold transition-colors";
+            icon.innerText = "check_circle";
+        }
+        const subTitle = btn.querySelector('.ep-sub-title');
+        if (subTitle) {
+            subTitle.className = "ep-sub-title text-[11px] text-on-primary-container truncate w-full font-bold transition-colors";
+        }
+    }
+    
+    const ep = currentSeriesData[seasonName][idx];
+    currentMovieData.title = `${currentMovieData.originalTitle} - ${seasonName} ${ep.name || ep.title || ep.ep_num || ep.num || 'EP'}`;
+    
+    const extractLink = (linksObj) => {
+        if (!linksObj || !linksObj.length) return null;
+        const isValid = (u) => u && typeof u === 'string' && u.startsWith('http') && !u.includes('cinesubz.net/movies') && !u.includes('cinesubz.net/episodes') && !u.includes('cinesubz.net/tvshows');
+        const getBest = (l) => {
+            if (isValid(l.real_direct_download_url)) return l.real_direct_download_url;
+            if (isValid(l.url)) return l.url;
+            if (isValid(l.link)) return l.link;
+            if (isValid(l.cinesubz_link)) return l.cinesubz_link;
+            return null;
+        };
+        const link720 = linksObj.find(l => (l.quality_info || l.quality || '').includes('720'));
+        if (link720) {
+            const best = getBest(link720);
+            if (best) return best;
+        }
+        for (let l of linksObj) {
+            const best = getBest(l);
+            if (best) return best;
+        }
+        return null;
+    };
+
+    currentDirectLink = extractLink(ep.download_links) || 
+                        extractLink(ep.links) || 
+                        extractLink(ep.downloadLinks) || 
+                        extractLink(ep.qualities) || 
+                        ep.direct_url || ep.url || ep.link || null;
+
+    if (currentMovieData.source === 'cs' && ep.url) {
+        try {
+            const btnContainer = document.getElementById('direct_download_buttons');
+            btnContainer.innerHTML = `<div class="col-span-full flex items-center justify-center gap-2 text-xs text-primary py-2"><div class="w-4 h-4 border-2 border-primary/20 border-t-primary rounded-full animate-spin"></div> Loading episode download links...</div>`;
+            
+            const res = await fetch(`${API_BASE}/api/details?url=${encodeURIComponent(ep.url)}`);
+            const data = await res.json();
+            const epDetails = data.details || data;
+            
+            const epLinks = epDetails.download_links || epDetails.links || [];
+            renderDownloadButtons(epLinks);
+            
+            currentDirectLink = extractLink(epLinks) || currentDirectLink;
+        } catch(e) {
+            console.error("Failed to load episode links", e);
+        }
+    } else if (ep.download_links || ep.links) {
+        renderDownloadButtons(ep.download_links || ep.links);
+    }
+}
+
+function showForm() {
+    document.getElementById('modal_loader').classList.add('hidden');
+    document.getElementById('modal_content_area').classList.remove('hidden');
+}
+
+function normalizePhoneNumber(rawNumber) {
+    if (!rawNumber) return "";
+    let clean = String(rawNumber).replace(/[^0-9]/g, '');
+    if (clean.startsWith('00')) clean = clean.substring(2);
+    if (clean.startsWith('0') && clean.length === 10) {
+        clean = '94' + clean.substring(1);
+    } else if (clean.length === 9 && (clean.startsWith('7') || clean.startsWith('1') || clean.startsWith('2') || clean.startsWith('3') || clean.startsWith('4') || clean.startsWith('5') || clean.startsWith('6') || clean.startsWith('8') || clean.startsWith('9'))) {
+        clean = '94' + clean;
+    }
+    return clean;
+}
+
+async function sendToWhatsApp(e) {
+    e.preventDefault();
+    if (!currentDirectLink) {
+        showWaStatus("Error: Could not find a valid download link.", "error");
+        return;
+    }
+    
+    const name = document.getElementById('wa_name').value.trim() || 'User';
+    const rawNumber = document.getElementById('wa_number').value;
+    const number = normalizePhoneNumber(rawNumber);
+    const btn = document.getElementById('wa_submit_btn');
+
+    if (!number || number.length < 9) {
+        showWaStatus("❌ Please enter a valid WhatsApp number (e.g. 0771234567).", "error");
+        return;
+    }
+    
+    btn.disabled = true;
+    btn.innerHTML = `<div class="w-5 h-5 border-2 border-white/20 border-t-white rounded-full animate-spin"></div> Sending...`;
+    
+    const payload = {
+        movieName: currentMovieData.title,
+        directLink: currentDirectLink,
+        number: number,
+        userName: name,
+        subtitleUrl: currentSubtitleUrl,
+        quality: "720p"
+    };
+    
+    try {
+        const res = await fetch(KAVIBOT_API, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+        });
+        
+        if (res.ok) {
+            showWaStatus("✅ Requested! Check your WhatsApp.", "success");
+        } else if (res.status === 429) {
+            showWaStatus("⚠️ Limit reached. Try again later.", "error");
+        } else {
+            showWaStatus("❌ Failed to send request.", "error");
+        }
+    } catch (err) {
+        console.error(err);
+        showWaStatus("❌ Network error. Is Kavibot running?", "error");
+    } finally {
+        btn.disabled = false;
+        btn.innerHTML = `<span class="material-symbols-outlined">send</span> Send to WhatsApp`;
+    }
+}
+
+function showWaStatus(msg, type) {
+    const el = document.getElementById('wa_status');
+    el.innerText = msg;
+    el.classList.remove('hidden', 'text-error', 'text-green-500');
+    el.classList.add(type === 'error' ? 'text-error' : 'text-green-500');
+}
+</script>
+
+<script>
+    // Simple script to handle parallax on scroll for hero background
+    window.addEventListener('scroll', () => {
+        const scrolled = window.scrollY;
+        const heroBg = document.getElementById('hero-bg');
+        if (heroBg && scrolled < window.innerHeight) {
+            heroBg.style.transform = `translateY(${scrolled * 0.4}px) scale(1.05)`;
+        }
     });
 </script>
+
+<script>
+let currentMode = 'sinhala'; // 'original' or 'sinhala' or 'merged'
+let MASTER_DATA = [];
+let CINESUBZ_DATA = [];
+
+const API_BASE = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') ? 'http://localhost:6555' : 'https://cinesubz.moviestream.lat';
+const ORIGINAL_API = "https://stream.moviestream.lat/api";
+const PANEL_DB = "https://panel.moviestream.lat/api/movies";
+
+// Fallback images array
+const fallbackImages = [
+    'https://image.tmdb.org/t/p/w500/8cdWjvZQUExUUTzyp4t6EDMubfO.jpg',
+    'https://image.tmdb.org/t/p/w500/qJ2tW6WMUDux911r6m7haRef0WH.jpg',
+    'https://image.tmdb.org/t/p/w500/3bhkrj58Vtu7enYsRolD1fZdja1.jpg'
+];
+
+function storeTempData(title, imgUrl) {
+    try {
+        sessionStorage.setItem('temp_movie_data', JSON.stringify({
+            title: decodeURIComponent(title),
+            imageUrl: decodeURIComponent(imgUrl)
+        }));
+    } catch (e) {
+        console.error(e);
+    }
+}
+
+function hideGlobalLoader() {
+    const loader = document.getElementById('global_loader');
+    if (loader) {
+        loader.classList.add('opacity-0');
+        setTimeout(() => loader.classList.add('hidden'), 500);
+    }
+}
+
+function showGlobalLoader() {
+    const loader = document.getElementById('global_loader');
+    if (loader) {
+        loader.classList.remove('hidden');
+        setTimeout(() => loader.classList.remove('opacity-0'), 10);
+    }
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+    setMode('sinhala');
+});
+
+function setMode(mode) {
+    currentMode = mode;
+    // Update button styles
+    document.querySelectorAll('button[id^="btn_"]').forEach(btn => {
+        btn.className = "snap-center whitespace-nowrap px-6 py-2 rounded-full font-label-bold text-label-bold text-secondary hover:text-on-surface hover:bg-white/5 transition-all duration-300";
+    });
+    const activeBtn = document.getElementById(`btn_${mode}`);
+    if(activeBtn) {
+        activeBtn.className = "snap-center whitespace-nowrap px-6 py-2 rounded-full font-label-bold text-label-bold bg-primary-container text-on-primary-container shadow-[0_0_15px_rgba(229,9,20,0.3)] transition-all duration-300 scale-105";
+    }
+
+    // Load Data
+    document.getElementById('dynamic_sections').innerHTML = '<div class="text-center py-10 text-primary">Loading...</div>';
+    
+    if (mode === 'sinhala') {
+        loadCineSubzHome();
+    } else {
+        loadOriginalHome();
+    }
+}
+
+async function loadCineSubzHome() {
+    try {
+        const json = await fetchCineSubzAPI('/api/homepage');
+        
+        let html = '';
+        if (json && Object.keys(json).length > 0) {
+            CINESUBZ_DATA = json;
+            
+            // Set Hero if Trending exists
+            if (CINESUBZ_DATA["Trending Now"] && CINESUBZ_DATA["Trending Now"].length > 0) {
+                updateHero(CINESUBZ_DATA["Trending Now"][0], true);
+            } else {
+                for (let key in CINESUBZ_DATA) {
+                    if(CINESUBZ_DATA[key].length > 0) {
+                        updateHero(CINESUBZ_DATA[key][0], true);
+                        break;
+                    }
+                }
+            }
+
+            for (let cat in CINESUBZ_DATA) {
+                html += renderCineplexRow(cat, CINESUBZ_DATA[cat], true);
+            }
+        } else {
+            html = '<div class="text-center py-10 text-primary-container font-bold">Failed to load content. Please refresh.</div>';
+        }
+        document.getElementById('dynamic_sections').innerHTML = html;
+        hideGlobalLoader();
+    } catch (e) {
+        console.error("loadCineSubzHome error:", e);
+        document.getElementById('dynamic_sections').innerHTML = '<div class="text-center py-10 text-primary-container font-bold">Failed to load content. Please refresh.</div>';
+        hideGlobalLoader();
+    }
+}
+
+async function loadOriginalHome() {
+    try {
+        MASTER_DATA = [];
+        
+        // Ensure SCRAPER_CATEGORIES is defined globally if not already
+        const SCRAPER_CATEGORIES = [
+            "Popular Movie", "Popular Series", "Movies", "TV Series", "K-Drama", "C-Drama",
+            "Sinhala Movies", "Sinhala Dubbing"
+        ];
+
+        const dynamicSections = document.getElementById('dynamic_sections');
+        dynamicSections.innerHTML = '';
+        
+        // Start all fetches concurrently to prevent freezing/latency
+        const fetchPromises = SCRAPER_CATEGORIES.map(async (category) => {
+            let fetchUrl = "";
+            let pageNum = 1;
+            if (category === "Sinhala Movies") {
+                fetchUrl = `${ORIGINAL_API}/genre/SinhalaMovies?page=${pageNum}`;
+            } else if (category === "Sinhala Dubbing") {
+                fetchUrl = `${ORIGINAL_API}/genre/SinhalaDubbing?page=${pageNum}`;
+            } else if (category === "TV Series") {
+                fetchUrl = `${ORIGINAL_API}/tvseries?page=${pageNum}`;
+            } else if (category === "Movies") {
+                fetchUrl = `${ORIGINAL_API}/movies-general?page=${pageNum}`;
+            } else {
+                const endpoint = category === "Popular Movie" || category === "Trending TV" || category === "Trending Movie" || category === "New Movie" 
+                    ? `/trending` 
+                    : `/genre/${category.replace(/\s+/g, '')}`;
+                fetchUrl = `${ORIGINAL_API}${endpoint}?page=${pageNum}`;
+            }
+
+            try {
+                const res = await fetch(fetchUrl);
+                const data = await res.json();
+                
+                let scraped = [];
+                if (Array.isArray(data)) {
+                    scraped = data;
+                } else if (data && data.data) {
+                    scraped = data.data.subjectList || data.data.items || data.data.rankingListContentList || [];
+                }
+                return { category, scraped };
+            } catch (err) {
+                console.error("Failed to load category:", category, err);
+                return { category, scraped: [] };
+            }
+        });
+
+        let hasData = false;
+
+        // Process results as they resolve in order to maintain layout consistency
+        for (let i = 0; i < fetchPromises.length; i++) {
+            const { category, scraped } = await fetchPromises[i];
+            
+            if (scraped.length > 0) {
+                hasData = true;
+                const formattedScraped = scraped.map((m, idx) => ({
+                    _id: m.id || m.subjectId || m._id || ('scrap_' + idx),
+                    title: m.title || m.name,
+                    imageUrl: m.cover?.url || m.coverUrl || m.cover || m.pic,
+                    year: m.year || m.releaseYear || "",
+                    quality: m.quality || "HD",
+                    fromPanel: false,
+                    detailPath: m.detailPath || m.id
+                }));
+
+                MASTER_DATA = [...MASTER_DATA, ...formattedScraped];
+
+                // Set Hero if Popular Movie
+                if (category === "Popular Movie" && formattedScraped.length > 0) {
+                    updateHero(formattedScraped[0], false);
+                    hideGlobalLoader(); // Hide loader quickly after hero is ready
+                }
+
+                dynamicSections.insertAdjacentHTML('beforeend', renderCineplexRow(category, formattedScraped, false));
+            }
+        }
+
+        if (!hasData) {
+            dynamicSections.innerHTML = `<div class="p-8 text-center"><span class="text-primary-container font-bold">Something went wrong. Please contact developer.</span></div>`;
+        }
+        hideGlobalLoader(); // Fallback
+
+    } catch(e) {
+        document.getElementById('dynamic_sections').innerHTML = `<div class="p-8 text-center"><span class="text-primary-container font-bold">Something went wrong. Please contact developer.</span></div>`;
+        hideGlobalLoader();
+    }
+}
+
+function updateHero(m, isCinesubz) {
+    if(!m) return;
+    const title = document.getElementById('movie_title') || document.getElementById('hero_title');
+    const desc = document.getElementById('movie_desc') || document.getElementById('hero_desc') || document.querySelector('#hero-section p');
+    const bg = document.querySelector('#hero-bg img') || document.querySelector('#hero img');
+    const btn = document.getElementById('hero_play_btn');
+    
+    if (title) title.innerText = m.title || m.name || 'Unknown';
+    // Remove description update if the element doesn't exist in the new template, or create one.
+    // The new template has a paragraph for description. Let's find it.
+    if (desc) desc.innerText = m.description || m.plot || 'No description available.';
+    
+    let img = m.imageUrl || m.coverUrl || m.cover?.url || m.image || m.cover;
+    // Attempt to get high quality image if available
+    if (img && typeof img === 'string') {
+        img = img.replace('w_300', 'w_1280').replace('h_450', 'h_720'); // Upscale image if it's from a known CDN
+    }
+    
+    if (img && bg) bg.src = img;
+
+    // The new template play button:
+    const playBtn = document.querySelector('#hero-section button:first-of-type');
+    if (playBtn) {
+        const id = isCinesubz ? encodeURIComponent(m.url) : (m.id || m.subjectId || m._id || m.detailPath);
+        playBtn.onclick = () => {
+            const detailPath = isCinesubz ? '' : (m.detailPath || id);
+            openMovieModal(id, isCinesubz ? 'cs' : 'original', encodeURIComponent(title), encodeURIComponent(imgUrl), detailPath);
+        };
+    }
+}
+
+function renderCineplexRow(category, items, isCinesubz) {
+    if (!items || items.length === 0) return '';
+    let cardsHtml = '';
+    
+    items.forEach(m => {
+        const id = isCinesubz ? encodeURIComponent(m.url) : (m._id || m.detailPath);
+        const safeId = id ? id.toString().replace(/'/g, "%27") : '';
+        const source = isCinesubz ? 'cs' : 'original';
+        const imgUrl = m.imageUrl || m.coverUrl || m.image || 'https://via.placeholder.com/200x300';
+        const quality = m.quality || m.type || 'HD';
+        const title = m.title || m.name || 'Unknown';
+        
+        const safeTitle = encodeURIComponent(title).replace(/'/g, "%27");
+        const safeImg = encodeURIComponent(imgUrl).replace(/'/g, "%27");
+        cardsHtml += `
+            <div class="movie-card relative shrink-0 w-[160px] md:w-[220px] aspect-[2/3] rounded-lg overflow-hidden border border-white/10 cursor-pointer bg-surface-container-low snap-start" onclick="openMovieModal('${safeId}', '${source}', '${safeTitle}', '${safeImg}', '${isCinesubz ? '' : (m.detailPath || '')}')">
+                <img src="${imgUrl}" class="w-full h-full object-cover" onerror="this.src='https://via.placeholder.com/200x300?text=No+Image'">
+                <div class="movie-overlay absolute inset-0 bg-gradient-to-t from-black via-black/60 to-transparent opacity-0 transition-opacity duration-300 flex flex-col justify-end p-4 backdrop-blur-[2px]">
+                    <h3 class="font-label-bold text-label-bold text-on-surface mb-2 truncate drop-shadow-md">${title}</h3>
+                    <div class="flex gap-2">
+                        ${isCinesubz ? `<span class="text-[10px] font-bold px-1.5 py-0.5 bg-primary-container text-on-primary-container rounded shadow-[0_0_5px_rgba(229,9,20,0.5)]">SINHALA</span>` : ''}
+                        <span class="text-[10px] font-bold px-1.5 py-0.5 border border-white/20 text-secondary rounded backdrop-blur-md bg-black/30">${quality}</span>
+                    </div>
+                </div>
+            </div>
+        `;
+    });
+
+    const modeParam = isCinesubz ? 'cinesubz' : 'original';
+    return `
+        <section class="pl-edge-margin-mobile md:pl-edge-margin-desktop overflow-hidden relative mb-10">
+            <div class="flex items-center justify-between gap-2 mb-stack-md group pr-edge-margin-mobile md:pr-edge-margin-desktop">
+                <h2 class="font-headline-md text-headline-md text-on-surface">${category}</h2>
+                <a href="category.html?type=${encodeURIComponent(category)}&mode=${modeParam}" class="text-sm font-medium text-primary hover:text-white transition cursor-pointer flex items-center gap-1">
+                    See All <span class="material-symbols-outlined text-sm">chevron_right</span>
+                </a>
+            </div>
+            <div class="flex gap-gutter overflow-x-auto hide-scrollbar pb-12 pt-4 pr-edge-margin-mobile md:pr-edge-margin-desktop snap-x">
+                ${cardsHtml}
+            </div>
+        </section>
+    `;
+}
+
+// Search Logic
+let searchTimeout = null;
+
+function openSearch() {
+    const overlay = document.getElementById('search_overlay');
+    overlay.classList.remove('hidden');
+    overlay.classList.add('flex');
+    setTimeout(() => overlay.classList.remove('opacity-0'), 10);
+    document.getElementById('main_search').focus();
+}
+
+function closeSearch() {
+    const overlay = document.getElementById('search_overlay');
+    overlay.classList.add('opacity-0');
+    setTimeout(() => {
+        overlay.classList.add('hidden');
+        overlay.classList.remove('flex');
+    }, 300);
+}
+
+async function liveSearch(query) {
+    clearTimeout(searchTimeout);
+    const resultsContainer = document.getElementById('search_results');
+    const loader = document.getElementById('search_loader');
+    
+    if (!query || query.length < 2) {
+        resultsContainer.innerHTML = '';
+        return;
+    }
+
+    loader.classList.remove('hidden');
+    resultsContainer.innerHTML = '';
+
+    searchTimeout = setTimeout(async () => {
+        try {
+            let items = [];
+            const isCinesubz = (currentMode === 'sinhala' || currentMode === 'merged');
+            
+            if (isCinesubz) {
+                const res = await fetch(`${API_BASE}/api/search?q=${encodeURIComponent(query)}`);
+                const data = await res.json();
+                if (data && data.results) items = data.results;
+            } else {
+                const res = await fetch(`${ORIGINAL_API}/search?keyword=${encodeURIComponent(query)}`);
+                const data = await res.json();
+                if (Array.isArray(data)) items = data;
+                else if (data && data.data) items = data.data.items || data.data.subjectList || [];
+            }
+            
+            let html = '';
+            if (items.length > 0) {
+                items.forEach((m, idx) => {
+                    const id = isCinesubz ? encodeURIComponent(m.url) : (m.id || m.subjectId || m._id || ('scrap_' + idx));
+                    const detailPath = isCinesubz ? '' : (m.detailPath || id);
+                    const finalId = isCinesubz ? id : (detailPath || id);
+                    const safeFinalId = finalId ? finalId.toString().replace(/'/g, "%27") : '';
+                    const source = isCinesubz ? 'cs' : 'original';
+                    const imgUrl = m.imageUrl || m.coverUrl || m.cover?.url || m.image || m.cover || 'https://via.placeholder.com/200x300';
+                    const title = m.title || m.name || 'Unknown';
+                    const quality = m.quality || m.type || 'HD';
+                    const safeTitle = encodeURIComponent(title).replace(/'/g, "%27");
+                    const safeImg = encodeURIComponent(imgUrl).replace(/'/g, "%27");
+                    html += `
+                        <div class="movie-card relative w-full aspect-[2/3] rounded-lg overflow-hidden border border-white/10 cursor-pointer bg-surface-container-low" onclick="openMovieModal('${safeFinalId}', '${source}', '${safeTitle}', '${safeImg}', '${detailPath}')">
+                            <img src="${imgUrl}" class="w-full h-full object-cover" onerror="this.src='https://via.placeholder.com/200x300?text=No+Image'">
+                            <div class="movie-overlay absolute inset-0 bg-gradient-to-t from-black via-black/60 to-transparent opacity-0 transition-opacity duration-300 flex flex-col justify-end p-4 backdrop-blur-[2px]">
+                                <h3 class="font-label-bold text-label-bold text-on-surface mb-2 truncate drop-shadow-md">${title}</h3>
+                                <div class="flex gap-2">
+                                    ${isCinesubz ? `<span class="text-[10px] font-bold px-1.5 py-0.5 bg-primary-container text-on-primary-container rounded shadow-[0_0_5px_rgba(229,9,20,0.5)]">SINHALA</span>` : ''}
+                                    <span class="text-[10px] font-bold px-1.5 py-0.5 border border-white/20 text-secondary rounded backdrop-blur-md bg-black/30">${quality}</span>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                });
+            } else {
+                html = `
+                <div class="col-span-full flex flex-col items-center justify-center py-20">
+                    <span class="material-symbols-outlined text-6xl text-white/20 mb-4" style="font-variation-settings: 'FILL' 0;">search_off</span>
+                    <h3 class="text-2xl font-display-hero-mobile text-white/60 mb-2 font-bold">No matches found</h3>
+                    <p class="text-secondary text-center max-w-sm">Try adjusting your keywords or search for a different movie or TV show.</p>
+                </div>`;
+            }
+            resultsContainer.innerHTML = html;
+        } catch (e) {
+            console.error(e);
+            resultsContainer.innerHTML = '<div class="col-span-full text-center py-10 text-primary-container font-bold">Something went wrong. Please contact developer.</div>';
+        }
+        loader.classList.add('hidden');
+    }, 500);
+}
+</script>
+
 </body></html>
