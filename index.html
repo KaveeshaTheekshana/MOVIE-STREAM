@@ -349,7 +349,10 @@
                     <!-- TV Series Section (Hidden for movies) -->
                     <div id="modal_tv_section" class="mb-6 hidden">
                         <div class="mb-4">
-                            <label class="block text-xs font-label-bold text-tertiary mb-2 uppercase tracking-wider">Select Season</label>
+                            <label class="block text-xs font-label-bold text-tertiary mb-2 uppercase tracking-wider flex items-center gap-1.5">
+                                <span class="material-symbols-outlined text-sm text-primary">layers</span>
+                                Select Season
+                            </label>
                             <div class="relative">
                                 <select id="season_select" onchange="loadEpisodes(this.value)" class="w-full appearance-none bg-surface-container-low border border-white/10 hover:border-primary/50 rounded-xl px-4 py-3 text-white font-medium outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all cursor-pointer">
                                     <!-- Seasons -->
@@ -359,8 +362,14 @@
                                 </div>
                             </div>
                         </div>
-                        <label class="block text-xs font-label-bold text-tertiary mb-2 uppercase tracking-wider">Select Episode</label>
-                        <div id="episodes_list" class="mt-4 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3 max-h-40 overflow-y-auto pr-2 custom-scrollbar">
+                        <div class="flex items-center justify-between mb-2">
+                            <label class="text-xs font-label-bold text-tertiary uppercase tracking-wider flex items-center gap-1.5">
+                                <span class="material-symbols-outlined text-sm text-primary">video_library</span>
+                                Select Episode
+                            </label>
+                            <span id="episodes_count_badge" class="text-[11px] font-mono font-medium text-secondary bg-white/5 border border-white/10 px-2.5 py-0.5 rounded-full"></span>
+                        </div>
+                        <div id="episodes_list" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-2.5 max-h-56 overflow-y-auto pr-1.5 custom-scrollbar">
                             <!-- Episodes -->
                         </div>
                     </div>
@@ -629,13 +638,29 @@ async function setupTvSeriesOriginal(data, pathParam) {
 function loadEpisodes(seasonName, source) {
     const episodes = currentSeriesData[seasonName] || [];
     const list = document.getElementById('episodes_list');
+    const badge = document.getElementById('episodes_count_badge');
+    if (badge) {
+        badge.innerText = `${episodes.length} Episodes`;
+    }
     list.innerHTML = '';
     
     episodes.forEach((ep, idx) => {
-        const title = ep.episode || ep.title || ep.name || `Episode ${ep.num || idx + 1}`;
+        const rawTitle = ep.title || ep.name || ep.episode || '';
+        const epNum = ep.num || ep.ep_num || (idx + 1);
+        const epNumBadge = String(epNum).toLowerCase().startsWith('ep') ? epNum : `EP ${epNum}`;
+        
+        let cleanTitle = rawTitle.replace(new RegExp(`^(episode|ep)\\s*${epNum}\\s*[-:]*\\s*`, 'i'), '').trim();
+        if (!cleanTitle || cleanTitle.toLowerCase() === `episode ${epNum}`.toLowerCase()) {
+            cleanTitle = `Episode ${epNum}`;
+        }
+
         list.innerHTML += `
-            <button type="button" onclick="selectEpisode(${idx}, '${seasonName.replace(/'/g, "\\'")}')" id="ep_btn_${idx}" class="series-episode-btn w-full text-left bg-surface-container-low hover:bg-white/10 border border-white/5 rounded-xl px-4 py-3 text-sm text-on-surface transition-all font-medium hover:border-primary/50">
-                ${title}
+            <button type="button" onclick="selectEpisode(${idx}, '${seasonName.replace(/'/g, "\\'")}')" id="ep_btn_${idx}" class="series-episode-btn group relative flex flex-col items-start justify-center bg-surface-container-low hover:bg-white/10 border border-white/10 hover:border-primary/50 rounded-xl p-2.5 text-left transition-all duration-200 cursor-pointer overflow-hidden shadow-sm">
+                <div class="flex items-center justify-between w-full gap-1 mb-1">
+                    <span class="ep-num-badge text-xs font-black tracking-wider uppercase text-white font-mono bg-white/10 px-2 py-0.5 rounded transition-all">${epNumBadge}</span>
+                    <span class="ep-status-icon material-symbols-outlined text-sm text-secondary group-hover:text-primary transition-colors">play_circle</span>
+                </div>
+                <span class="ep-sub-title text-[11px] text-tertiary truncate w-full font-medium transition-colors" title="${cleanTitle}">${cleanTitle}</span>
             </button>
         `;
     });
@@ -646,9 +671,42 @@ function loadEpisodes(seasonName, source) {
 }
 
 async function selectEpisode(idx, seasonName) {
-    document.querySelectorAll('.series-episode-btn').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.series-episode-btn').forEach(b => {
+        b.classList.remove('active', 'border-primary', 'bg-primary-container', 'shadow-[0_0_15px_rgba(229,9,20,0.5)]', 'scale-[1.02]');
+        b.classList.add('bg-surface-container-low', 'border-white/10');
+        const numBadge = b.querySelector('.ep-num-badge');
+        if (numBadge) {
+            numBadge.className = "ep-num-badge text-xs font-black tracking-wider uppercase text-white font-mono bg-white/10 px-2 py-0.5 rounded transition-all";
+        }
+        const icon = b.querySelector('.ep-status-icon');
+        if (icon) {
+            icon.className = "ep-status-icon material-symbols-outlined text-sm text-secondary group-hover:text-primary transition-colors";
+            icon.innerText = "play_circle";
+        }
+        const subTitle = b.querySelector('.ep-sub-title');
+        if (subTitle) {
+            subTitle.className = "ep-sub-title text-[11px] text-tertiary truncate w-full font-medium transition-colors";
+        }
+    });
+
     const btn = document.getElementById(`ep_btn_${idx}`);
-    if (btn) btn.classList.add('active');
+    if (btn) {
+        btn.classList.add('active', 'border-primary', 'bg-primary-container', 'shadow-[0_0_15px_rgba(229,9,20,0.5)]', 'scale-[1.02]');
+        btn.classList.remove('bg-surface-container-low', 'border-white/10');
+        const numBadge = btn.querySelector('.ep-num-badge');
+        if (numBadge) {
+            numBadge.className = "ep-num-badge text-xs font-black tracking-wider uppercase text-on-primary-container font-mono bg-black/40 px-2 py-0.5 rounded shadow-sm transition-all";
+        }
+        const icon = btn.querySelector('.ep-status-icon');
+        if (icon) {
+            icon.className = "ep-status-icon material-symbols-outlined text-sm text-on-primary-container font-bold transition-colors";
+            icon.innerText = "check_circle";
+        }
+        const subTitle = btn.querySelector('.ep-sub-title');
+        if (subTitle) {
+            subTitle.className = "ep-sub-title text-[11px] text-on-primary-container truncate w-full font-bold transition-colors";
+        }
+    }
     
     const ep = currentSeriesData[seasonName][idx];
     currentMovieData.title = `${currentMovieData.originalTitle} - ${seasonName} ${ep.name || ep.title || ep.ep_num || ep.num || 'EP'}`;
@@ -684,472 +742,4 @@ async function selectEpisode(idx, seasonName) {
     if (currentMovieData.source === 'cs' && ep.url) {
         try {
             const btnContainer = document.getElementById('direct_download_buttons');
-            btnContainer.innerHTML = `<div class="col-span-full flex items-center justify-center gap-2 text-xs text-primary py-2"><div class="w-4 h-4 border-2 border-primary/20 border-t-primary rounded-full animate-spin"></div> Loading episode download links...</div>`;
-            
-            const res = await fetch(`${API_BASE}/api/details?url=${encodeURIComponent(ep.url)}`);
-            const data = await res.json();
-            const epDetails = data.details || data;
-            
-            const epLinks = epDetails.download_links || epDetails.links || [];
-            renderDownloadButtons(epLinks);
-            
-            currentDirectLink = extractLink(epLinks) || currentDirectLink;
-        } catch(e) {
-            console.error("Failed to load episode links", e);
-        }
-    } else if (ep.download_links || ep.links) {
-        renderDownloadButtons(ep.download_links || ep.links);
-    }
-}
-
-function showForm() {
-    document.getElementById('modal_loader').classList.add('hidden');
-    document.getElementById('modal_content_area').classList.remove('hidden');
-}
-
-function normalizePhoneNumber(rawNumber) {
-    if (!rawNumber) return "";
-    let clean = String(rawNumber).replace(/[^0-9]/g, '');
-    if (clean.startsWith('00')) clean = clean.substring(2);
-    if (clean.startsWith('0') && clean.length === 10) {
-        clean = '94' + clean.substring(1);
-    } else if (clean.length === 9 && (clean.startsWith('7') || clean.startsWith('1') || clean.startsWith('2') || clean.startsWith('3') || clean.startsWith('4') || clean.startsWith('5') || clean.startsWith('6') || clean.startsWith('8') || clean.startsWith('9'))) {
-        clean = '94' + clean;
-    }
-    return clean;
-}
-
-async function sendToWhatsApp(e) {
-    e.preventDefault();
-    if (!currentDirectLink) {
-        showWaStatus("Error: Could not find a valid download link.", "error");
-        return;
-    }
-    
-    const name = document.getElementById('wa_name').value.trim() || 'User';
-    const rawNumber = document.getElementById('wa_number').value;
-    const number = normalizePhoneNumber(rawNumber);
-    const btn = document.getElementById('wa_submit_btn');
-
-    if (!number || number.length < 9) {
-        showWaStatus("❌ Please enter a valid WhatsApp number (e.g. 0771234567).", "error");
-        return;
-    }
-    
-    btn.disabled = true;
-    btn.innerHTML = `<div class="w-5 h-5 border-2 border-white/20 border-t-white rounded-full animate-spin"></div> Sending...`;
-    
-    const payload = {
-        movieName: currentMovieData.title,
-        directLink: currentDirectLink,
-        number: number,
-        userName: name,
-        subtitleUrl: currentSubtitleUrl,
-        quality: "720p"
-    };
-    
-    try {
-        const res = await fetch(KAVIBOT_API, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(payload)
-        });
-        
-        if (res.ok) {
-            showWaStatus("✅ Requested! Check your WhatsApp.", "success");
-        } else if (res.status === 429) {
-            showWaStatus("⚠️ Limit reached. Try again later.", "error");
-        } else {
-            showWaStatus("❌ Failed to send request.", "error");
-        }
-    } catch (err) {
-        console.error(err);
-        showWaStatus("❌ Network error. Is Kavibot running?", "error");
-    } finally {
-        btn.disabled = false;
-        btn.innerHTML = `<span class="material-symbols-outlined">send</span> Send to WhatsApp`;
-    }
-}
-
-function showWaStatus(msg, type) {
-    const el = document.getElementById('wa_status');
-    el.innerText = msg;
-    el.classList.remove('hidden', 'text-error', 'text-green-500');
-    el.classList.add(type === 'error' ? 'text-error' : 'text-green-500');
-}
-</script>
-
-<script>
-    // Simple script to handle parallax on scroll for hero background
-    window.addEventListener('scroll', () => {
-        const scrolled = window.scrollY;
-        const heroBg = document.getElementById('hero-bg');
-        if (heroBg && scrolled < window.innerHeight) {
-            heroBg.style.transform = `translateY(${scrolled * 0.4}px) scale(1.05)`;
-        }
-    });
-</script>
-
-<script>
-let currentMode = 'sinhala'; // 'original' or 'sinhala' or 'merged'
-let MASTER_DATA = [];
-let CINESUBZ_DATA = [];
-
-const API_BASE = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') ? 'http://localhost:6555' : 'https://cinesubz.moviestream.lat';
-const ORIGINAL_API = "https://stream.moviestream.lat/api";
-const PANEL_DB = "https://panel.moviestream.lat/api/movies";
-
-// Fallback images array
-const fallbackImages = [
-    'https://image.tmdb.org/t/p/w500/8cdWjvZQUExUUTzyp4t6EDMubfO.jpg',
-    'https://image.tmdb.org/t/p/w500/qJ2tW6WMUDux911r6m7haRef0WH.jpg',
-    'https://image.tmdb.org/t/p/w500/3bhkrj58Vtu7enYsRolD1fZdja1.jpg'
-];
-
-function storeTempData(title, imgUrl) {
-    try {
-        sessionStorage.setItem('temp_movie_data', JSON.stringify({
-            title: decodeURIComponent(title),
-            imageUrl: decodeURIComponent(imgUrl)
-        }));
-    } catch (e) {
-        console.error(e);
-    }
-}
-
-function hideGlobalLoader() {
-    const loader = document.getElementById('global_loader');
-    if (loader) {
-        loader.classList.add('opacity-0');
-        setTimeout(() => loader.classList.add('hidden'), 500);
-    }
-}
-
-function showGlobalLoader() {
-    const loader = document.getElementById('global_loader');
-    if (loader) {
-        loader.classList.remove('hidden');
-        setTimeout(() => loader.classList.remove('opacity-0'), 10);
-    }
-}
-
-document.addEventListener("DOMContentLoaded", () => {
-    setMode('sinhala');
-});
-
-function setMode(mode) {
-    currentMode = mode;
-    // Update button styles
-    document.querySelectorAll('button[id^="btn_"]').forEach(btn => {
-        btn.className = "snap-center whitespace-nowrap px-6 py-2 rounded-full font-label-bold text-label-bold text-secondary hover:text-on-surface hover:bg-white/5 transition-all duration-300";
-    });
-    const activeBtn = document.getElementById(`btn_${mode}`);
-    if(activeBtn) {
-        activeBtn.className = "snap-center whitespace-nowrap px-6 py-2 rounded-full font-label-bold text-label-bold bg-primary-container text-on-primary-container shadow-[0_0_15px_rgba(229,9,20,0.3)] transition-all duration-300 scale-105";
-    }
-
-    // Load Data
-    document.getElementById('dynamic_sections').innerHTML = '<div class="text-center py-10 text-primary">Loading...</div>';
-    
-    if (mode === 'sinhala') {
-        loadCineSubzHome();
-    } else {
-        loadOriginalHome();
-    }
-}
-
-async function loadCineSubzHome() {
-    try {
-        const res = await fetch(`${API_BASE}/api/homepage`);
-        const json = await res.json();
-        
-        let html = '';
-        if (json && Object.keys(json).length > 0) {
-            CINESUBZ_DATA = json;
-            
-            // Set Hero if Trending exists
-            if (CINESUBZ_DATA["Trending Now"] && CINESUBZ_DATA["Trending Now"].length > 0) {
-                updateHero(CINESUBZ_DATA["Trending Now"][0], true);
-            } else {
-                for (let key in CINESUBZ_DATA) {
-                    if(CINESUBZ_DATA[key].length > 0) {
-                        updateHero(CINESUBZ_DATA[key][0], true);
-                        break;
-                    }
-                }
-            }
-
-            for (let cat in CINESUBZ_DATA) {
-                html += renderCineplexRow(cat, CINESUBZ_DATA[cat], true);
-            }
-        } else {
-            html = '<div class="text-center py-10 text-primary-container font-bold">Something went wrong. Please contact developer.</div>';
-        }
-        document.getElementById('dynamic_sections').innerHTML = html;
-        hideGlobalLoader();
-    } catch (e) {
-        console.error(e);
-        document.getElementById('dynamic_sections').innerHTML = '<div class="text-center py-10 text-primary-container font-bold">Something went wrong. Please contact developer.</div>';
-        hideGlobalLoader();
-    }
-}
-
-async function loadOriginalHome() {
-    try {
-        MASTER_DATA = [];
-        
-        // Ensure SCRAPER_CATEGORIES is defined globally if not already
-        const SCRAPER_CATEGORIES = [
-            "Popular Movie", "Popular Series", "Movies", "TV Series", "K-Drama", "C-Drama",
-            "Sinhala Movies", "Sinhala Dubbing"
-        ];
-
-        const dynamicSections = document.getElementById('dynamic_sections');
-        dynamicSections.innerHTML = '';
-        
-        // Start all fetches concurrently to prevent freezing/latency
-        const fetchPromises = SCRAPER_CATEGORIES.map(async (category) => {
-            let fetchUrl = "";
-            let pageNum = 1;
-            if (category === "Sinhala Movies") {
-                fetchUrl = `${ORIGINAL_API}/genre/SinhalaMovies?page=${pageNum}`;
-            } else if (category === "Sinhala Dubbing") {
-                fetchUrl = `${ORIGINAL_API}/genre/SinhalaDubbing?page=${pageNum}`;
-            } else if (category === "TV Series") {
-                fetchUrl = `${ORIGINAL_API}/tvseries?page=${pageNum}`;
-            } else if (category === "Movies") {
-                fetchUrl = `${ORIGINAL_API}/movies-general?page=${pageNum}`;
-            } else {
-                const endpoint = category === "Popular Movie" || category === "Trending TV" || category === "Trending Movie" || category === "New Movie" 
-                    ? `/trending` 
-                    : `/genre/${category.replace(/\s+/g, '')}`;
-                fetchUrl = `${ORIGINAL_API}${endpoint}?page=${pageNum}`;
-            }
-
-            try {
-                const res = await fetch(fetchUrl);
-                const data = await res.json();
-                
-                let scraped = [];
-                if (Array.isArray(data)) {
-                    scraped = data;
-                } else if (data && data.data) {
-                    scraped = data.data.subjectList || data.data.items || data.data.rankingListContentList || [];
-                }
-                return { category, scraped };
-            } catch (err) {
-                console.error("Failed to load category:", category, err);
-                return { category, scraped: [] };
-            }
-        });
-
-        let hasData = false;
-
-        // Process results as they resolve in order to maintain layout consistency
-        for (let i = 0; i < fetchPromises.length; i++) {
-            const { category, scraped } = await fetchPromises[i];
-            
-            if (scraped.length > 0) {
-                hasData = true;
-                const formattedScraped = scraped.map((m, idx) => ({
-                    _id: m.id || m.subjectId || m._id || ('scrap_' + idx),
-                    title: m.title || m.name,
-                    imageUrl: m.cover?.url || m.coverUrl || m.cover || m.pic,
-                    year: m.year || m.releaseYear || "",
-                    quality: m.quality || "HD",
-                    fromPanel: false,
-                    detailPath: m.detailPath || m.id
-                }));
-
-                MASTER_DATA = [...MASTER_DATA, ...formattedScraped];
-
-                // Set Hero if Popular Movie
-                if (category === "Popular Movie" && formattedScraped.length > 0) {
-                    updateHero(formattedScraped[0], false);
-                    hideGlobalLoader(); // Hide loader quickly after hero is ready
-                }
-
-                dynamicSections.insertAdjacentHTML('beforeend', renderCineplexRow(category, formattedScraped, false));
-            }
-        }
-
-        if (!hasData) {
-            dynamicSections.innerHTML = `<div class="p-8 text-center"><span class="text-primary-container font-bold">Something went wrong. Please contact developer.</span></div>`;
-        }
-        hideGlobalLoader(); // Fallback
-
-    } catch(e) {
-        document.getElementById('dynamic_sections').innerHTML = `<div class="p-8 text-center"><span class="text-primary-container font-bold">Something went wrong. Please contact developer.</span></div>`;
-        hideGlobalLoader();
-    }
-}
-
-function updateHero(m, isCinesubz) {
-    if(!m) return;
-    const title = document.getElementById('movie_title') || document.getElementById('hero_title');
-    const desc = document.getElementById('movie_desc') || document.getElementById('hero_desc') || document.querySelector('#hero-section p');
-    const bg = document.querySelector('#hero-bg img') || document.querySelector('#hero img');
-    const btn = document.getElementById('hero_play_btn');
-    
-    if (title) title.innerText = m.title || m.name || 'Unknown';
-    // Remove description update if the element doesn't exist in the new template, or create one.
-    // The new template has a paragraph for description. Let's find it.
-    if (desc) desc.innerText = m.description || m.plot || 'No description available.';
-    
-    let img = m.imageUrl || m.coverUrl || m.cover?.url || m.image || m.cover;
-    // Attempt to get high quality image if available
-    if (img && typeof img === 'string') {
-        img = img.replace('w_300', 'w_1280').replace('h_450', 'h_720'); // Upscale image if it's from a known CDN
-    }
-    
-    if (img && bg) bg.src = img;
-
-    // The new template play button:
-    const playBtn = document.querySelector('#hero-section button:first-of-type');
-    if (playBtn) {
-        const id = isCinesubz ? encodeURIComponent(m.url) : (m.id || m.subjectId || m._id || m.detailPath);
-        playBtn.onclick = () => {
-            const detailPath = isCinesubz ? '' : (m.detailPath || id);
-            openMovieModal(id, isCinesubz ? 'cs' : 'original', encodeURIComponent(title), encodeURIComponent(imgUrl), detailPath);
-        };
-    }
-}
-
-function renderCineplexRow(category, items, isCinesubz) {
-    if (!items || items.length === 0) return '';
-    let cardsHtml = '';
-    
-    items.forEach(m => {
-        const id = isCinesubz ? encodeURIComponent(m.url) : (m._id || m.detailPath);
-        const safeId = id ? id.toString().replace(/'/g, "%27") : '';
-        const source = isCinesubz ? 'cs' : 'original';
-        const imgUrl = m.imageUrl || m.coverUrl || m.image || 'https://via.placeholder.com/200x300';
-        const quality = m.quality || m.type || 'HD';
-        const title = m.title || m.name || 'Unknown';
-        
-        const safeTitle = encodeURIComponent(title).replace(/'/g, "%27");
-        const safeImg = encodeURIComponent(imgUrl).replace(/'/g, "%27");
-        cardsHtml += `
-            <div class="movie-card relative shrink-0 w-[160px] md:w-[220px] aspect-[2/3] rounded-lg overflow-hidden border border-white/10 cursor-pointer bg-surface-container-low snap-start" onclick="openMovieModal('${safeId}', '${source}', '${safeTitle}', '${safeImg}', '${isCinesubz ? '' : (m.detailPath || '')}')">
-                <img src="${imgUrl}" class="w-full h-full object-cover" onerror="this.src='https://via.placeholder.com/200x300?text=No+Image'">
-                <div class="movie-overlay absolute inset-0 bg-gradient-to-t from-black via-black/60 to-transparent opacity-0 transition-opacity duration-300 flex flex-col justify-end p-4 backdrop-blur-[2px]">
-                    <h3 class="font-label-bold text-label-bold text-on-surface mb-2 truncate drop-shadow-md">${title}</h3>
-                    <div class="flex gap-2">
-                        ${isCinesubz ? `<span class="text-[10px] font-bold px-1.5 py-0.5 bg-primary-container text-on-primary-container rounded shadow-[0_0_5px_rgba(229,9,20,0.5)]">SINHALA</span>` : ''}
-                        <span class="text-[10px] font-bold px-1.5 py-0.5 border border-white/20 text-secondary rounded backdrop-blur-md bg-black/30">${quality}</span>
-                    </div>
-                </div>
-            </div>
-        `;
-    });
-
-    const modeParam = isCinesubz ? 'cinesubz' : 'original';
-    return `
-        <section class="pl-edge-margin-mobile md:pl-edge-margin-desktop overflow-hidden relative mb-10">
-            <div class="flex items-center justify-between gap-2 mb-stack-md group pr-edge-margin-mobile md:pr-edge-margin-desktop">
-                <h2 class="font-headline-md text-headline-md text-on-surface">${category}</h2>
-                <a href="category.html?type=${encodeURIComponent(category)}&mode=${modeParam}" class="text-sm font-medium text-primary hover:text-white transition cursor-pointer flex items-center gap-1">
-                    See All <span class="material-symbols-outlined text-sm">chevron_right</span>
-                </a>
-            </div>
-            <div class="flex gap-gutter overflow-x-auto hide-scrollbar pb-12 pt-4 pr-edge-margin-mobile md:pr-edge-margin-desktop snap-x">
-                ${cardsHtml}
-            </div>
-        </section>
-    `;
-}
-
-// Search Logic
-let searchTimeout = null;
-
-function openSearch() {
-    const overlay = document.getElementById('search_overlay');
-    overlay.classList.remove('hidden');
-    overlay.classList.add('flex');
-    setTimeout(() => overlay.classList.remove('opacity-0'), 10);
-    document.getElementById('main_search').focus();
-}
-
-function closeSearch() {
-    const overlay = document.getElementById('search_overlay');
-    overlay.classList.add('opacity-0');
-    setTimeout(() => {
-        overlay.classList.add('hidden');
-        overlay.classList.remove('flex');
-    }, 300);
-}
-
-async function liveSearch(query) {
-    clearTimeout(searchTimeout);
-    const resultsContainer = document.getElementById('search_results');
-    const loader = document.getElementById('search_loader');
-    
-    if (!query || query.length < 2) {
-        resultsContainer.innerHTML = '';
-        return;
-    }
-
-    loader.classList.remove('hidden');
-    resultsContainer.innerHTML = '';
-
-    searchTimeout = setTimeout(async () => {
-        try {
-            let items = [];
-            const isCinesubz = (currentMode === 'sinhala' || currentMode === 'merged');
-            
-            if (isCinesubz) {
-                const res = await fetch(`${API_BASE}/api/search?q=${encodeURIComponent(query)}`);
-                const data = await res.json();
-                if (data && data.results) items = data.results;
-            } else {
-                const res = await fetch(`${ORIGINAL_API}/search?keyword=${encodeURIComponent(query)}`);
-                const data = await res.json();
-                if (Array.isArray(data)) items = data;
-                else if (data && data.data) items = data.data.items || data.data.subjectList || [];
-            }
-            
-            let html = '';
-            if (items.length > 0) {
-                items.forEach((m, idx) => {
-                    const id = isCinesubz ? encodeURIComponent(m.url) : (m.id || m.subjectId || m._id || ('scrap_' + idx));
-                    const detailPath = isCinesubz ? '' : (m.detailPath || id);
-                    const finalId = isCinesubz ? id : (detailPath || id);
-                    const safeFinalId = finalId ? finalId.toString().replace(/'/g, "%27") : '';
-                    const source = isCinesubz ? 'cs' : 'original';
-                    const imgUrl = m.imageUrl || m.coverUrl || m.cover?.url || m.image || m.cover || 'https://via.placeholder.com/200x300';
-                    const title = m.title || m.name || 'Unknown';
-                    const quality = m.quality || m.type || 'HD';
-                    const safeTitle = encodeURIComponent(title).replace(/'/g, "%27");
-                    const safeImg = encodeURIComponent(imgUrl).replace(/'/g, "%27");
-                    html += `
-                        <div class="movie-card relative w-full aspect-[2/3] rounded-lg overflow-hidden border border-white/10 cursor-pointer bg-surface-container-low" onclick="openMovieModal('${safeFinalId}', '${source}', '${safeTitle}', '${safeImg}', '${detailPath}')">
-                            <img src="${imgUrl}" class="w-full h-full object-cover" onerror="this.src='https://via.placeholder.com/200x300?text=No+Image'">
-                            <div class="movie-overlay absolute inset-0 bg-gradient-to-t from-black via-black/60 to-transparent opacity-0 transition-opacity duration-300 flex flex-col justify-end p-4 backdrop-blur-[2px]">
-                                <h3 class="font-label-bold text-label-bold text-on-surface mb-2 truncate drop-shadow-md">${title}</h3>
-                                <div class="flex gap-2">
-                                    ${isCinesubz ? `<span class="text-[10px] font-bold px-1.5 py-0.5 bg-primary-container text-on-primary-container rounded shadow-[0_0_5px_rgba(229,9,20,0.5)]">SINHALA</span>` : ''}
-                                    <span class="text-[10px] font-bold px-1.5 py-0.5 border border-white/20 text-secondary rounded backdrop-blur-md bg-black/30">${quality}</span>
-                                </div>
-                            </div>
-                        </div>
-                    `;
-                });
-            } else {
-                html = `
-                <div class="col-span-full flex flex-col items-center justify-center py-20">
-                    <span class="material-symbols-outlined text-6xl text-white/20 mb-4" style="font-variation-settings: 'FILL' 0;">search_off</span>
-                    <h3 class="text-2xl font-display-hero-mobile text-white/60 mb-2 font-bold">No matches found</h3>
-                    <p class="text-secondary text-center max-w-sm">Try adjusting your keywords or search for a different movie or TV show.</p>
-                </div>`;
-            }
-            resultsContainer.innerHTML = html;
-        } catch (e) {
-            console.error(e);
-            resultsContainer.innerHTML = '<div class="col-span-full text-center py-10 text-primary-container font-bold">Something went wrong. Please contact developer.</div>';
-        }
-        loader.classList.add('hidden');
-    }, 500);
-}
-</script>
-
-</body></html>
+            btnContainer.innerHTML = `<div class="col-span-full flex items-ce
