@@ -126,27 +126,42 @@
     async function fetchMovies(page) {
         if (!categoryName) return [];
 
-        if (!isDataLoaded) {
-            if (mode === 'cinesubz') {
+        if (mode === 'cinesubz') {
+            try {
+                const res = await fetch(`${API_BASE}/api/category?type=${encodeURIComponent(categoryName)}&page=${page}`);
+                const data = await res.json();
+                if (data && Array.isArray(data.results) && data.results.length > 0) {
+                    return data.results;
+                }
+            } catch(e) {
+                console.error("CineSubz Category API failed, falling back to homepage data:", e);
+            }
+
+            // Fallback to homepage data if /api/category fails
+            if (!isDataLoaded) {
                 try {
                     const res = await fetch(`${API_BASE}/api/homepage?t=${new Date().getTime()}`);
                     const json = await res.json();
                     if (json) {
                         const targetCat = (categoryName || '').toLowerCase().trim();
-                        if (targetCat.includes('all')) {
-                            // Merge all categories together
-                            allFilteredItems = Object.values(json).flat();
+                        if (targetCat.includes('all') || targetCat.includes('movie')) {
+                            allFilteredItems = json["All Movies"] || json["Movies"] || [];
+                        } else if (targetCat.includes('tv') || targetCat.includes('series')) {
+                            allFilteredItems = json["TV Shows"] || [];
+                        } else if (targetCat.includes('trend')) {
+                            allFilteredItems = json["Trending Now"] || [];
                         } else {
-                            for (const key in json) {
-                                if (key.toLowerCase().trim() === targetCat) {
-                                    allFilteredItems = json[key];
-                                    break;
-                                }
-                            }
+                            allFilteredItems = json[categoryName] || [];
                         }
                     }
                 } catch(e) { console.error(e); }
-            } else {
+                isDataLoaded = true;
+            }
+            const itemsPerPage = 20;
+            const startIndex = (page - 1) * itemsPerPage;
+            return allFilteredItems.slice(startIndex, startIndex + itemsPerPage);
+        } else {
+            if (!isDataLoaded) {
                 try {
                     // Fetch original movies dump for blazing fast client-side sorting and filtering
                     const res = await fetch(`https://panel.moviestream.lat/api/movies?v=${new Date().getTime()}`);
@@ -165,13 +180,13 @@
                         }
                     }
                 } catch(e) { console.error(e); }
+                isDataLoaded = true;
             }
-            isDataLoaded = true;
-        }
 
-        const itemsPerPage = 20;
-        const startIndex = (page - 1) * itemsPerPage;
-        return allFilteredItems.slice(startIndex, startIndex + itemsPerPage);
+            const itemsPerPage = 20;
+            const startIndex = (page - 1) * itemsPerPage;
+            return allFilteredItems.slice(startIndex, startIndex + itemsPerPage);
+        }
     }
 
     function renderCards(items) {
@@ -278,7 +293,10 @@
                     <!-- TV Series Section (Hidden for movies) -->
                     <div id="modal_tv_section" class="mb-6 hidden">
                         <div class="mb-4">
-                            <label class="block text-xs font-label-bold text-tertiary mb-2 uppercase tracking-wider">Select Season</label>
+                            <label class="block text-xs font-label-bold text-tertiary mb-2 uppercase tracking-wider flex items-center gap-1.5">
+                                <span class="material-symbols-outlined text-sm text-primary">layers</span>
+                                Select Season
+                            </label>
                             <div class="relative">
                                 <select id="season_select" onchange="loadEpisodes(this.value)" class="w-full appearance-none bg-surface-container-low border border-white/10 hover:border-primary/50 rounded-xl px-4 py-3 text-white font-medium outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all cursor-pointer">
                                     <!-- Seasons -->
@@ -288,8 +306,14 @@
                                 </div>
                             </div>
                         </div>
-                        <label class="block text-xs font-label-bold text-tertiary mb-2 uppercase tracking-wider">Select Episode</label>
-                        <div id="episodes_list" class="mt-4 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3 max-h-40 overflow-y-auto pr-2 custom-scrollbar">
+                        <div class="flex items-center justify-between mb-2">
+                            <label class="text-xs font-label-bold text-tertiary uppercase tracking-wider flex items-center gap-1.5">
+                                <span class="material-symbols-outlined text-sm text-primary">video_library</span>
+                                Select Episode
+                            </label>
+                            <span id="episodes_count_badge" class="text-[11px] font-mono font-medium text-secondary bg-white/5 border border-white/10 px-2.5 py-0.5 rounded-full"></span>
+                        </div>
+                        <div id="episodes_list" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-2.5 max-h-56 overflow-y-auto pr-1.5 custom-scrollbar">
                             <!-- Episodes -->
                         </div>
                     </div>
@@ -558,13 +582,29 @@ async function setupTvSeriesOriginal(data, pathParam) {
 function loadEpisodes(seasonName, source) {
     const episodes = currentSeriesData[seasonName] || [];
     const list = document.getElementById('episodes_list');
+    const badge = document.getElementById('episodes_count_badge');
+    if (badge) {
+        badge.innerText = `${episodes.length} Episodes`;
+    }
     list.innerHTML = '';
     
     episodes.forEach((ep, idx) => {
-        const title = ep.episode || ep.title || ep.name || `Episode ${ep.num || idx + 1}`;
+        const rawTitle = ep.title || ep.name || ep.episode || '';
+        const epNum = ep.num || ep.ep_num || (idx + 1);
+        const epNumBadge = String(epNum).toLowerCase().startsWith('ep') ? epNum : `EP ${epNum}`;
+        
+        let cleanTitle = rawTitle.replace(new RegExp(`^(episode|ep)\\s*${epNum}\\s*[-:]*\\s*`, 'i'), '').trim();
+        if (!cleanTitle || cleanTitle.toLowerCase() === `episode ${epNum}`.toLowerCase()) {
+            cleanTitle = `Episode ${epNum}`;
+        }
+
         list.innerHTML += `
-            <button type="button" onclick="selectEpisode(${idx}, '${seasonName.replace(/'/g, "\\'")}')" id="ep_btn_${idx}" class="series-episode-btn w-full text-left bg-surface-container-low hover:bg-white/10 border border-white/5 rounded-xl px-4 py-3 text-sm text-on-surface transition-all font-medium hover:border-primary/50">
-                ${title}
+            <button type="button" onclick="selectEpisode(${idx}, '${seasonName.replace(/'/g, "\\'")}')" id="ep_btn_${idx}" class="series-episode-btn group relative flex flex-col items-start justify-center bg-surface-container-low hover:bg-white/10 border border-white/10 hover:border-primary/50 rounded-xl p-2.5 text-left transition-all duration-200 cursor-pointer overflow-hidden shadow-sm">
+                <div class="flex items-center justify-between w-full gap-1 mb-1">
+                    <span class="ep-num-badge text-xs font-black tracking-wider uppercase text-white font-mono bg-white/10 px-2 py-0.5 rounded transition-all">${epNumBadge}</span>
+                    <span class="ep-status-icon material-symbols-outlined text-sm text-secondary group-hover:text-primary transition-colors">play_circle</span>
+                </div>
+                <span class="ep-sub-title text-[11px] text-tertiary truncate w-full font-medium transition-colors" title="${cleanTitle}">${cleanTitle}</span>
             </button>
         `;
     });
@@ -575,9 +615,42 @@ function loadEpisodes(seasonName, source) {
 }
 
 async function selectEpisode(idx, seasonName) {
-    document.querySelectorAll('.series-episode-btn').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.series-episode-btn').forEach(b => {
+        b.classList.remove('active', 'border-primary', 'bg-primary-container', 'shadow-[0_0_15px_rgba(229,9,20,0.5)]', 'scale-[1.02]');
+        b.classList.add('bg-surface-container-low', 'border-white/10');
+        const numBadge = b.querySelector('.ep-num-badge');
+        if (numBadge) {
+            numBadge.className = "ep-num-badge text-xs font-black tracking-wider uppercase text-white font-mono bg-white/10 px-2 py-0.5 rounded transition-all";
+        }
+        const icon = b.querySelector('.ep-status-icon');
+        if (icon) {
+            icon.className = "ep-status-icon material-symbols-outlined text-sm text-secondary group-hover:text-primary transition-colors";
+            icon.innerText = "play_circle";
+        }
+        const subTitle = b.querySelector('.ep-sub-title');
+        if (subTitle) {
+            subTitle.className = "ep-sub-title text-[11px] text-tertiary truncate w-full font-medium transition-colors";
+        }
+    });
+
     const btn = document.getElementById(`ep_btn_${idx}`);
-    if (btn) btn.classList.add('active');
+    if (btn) {
+        btn.classList.add('active', 'border-primary', 'bg-primary-container', 'shadow-[0_0_15px_rgba(229,9,20,0.5)]', 'scale-[1.02]');
+        btn.classList.remove('bg-surface-container-low', 'border-white/10');
+        const numBadge = btn.querySelector('.ep-num-badge');
+        if (numBadge) {
+            numBadge.className = "ep-num-badge text-xs font-black tracking-wider uppercase text-on-primary-container font-mono bg-black/40 px-2 py-0.5 rounded shadow-sm transition-all";
+        }
+        const icon = btn.querySelector('.ep-status-icon');
+        if (icon) {
+            icon.className = "ep-status-icon material-symbols-outlined text-sm text-on-primary-container font-bold transition-colors";
+            icon.innerText = "check_circle";
+        }
+        const subTitle = btn.querySelector('.ep-sub-title');
+        if (subTitle) {
+            subTitle.className = "ep-sub-title text-[11px] text-on-primary-container truncate w-full font-bold transition-colors";
+        }
+    }
     
     const ep = currentSeriesData[seasonName][idx];
     currentMovieData.title = `${currentMovieData.originalTitle} - ${seasonName} ${ep.name || ep.title || ep.ep_num || ep.num || 'EP'}`;
